@@ -1,11 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView4"
+    <androidx.cardview.widget.CardView
+        app:cardCornerRadius="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="@dimen/dp_20"
+        android:minHeight="200dp"
+        android:orientation="vertical">
+
+        <com.ysxsoft.common_base.view.custom.image.RoundImageView
+            android:id="@+id/riv"
+            app:radius="@dimen/dp_10"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableTop="@mipmap/icon_no"
+            android:drawablePadding="25dp"
+            android:text="上传房产证复印件"
+            android:textColor="@color/color_cccccc"
+            android:textSize="11sp" />
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_40"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_btn_bg"
+            android:drawableLeft="@mipmap/icon_carmer"
+            android:gravity="center"
+            android:paddingHorizontal="35dp"
+            android:text="拍照上传"
+            android:textColor="@color/colorWhite"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_btn_bg"
+            android:gravity="center"
+            android:text="提交认证"
+            android:textColor="@color/colorWhite"
+            android:textSize="17sp" />
+
+
+    </LinearLayout>
 </LinearLayout>

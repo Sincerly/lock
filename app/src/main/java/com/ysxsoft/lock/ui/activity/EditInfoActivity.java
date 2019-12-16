@@ -1,7 +1,9 @@
 package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +20,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.EditInfoResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +53,16 @@ public class EditInfoActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+
+    @BindView(R.id.name)
+    EditText name;
+    @BindView(R.id.ivClose)
+    ImageView ivClose;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
+
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getEditInfoActivity()).navigation();
     }
 
@@ -72,9 +84,23 @@ public class EditInfoActivity extends BaseActivity {
         title.setText("昵称");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout,R.id.ivClose,R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.ivClose:
+                name.setText("");
+                break;
+            case R.id.tvOk:
+                if (TextUtils.isEmpty(name.getText().toString().trim())){
+                    showToast("昵称不能为空");
+                    return;
+                }
+
+                break;
+        }
     }
 
     public void request() {
@@ -93,7 +119,7 @@ public class EditInfoActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        EditInfoResponse resp = JsonUtils.parseByGson(response,EditInfoResponse.class);
+                        EditInfoResponse resp = JsonUtils.parseByGson(response, EditInfoResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

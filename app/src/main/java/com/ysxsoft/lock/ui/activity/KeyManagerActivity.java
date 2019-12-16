@@ -8,9 +8,22 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
+import com.google.android.material.tabs.TabLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
+import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.base.frame.list.IListAdapter;
+import com.ysxsoft.common_base.base.frame.list.ListManager;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.RoundImageView;
+import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
+import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
+import com.ysxsoft.lock.ui.fragment.TabKeyManager1Fragment;
+import com.ysxsoft.lock.ui.fragment.TabKeyManager2Fragment;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,6 +31,15 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.KeyManagerResponse;
 import com.ysxsoft.lock.net.Api;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +72,15 @@ public class KeyManagerActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.tv1)
+    TextView tv1;
+
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
+    @BindView(R.id.viewPager)
+    NoScrollViewPager viewPager;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getKeyManagerActivity()).navigation();
     }
 
@@ -63,7 +93,78 @@ public class KeyManagerActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        tabLayout.removeAllTabs();
+        List<Fragment> fragmentList = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+        titles.add("手机钥匙");
+        titles.add("人脸识别");
+        fragmentList.add(new TabKeyManager1Fragment());
+        fragmentList.add(new TabKeyManager2Fragment());
+        initViewPage(fragmentList, titles);
+        initTabLayout(titles);
     }
+    private void initViewPage(List<Fragment> fragmentList, List<String> titles) {
+        viewPager.setAdapter(new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, titles));
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                viewPager.setCurrentItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+        });
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(fragmentList.size());
+    }
+
+    private void initTabLayout(List<String> titles) {
+        for (int i = 0; i < titles.size(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            tab.setCustomView(R.layout.view_tab);
+            TextView textView = tab.getCustomView().findViewById(R.id.tab);
+            textView.setText(titles.get(i));
+            if (i == 0) {
+                textView.setTextColor(getResources().getColor(R.color.colorTabSelectedIndictor));
+                textView.setTextSize(17);
+            } else {
+                textView.setTextColor(getResources().getColor(R.color.colorTabNormalIndictor));
+                textView.setTextSize(15);
+            }
+        }
+        tabLayout.addOnTabSelectedListener(onTabSelectedListener);
+    }
+
+    private TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            if (tab.getCustomView() == null) {
+                return;
+            }
+            TextView tv = tab.getCustomView().findViewById(R.id.tab);
+            tv.setTextSize(17);
+            tv.setTextColor(getResources().getColor(R.color.colorTabSelectedIndictor));
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+            if (tab.getCustomView() == null) {
+                return;
+            }
+            TextView tv = tab.getCustomView().findViewById(R.id.tab);
+            tv.setTextSize(15);
+            tv.setTextColor(getResources().getColor(R.color.colorTabNormalIndictor));
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+        }
+    };
 
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
@@ -72,12 +173,19 @@ public class KeyManagerActivity extends BaseActivity {
         title.setText("钥匙管理");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tv1})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tv1:
+                ApplyKeyActivity.start();
+                break;
+        }
     }
 
-    public void request() {
+    public void request(int page) {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.GET_KEY_MANAGER)
@@ -93,7 +201,7 @@ public class KeyManagerActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        KeyManagerResponse resp = JsonUtils.parseByGson(response,KeyManagerResponse.class);
+                        KeyManagerResponse resp = JsonUtils.parseByGson(response, KeyManagerResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
@@ -109,4 +217,9 @@ public class KeyManagerActivity extends BaseActivity {
                     }
                 });
     }
+
+//    public int getItemLayoutId() {
+//        return R.layout.item_key_manager;
+//    }
+
 }

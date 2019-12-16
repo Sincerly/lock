@@ -2,15 +2,18 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.WebViewUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,6 +21,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.AboutMeResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,8 +54,28 @@ public class AboutMeActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.webview)
+    WebView webview;
+
+    @Autowired
+    String webUrl;
+    @Autowired
+    String webContent;
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getAboutMeActivity()).navigation();
+    }
+
+
+    public static void start(String url) {
+        ARouter.getInstance().build(ARouterPath.getAboutMeActivity()).withString("webUrl", url).navigation();
+    }
+
+    public static void startUrl(String title, String url) {
+        ARouter.getInstance().build(ARouterPath.getAboutMeActivity()).withString("webTitle", title).withString("webUrl", url).navigation();
+    }
+
+    public static void startContent(String title, String content) {
+        ARouter.getInstance().build(ARouterPath.getAboutMeActivity()).withString("webTitle", title).withString("webContent", content).navigation();
     }
 
     @Override
@@ -63,6 +87,26 @@ public class AboutMeActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        initWebView();
+    }
+
+    private void initWebView() {
+        WebViewUtils.init(webview);
+        if (webUrl != null) {
+            webview.loadUrl(webUrl);
+        } else {
+            if (webContent != null) {
+                WebViewUtils.setH5Data(webview, webContent);
+            } else {
+                //自定义处理
+                onCustom(webview);
+            }
+        }
+    }
+
+    private void onCustom(WebView webview) {
+
+
     }
 
     private void initTitle() {
@@ -74,6 +118,10 @@ public class AboutMeActivity extends BaseActivity {
 
     @OnClick(R.id.backLayout)
     public void onViewClicked() {
+        if (webview.canGoBack()) {
+            webview.goBack();
+            return;
+        }
         backToActivity();
     }
 
@@ -93,7 +141,7 @@ public class AboutMeActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        AboutMeResponse resp = JsonUtils.parseByGson(response,AboutMeResponse.class);
+                        AboutMeResponse resp = JsonUtils.parseByGson(response, AboutMeResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

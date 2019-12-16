@@ -1,11 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="您的姓名"
+            android:gravity="center_vertical"
+            android:textColor="@color/color_282828"
+            android:layout_marginHorizontal="15dp"
+            android:textSize="@dimen/sp_14" />
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:textSize="@dimen/sp_14"
+            android:singleLine="true"
+            android:hint="请输入您的姓名"
+            android:gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/color_282828"
+            android:textColorHint="@color/color_cccccc"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="身份证号"
+            android:gravity="center_vertical"
+            android:textColor="@color/color_282828"
+            android:layout_marginHorizontal="15dp"
+            android:textSize="@dimen/sp_14" />
+
+        <EditText
+            android:id="@+id/IdCardNum"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:textSize="@dimen/sp_14"
+            android:hint="请输入您的姓名"
+            android:gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:singleLine="true"
+            android:textColor="@color/color_282828"
+            android:textColorHint="@color/color_cccccc"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="手机号码"
+            android:gravity="center_vertical"
+            android:textColor="@color/color_282828"
+            android:layout_marginHorizontal="15dp"
+            android:textSize="@dimen/sp_14" />
+
+        <EditText
+            android:id="@+id/inputPhoneNum"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:textSize="@dimen/sp_14"
+            android:hint="请输入您的姓名"
+            android:gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:singleLine="true"
+            android:textColor="@color/color_282828"
+            android:textColorHint="@color/color_cccccc"/>
+
+    </LinearLayout>
+
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/tvOk"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_height="@dimen/dp_44"
+        android:layout_marginTop="@dimen/dp_40"
+        android:background="@drawable/shape_btn_bg"
+        android:gravity="center"
+        android:text="提交"
+        android:layout_marginHorizontal="35dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="17sp" />
+
+
+
 </LinearLayout>

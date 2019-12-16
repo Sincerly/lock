@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
@@ -12,7 +12,212 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/LL1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="@dimen/dp_10"
+            android:orientation="horizontal">
+
+            <com.ysxsoft.common_base.view.custom.image.CircleImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:drawableRight="@mipmap/icon_right_arrow"
+                android:drawablePadding="@dimen/dp_10"
+                android:gravity="right"
+                android:text="更换头像"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/LL2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="昵称"
+                android:textColor="@color/color_282828"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:drawableRight="@mipmap/icon_right_arrow"
+                android:drawablePadding="@dimen/dp_10"
+                android:gravity="right"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/LL3"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="个性签名"
+                android:textColor="@color/color_282828"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/autograph"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:drawableRight="@mipmap/icon_right_arrow"
+                android:drawablePadding="@dimen/dp_10"
+                android:gravity="right"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+
+
+        </LinearLayout>
+
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/LL4"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="修改密码"
+                android:textColor="@color/color_282828"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:drawableRight="@mipmap/icon_right_arrow"
+                android:drawablePadding="@dimen/dp_10"
+                android:gravity="right"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL5"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="清理缓存"
+                android:textColor="@color/color_282828"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvMemery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:drawableRight="@mipmap/icon_right_arrow"
+                android:drawablePadding="@dimen/dp_10"
+                android:gravity="right"
+                android:text="5MB"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL6"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:layout_marginHorizontal="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关于我们"
+                android:textColor="@color/color_282828"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:drawableRight="@mipmap/icon_right_arrow"
+                android:drawablePadding="@dimen/dp_10"
+                android:gravity="right"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/LoginOut"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:background="@color/colorWhite"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="退出登录"
+        android:textColor="@color/colorRed"
+        android:textSize="@dimen/sp_14" />
+
 </LinearLayout>

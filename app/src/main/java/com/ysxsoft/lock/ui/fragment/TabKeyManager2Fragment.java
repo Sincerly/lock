@@ -12,15 +12,9 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.utils.ImageUtils;
-import com.ysxsoft.common_base.utils.JsonUtils;
-import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
-import com.ysxsoft.lock.config.AppConfig;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
-
 import com.ysxsoft.lock.R;
-import com.ysxsoft.lock.net.Api;
+import com.ysxsoft.lock.config.AppConfig;
 
 import java.io.File;
 import java.util.List;
@@ -31,13 +25,12 @@ import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.util.BGAPhotoHelper;
 import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
 import io.reactivex.functions.Consumer;
-import okhttp3.Call;
 
 /**
- * create by Sincerly on 9999/9/9 0009
- **/
-public class TabPropertyCert2Fragment extends BaseFragment {
-
+ * Create By 胡
+ * on 2019/12/16 0016
+ */
+public class TabKeyManager2Fragment extends BaseFragment {
     @BindView(R.id.riv)
     RoundImageView riv;
     @BindView(R.id.tv1)
@@ -51,17 +44,15 @@ public class TabPropertyCert2Fragment extends BaseFragment {
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
     public static final int REQUEST_CODE_CROP = 0x02;
-
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_tabpropertycert2;
+        return R.layout.fragment_tab_property_cert1;
     }
 
     @Override
     protected void doWork(View view) {
-        initPhotoHelper();
-    }
 
+    }
     @SuppressLint("CheckResult")
     private void initPhotoHelper() {
         r = new RxPermissions(this);
@@ -129,40 +120,6 @@ public class TabPropertyCert2Fragment extends BaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
     }
-
-    public void request() {
-        showLoadingDialog("请求中");
-        OkHttpUtils.post()
-//                .url(Api.GET_CODE)
-                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
-                .tag(this)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        hideLoadingDialog();
-//                        ListResponse resp = JsonUtils.parseByGson(response, ListResponse.class);
-//                        if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<ListResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
-//                        } else {
-//                            showToast("获取失败");
-//                        }
-                    }
-                });
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

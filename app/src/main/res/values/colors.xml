@@ -5,4 +5,9 @@
     <color name="colorAccent">#D81B60</color>
 	<color name="colorTabSelectedIndictor">@color/colorPrimary</color>
     <color name="colorTabNormalIndictor">@color/color_989898</color>
+
+    <color name="color_2AA9E0">#2AA9E0</color>
+    <color name="color_62C0B3">#62C0B3</color>
+    <color name="color_3BB0D2">#3BB0D2</color>
+    <color name="transparent">#00000000</color>
 </resources>

@@ -11,6 +11,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,6 +19,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.SettingResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +52,32 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.ivAvatar)
+    CircleImageView ivAvatar;
+    @BindView(R.id.name)
+    TextView name;
+    @BindView(R.id.autograph)
+    TextView autograph;
+    @BindView(R.id.tvMemery)
+    TextView tvMemery;
+    @BindView(R.id.LoginOut)
+    TextView LoginOut;
+
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
+    @BindView(R.id.LL2)
+    LinearLayout LL2;
+    @BindView(R.id.LL3)
+    LinearLayout LL3;
+    @BindView(R.id.LL4)
+    LinearLayout LL4;
+    @BindView(R.id.LL5)
+    LinearLayout LL5;
+    @BindView(R.id.LL6)
+    LinearLayout LL6;
+
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getSettingActivity()).navigation();
     }
 
@@ -72,9 +99,29 @@ public class SettingActivity extends BaseActivity {
         title.setText("设置");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.LL1, R.id.LL2, R.id.LL3, R.id.LL4, R.id.LL5, R.id.LL6, R.id.LoginOut})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.LL1:
+                break;
+            case R.id.LL2:
+                EditInfoActivity.start();
+                break;
+            case R.id.LL3:
+                break;
+            case R.id.LL4:
+                break;
+            case R.id.LL5:
+                break;
+            case R.id.LL6:
+                break;
+            case R.id.LoginOut:
+                toLogin();
+                break;
+        }
     }
 
     public void request() {
@@ -93,7 +140,7 @@ public class SettingActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        SettingResponse resp = JsonUtils.parseByGson(response,SettingResponse.class);
+                        SettingResponse resp = JsonUtils.parseByGson(response, SettingResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

@@ -3,16 +3,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
         layout="@layout/include_title" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-    </LinearLayout>
+        android:layout_height="@dimen/dp_44"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/colorWhite"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="15dp">
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:singleLine="true"
+            android:text="小黄鸡"
+            android:textColorHint="@color/color_999999"
+            android:textColor="@color/color_282828"
+            android:hint="请输入昵称"
+            android:textSize="@dimen/sp_14" />
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/icon_close" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvOk"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:layout_marginTop="@dimen/dp_40"
+        android:background="@drawable/shape_btn_bg"
+        android:gravity="center"
+        android:text="提交"
+        android:layout_marginHorizontal="35dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="17sp" />
 </LinearLayout>

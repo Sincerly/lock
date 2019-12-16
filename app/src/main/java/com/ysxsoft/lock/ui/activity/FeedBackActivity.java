@@ -1,7 +1,9 @@
 package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +20,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.FeedBackResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +53,18 @@ public class FeedBackActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.etContent)
+    EditText etContent;
+
+    @BindView(R.id.tv1)
+    TextView tv1;
+    @BindView(R.id.tv3)
+    TextView tv3;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
+
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getFeedBackActivity()).navigation();
     }
 
@@ -72,9 +86,20 @@ public class FeedBackActivity extends BaseActivity {
         title.setText("意见反馈");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tvOk:
+                if (TextUtils.isEmpty(etContent.getText().toString().trim())) {
+                    showToast("反馈内容不能为空");
+                    return;
+                }
+                break;
+
+        }
     }
 
     public void request() {
@@ -93,7 +118,7 @@ public class FeedBackActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        FeedBackResponse resp = JsonUtils.parseByGson(response,FeedBackResponse.class);
+                        FeedBackResponse resp = JsonUtils.parseByGson(response, FeedBackResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

@@ -1,6 +1,7 @@
 package com.ysxsoft.lock.ui.activity;
 
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,9 +28,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
-* 申请钥匙
-* create by Sincerly on 9999/9/9 0009
-**/
+ * 申请钥匙
+ * create by Sincerly on 9999/9/9 0009
+ **/
 @Route(path = "/main/ApplyKeyActivity")
 public class ApplyKeyActivity extends BaseActivity {
     @BindView(R.id.statusBar)
@@ -55,7 +56,17 @@ public class ApplyKeyActivity extends BaseActivity {
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
 
-    public static void start(){
+
+    @BindView(R.id.tv1)
+    TextView tv1;
+    @BindView(R.id.tv2)
+    TextView tv2;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
+    @BindView(R.id.et1)
+    EditText et1;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getApplyKeyActivity()).navigation();
     }
 
@@ -76,19 +87,37 @@ public class ApplyKeyActivity extends BaseActivity {
         title.setText("申请钥匙");
     }
 
+    @OnClick({R.id.backLayout, R.id.tv1, R.id.tv2, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tv1:
+                showToast("几栋楼");
+                break;
+            case R.id.tv2:
+                showToast("几单元");
+                break;
+            case R.id.tvOk:
+                finish();
+                break;
+        }
+    }
+
     @Override
     public void doWork() {
         super.doWork();
         initTitle();
-        tabLayout.removeAllTabs();
-        List<Fragment> fragmentList = new ArrayList<>();
-        List<String> titles = new ArrayList<>();
-        titles.add("手机钥匙");
-        titles.add("人脸识别");
-        fragmentList.add(new TabApplyKey1Fragment());
-        fragmentList.add(new TabApplyKey2Fragment());
-        initViewPage(fragmentList, titles);
-        initTabLayout(titles);
+//        tabLayout.removeAllTabs();
+//        List<Fragment> fragmentList = new ArrayList<>();
+//        List<String> titles = new ArrayList<>();
+//        titles.add("手机钥匙");
+//        titles.add("人脸识别");
+//        fragmentList.add(new TabApplyKey1Fragment());
+//        fragmentList.add(new TabApplyKey2Fragment());
+//        initViewPage(fragmentList, titles);
+//        initTabLayout(titles);
     }
 
     private void initViewPage(List<Fragment> fragmentList, List<String> titles) {
@@ -113,7 +142,7 @@ public class ApplyKeyActivity extends BaseActivity {
 
     private void initTabLayout(List<String> titles) {
         for (int i = 0; i < titles.size(); i++) {
-            TabLayout.Tab tab =tabLayout.getTabAt(i);
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
             tab.setCustomView(R.layout.view_tab);
             TextView textView = tab.getCustomView().findViewById(R.id.tab);
             textView.setText(titles.get(i));

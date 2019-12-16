@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,6 +12,9 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.StringUtils;
+import com.ysxsoft.common_base.utils.action.GetCodeTimerUtils;
+import com.ysxsoft.lock.MainActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,6 +22,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.OtherLoginResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +55,25 @@ public class OtherLoginActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.inputLoginPhone)
+    EditText inputLoginPhone;
+    @BindView(R.id.inputLoginPwd)
+    EditText inputLoginPwd;
+    @BindView(R.id.ivClose)
+    ImageView ivClose;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
+
+    @BindView(R.id.forgetPwd)
+    TextView forgetPwd;
+    @BindView(R.id.regist)
+    TextView regist;
+
+
+    private boolean isRunning = false;
+    private GetCodeTimerUtils utils;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getOtherLoginActivity()).navigation();
     }
 
@@ -63,6 +86,7 @@ public class OtherLoginActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        utils = GetCodeTimerUtils.getInstance();
     }
 
     private void initTitle() {
@@ -72,9 +96,30 @@ public class OtherLoginActivity extends BaseActivity {
         title.setText("登录/注册");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.ivClose, R.id.forgetPwd, R.id.regist, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.ivClose:
+                inputLoginPhone.setText("");
+                break;
+
+            case R.id.forgetPwd:
+                ForgetPwdActivity.start();
+                break;
+
+            case R.id.regist:
+                RegActivity.start();
+                break;
+
+            case R.id.tvOk:
+                MainActivity.start();
+                break;
+
+
+        }
     }
 
     public void request() {
@@ -93,7 +138,7 @@ public class OtherLoginActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        OtherLoginResponse resp = JsonUtils.parseByGson(response,OtherLoginResponse.class);
+                        OtherLoginResponse resp = JsonUtils.parseByGson(response, OtherLoginResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

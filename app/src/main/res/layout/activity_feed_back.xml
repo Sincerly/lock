@@ -3,16 +3,79 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
         layout="@layout/include_title" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
         android:layout_height="wrap_content">
-    </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/etContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:gravity="start"
+            android:hint="此刻想和大家分享点什么…"
+            android:minHeight="200dp"
+            android:padding="@dimen/dp_10"
+            android:textColor="@color/color_282828"
+            android:textColorHint="@color/color_cccccc"
+            android:textSize="@dimen/sp_14"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/color_cccccc"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv2"
+            app:layout_constraintRight_toLeftOf="@id/tv2" />
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textColor="@color/color_cccccc"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv3"
+            app:layout_constraintRight_toLeftOf="@id/tv3" />
+
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="500"
+            android:textColor="@color/color_cccccc"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="@dimen/dp_10"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <TextView
+        android:id="@+id/tvOk"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:layout_marginTop="@dimen/dp_40"
+        android:background="@drawable/shape_btn_bg"
+        android:gravity="center"
+        android:text="提交"
+        android:layout_marginHorizontal="35dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="17sp" />
 </LinearLayout>
