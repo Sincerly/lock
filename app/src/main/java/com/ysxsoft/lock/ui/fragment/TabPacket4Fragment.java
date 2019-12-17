@@ -1,6 +1,7 @@
 package com.ysxsoft.lock.ui.fragment;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
@@ -17,6 +19,7 @@ import com.ysxsoft.common_base.base.frame.list.ListManager;
 import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -26,13 +29,13 @@ import java.util.List;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import okhttp3.Call;
 
 import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
 
 /**
- * 
  * create by Sincerly on 9999/9/9 0009
  **/
 public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
@@ -54,7 +57,7 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
         initList(view);
     }
 
-    private void initList(View view){
+    private void initList(View view) {
         manager = new ListManager(this);
         manager.init(view);
         manager.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -80,9 +83,9 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
 
     @Override
     public void request(int page) {
-        if(IS_DEBUG_ENABLED){
+        if (IS_DEBUG_ENABLED) {
             debug(manager);
-        }else {
+        } else {
             OkHttpUtils.post()
 //                    .url(Api.GET_CODE)
                     .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
@@ -117,7 +120,24 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
 
     @Override
     public void fillView(BaseViewHolder helper, Object o) {
-
+        ImageView ivbg = helper.getView(R.id.ivbg);
+        CircleImageView civ = helper.getView(R.id.civ);
+        ImageView iv1 = helper.getView(R.id.iv1);
+//        Glide.with(getActivity()).load("").into(civ);
+//        helper.setText(R.id.tv1,"");
+//        helper.setText(R.id.tv2,"");
+//        helper.setText(R.id.tv3,"");
+        switch (helper.getAdapterPosition() % 3) {
+            case 0:
+                ivbg.setBackgroundResource(R.mipmap.icon_vip1);
+                break;
+            case 1:
+                ivbg.setBackgroundResource(R.mipmap.icon_vip2);
+                break;
+            case 2:
+                ivbg.setBackgroundResource(R.mipmap.icon_vip3);
+                break;
+        }
     }
 
     @Override

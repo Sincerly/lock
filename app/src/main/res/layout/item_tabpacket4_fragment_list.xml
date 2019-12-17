@@ -1,15 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/parent"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/colorWhite"
-              android:orientation="vertical">
-    <TextView
-            android:id="@+id/textView"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="135dp"
+    android:layout_marginTop="@dimen/dp_10"
+    android:background="@color/colorWhite"
+    android:layout_marginHorizontal="15dp"
+    android:orientation="vertical"
+    app:cardCornerRadius="@dimen/dp_10">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:gravity="center"
-            android:text="TextView" />
-</LinearLayout>
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.ysxsoft.common_base.view.custom.image.CircleImageView
+                android:id="@+id/civ"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:text="肯德基"
+                android:textColor="@color/color_282828"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dp_10">
+
+            <ImageView
+                android:id="@+id/ivbg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@mipmap/icon_vip1"
+                android:layout_marginHorizontal="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="20dp"
+                android:text="肯德基会员卡"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/sp_18"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="@id/ivbg"
+                app:layout_constraintTop_toTopOf="@id/ivbg" />
+
+            <ImageView
+                android:id="@+id/iv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:src="@mipmap/icon_vip_qrcode"
+                app:layout_constraintRight_toRightOf="@id/ivbg"
+                app:layout_constraintTop_toTopOf="@id/tv2" />
+
+            <TextView
+                android:id="@+id/tv3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:text="AK666666666"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintLeft_toLeftOf="@id/tv2"
+                app:layout_constraintTop_toBottomOf="@id/tv2" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

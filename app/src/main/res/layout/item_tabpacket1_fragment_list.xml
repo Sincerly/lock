@@ -6,35 +6,138 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="15dp"
     android:layout_marginTop="@dimen/dp_10"
-    android:minHeight="80dp"
     android:orientation="vertical"
     app:cardCornerRadius="@dimen/dp_10">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/dp_10">
 
         <TextView
             android:id="@+id/tv1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="¥5000"
+            android:text="¥"
             android:textColor="@color/colorRed"
             android:textSize="@dimen/sp_18"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tv4"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5000"
+            android:textColor="@color/colorRed"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tv1"
+            app:layout_constraintLeft_toRightOf="@id/tv1"
+            app:layout_constraintTop_toTopOf="@id/tv1" />
+
+
+        <TextView
+            android:id="@+id/tvmj"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="满3000可用"
             android:textColor="@color/color_999999"
             android:textSize="@dimen/sp_10"
-            app:layout_constraintLeft_toLeftOf="@id/tv1"
-            app:layout_constraintRight_toRightOf="@id/tv1"
-            app:layout_constraintTop_toBottomOf="@id/tv1" />
+            app:layout_constraintLeft_toLeftOf="@id/tv2"
+            app:layout_constraintRight_toRightOf="@id/tv2"
+            app:layout_constraintTop_toBottomOf="@id/tv2" />
+
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="超级会员专享酒店券"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toRightOf="@id/tv2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="2019.10.17-2019.11.30"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintLeft_toLeftOf="@id/tv3"
+            app:layout_constraintTop_toBottomOf="@id/tv3" />
+
+        <TextView
+            android:id="@+id/tv5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:drawableRight="@mipmap/icon_down_arrow"
+            android:text="使用规则"
+            android:textColor="@color/color_666666"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tv4"
+            app:layout_constraintTop_toBottomOf="@id/tv4" />
+
+        <TextView
+            android:id="@+id/tv6"
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dp_24"
+            android:layout_marginRight="@dimen/dp_10"
+            android:background="@drawable/bg_shape__color3bb0d2_radius_20"
+            android:gravity="center"
+            android:text="立即使用"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_12"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/tv5"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_expire"
+            app:layout_constraintBottom_toBottomOf="@id/tv5"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            app:cardCornerRadius="@dimen/dp_10"
+            android:elevation="0dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/tv5">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_shape_gray_color_r8"
+                android:orientation="vertical"
+                android:padding="@dimen/dp_10">
+
+                <TextView
+                    android:id="@+id/tv7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_666666"
+                    android:textSize="9sp"
+                    android:text="1、酒店房型加价说明：雅致大床房2018年11月平日无须加收，周五需补100元/间，周六需补300元/间；升级房型时遇周未及节假日费用须叠加收费；2、所有差价客人到酒店前台现付；3、注：预约提交成功后等待酒店核验处理；是否预约成功以收到确认短信为准！预约成功后不能更改及取消！" />
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
