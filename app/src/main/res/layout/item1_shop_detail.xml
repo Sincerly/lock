@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ysxsoft.common_base.view.custom.image.RoundImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/riv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="200dp"
+    android:minHeight="150dp"
+    android:layout_marginLeft="@dimen/dp_10"
+    android:layout_marginTop="@dimen/dp_10"
+    android:orientation="vertical"
+    android:src="@mipmap/icon_business_banner"
+    app:radius="@dimen/dp_10">
+
+</com.ysxsoft.common_base.view.custom.image.RoundImageView>

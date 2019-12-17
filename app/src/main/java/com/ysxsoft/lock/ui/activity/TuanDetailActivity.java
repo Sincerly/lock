@@ -1,16 +1,26 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.RoundImageView;
+import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
+import com.ysxsoft.lock.ui.fragment.TabTuanDetailFragment1;
+import com.ysxsoft.lock.ui.fragment.TabTuanDetailFragment2;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,6 +28,12 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.TuanDetailResponse;
 import com.ysxsoft.lock.net.Api;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +66,24 @@ public class TuanDetailActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.riv)
+    RoundImageView riv;
+    @BindView(R.id.tvName)
+    TextView tvName;
+    @BindView(R.id.rbar)
+    RatingBar rbar;
+    @BindView(R.id.tvLevel)
+    TextView tvLevel;
+    @BindView(R.id.tvSales)
+    TextView tvSales;
+
+
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
+    @BindView(R.id.viewPager)
+    NoScrollViewPager viewPager;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getTuanDetailActivity()).navigation();
     }
 
@@ -63,6 +96,15 @@ public class TuanDetailActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        tabLayout.removeAllTabs();
+        List<Fragment> fragmentList = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+        titles.add("团购详情");
+        titles.add("使用规则");
+        fragmentList.add(new TabTuanDetailFragment1());
+        fragmentList.add(new TabTuanDetailFragment2());
+        initViewPage(fragmentList, titles);
+        initTabLayout(titles);
     }
 
     private void initTitle() {
@@ -70,7 +112,81 @@ public class TuanDetailActivity extends BaseActivity {
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("团购详情");
+
+        //1,获取图片的高度
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.icon_ratingbar_ok);
+        int starsImgHeight = bmp.getHeight();
+
+        //2,将获取的图片高度设置给RatingBar
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)rbar.getLayoutParams();
+        lp.width = (LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.height =starsImgHeight;
+        rbar.setLayoutParams(lp);
+        rbar.setRating(4.0f);
     }
+
+    private void initViewPage(List<Fragment> fragmentList, List<String> titles) {
+        viewPager.setAdapter(new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, titles));
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                viewPager.setCurrentItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+        });
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(fragmentList.size());
+    }
+
+    private void initTabLayout(List<String> titles) {
+        for (int i = 0; i < titles.size(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            tab.setCustomView(R.layout.view_tab);
+            TextView textView = tab.getCustomView().findViewById(R.id.tab);
+            textView.setText(titles.get(i));
+            if (i == 0) {
+                textView.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                textView.setTextSize(17);
+            } else {
+                textView.setTextColor(getResources().getColor(R.color.color_666666));
+                textView.setTextSize(13);
+            }
+        }
+        tabLayout.addOnTabSelectedListener(onTabSelectedListener);
+    }
+
+    private TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            if (tab.getCustomView() == null) {
+                return;
+            }
+            TextView tv = tab.getCustomView().findViewById(R.id.tab);
+            tv.setTextSize(17);
+            tv.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+            if (tab.getCustomView() == null) {
+                return;
+            }
+            TextView tv = tab.getCustomView().findViewById(R.id.tab);
+            tv.setTextSize(13);
+            tv.setTextColor(getResources().getColor(R.color.color_666666));
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+        }
+    };
 
     @OnClick(R.id.backLayout)
     public void onViewClicked() {
@@ -93,7 +209,7 @@ public class TuanDetailActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        TuanDetailResponse resp = JsonUtils.parseByGson(response,TuanDetailResponse.class);
+                        TuanDetailResponse resp = JsonUtils.parseByGson(response, TuanDetailResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

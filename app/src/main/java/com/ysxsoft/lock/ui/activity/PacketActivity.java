@@ -55,7 +55,7 @@ public class PacketActivity extends BaseActivity {
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
-    NoScrollViewPager viewPager;
+    ViewPager viewPager;
 
     public static void start(){
         ARouter.getInstance().build(ARouterPath.getPacketActivity()).navigation();

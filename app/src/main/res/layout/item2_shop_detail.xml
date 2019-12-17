@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="150dp"
+    android:layout_height="150dp"
+    android:minWidth="150dp"
+    android:minHeight="130dp"
+    android:layout_marginLeft="@dimen/dp_10"
+    android:layout_marginTop="@dimen/dp_10"
+    app:cardCornerRadius="@dimen/dp_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.ysxsoft.common_base.view.custom.image.RoundImageView
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="@mipmap/ic_launcher"
+            app:leftBottomRadius="0dp"
+            app:leftRadius="@dimen/dp_10"
+            app:rightBottomRadius="0dp"
+            app:rightRadius="@dimen/dp_10" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_10"
+            android:text="肯德基天桥店"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上海市 南明区美味小吃"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_10" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

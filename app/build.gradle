@@ -83,4 +83,5 @@ dependencies {
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
     annotationProcessor rootProject.ext.dependencies["arouter-compiler"]
     annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
+    implementation 'org.jsoup:jsoup:1.10.2'
 }
