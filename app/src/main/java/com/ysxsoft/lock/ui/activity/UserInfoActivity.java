@@ -163,6 +163,7 @@ public class UserInfoActivity extends BaseActivity {
                 SettingActivity.start();
                 break;
             case R.id.cL1:
+                ShopListActivity.start();
                 break;
         }
 

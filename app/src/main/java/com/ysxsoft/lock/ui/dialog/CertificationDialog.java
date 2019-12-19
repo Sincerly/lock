@@ -9,40 +9,45 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ysxsoft.common_base.utils.DisplayUtils;
+import com.ysxsoft.lock.R;
+
 import androidx.annotation.NonNull;
 
-import com.ysxsoft.lock.R;
-import com.ysxsoft.common_base.utils.DisplayUtils;
-
 /**
-* 推荐优惠券弹窗
-* create by Sincerly on 9999/9/9 0009
-**/
-public class CouponDialog extends Dialog {
+ * Create By 胡
+ * on 2019/12/18 0018
+ */
+public class CertificationDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
 
-    public CouponDialog(@NonNull Context context, int themeResId) {
+    public CertificationDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         this.mContext = context;
         init();
     }
 
     private View init() {
-        View view = View.inflate(mContext, R.layout.dialog_coupon, null);
-        TextView tvYHQ = view.findViewById(R.id.tvYHQ);
-        TextView tvMoney = view.findViewById(R.id.tvMoney);
-        TextView tvmj = view.findViewById(R.id.tvmj);
-        TextView tv3 = view.findViewById(R.id.tv3);
-        TextView tvRule = view.findViewById(R.id.tvRule);
-        TextView tvTime = view.findViewById(R.id.tvTime);
+        View view = View.inflate(mContext, R.layout.dialog_certification, null);
+        TextView sure = view.findViewById(R.id.sure);
         ImageView ivClose = view.findViewById(R.id.ivClose);
+        sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.sure();
+                }
+                dismiss();
+            }
+        });
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
             }
         });
+
         return view;
     }
 
@@ -65,7 +70,7 @@ public class CouponDialog extends Dialog {
         if (!isShowing()) {
             show();
             WindowManager.LayoutParams lp = getWindow().getAttributes();
-          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
+            lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
 //            lp.width = DisplayUtils.getDisplayWidth(mContext);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(lp);
@@ -73,8 +78,8 @@ public class CouponDialog extends Dialog {
         }
     }
 
-    public static CouponDialog show(Context context, OnDialogClickListener listener) {
-        CouponDialog dialog = new CouponDialog(context, R.style.CenterDialogStyle);
+    public static CertificationDialog show(Context context, OnDialogClickListener listener) {
+        CertificationDialog dialog = new CertificationDialog(context, R.style.CenterDialogStyle);
         dialog.setListener(listener);
         dialog.showDialog();
         return dialog;

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
-        app:cardCornerRadius="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="@dimen/dp_20"
         android:minHeight="200dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:cardCornerRadius="@dimen/dp_10">
 
         <com.ysxsoft.common_base.view.custom.image.RoundImageView
             android:id="@+id/riv"
-            app:radius="@dimen/dp_10"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:radius="@dimen/dp_10" />
 
         <TextView
             android:id="@+id/tv1"
@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             android:drawableTop="@mipmap/icon_no"
             android:drawablePadding="25dp"
-            android:text="上传房产证复印件"
+            android:text="上传个人照片"
             android:textColor="@color/color_cccccc"
             android:textSize="11sp" />
     </androidx.cardview.widget.CardView>
@@ -63,6 +63,7 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="17sp" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/tv3"
             android:layout_width="0dp"

@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.fragment;
 
 import android.graphics.Paint;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -110,15 +111,21 @@ public class TabShopDetailFragment2 extends BaseFragment implements IListAdapter
 
     @Override
     public void fillView(BaseViewHolder helper, Object o) {
+        ImageView ivTj = helper.getView(R.id.ivTj);
         RoundImageView riv = helper.getView(R.id.riv);
 //        Glide.with(getActivity()).load("").into(riv);
-        helper.setText(R.id.tvName, "");
-        helper.setText(R.id.tvSales, "");
-        helper.setText(R.id.tvMoney, "¥");
+//        helper.setText(R.id.tvName, "");
+//        helper.setText(R.id.tvSales, "");
+//        helper.setText(R.id.tvMoney, "¥");
         TextView tv1 = helper.getView(R.id.tv1);
-        tv1.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
+        tv1.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         tv1.getPaint().setAntiAlias(true);//抗锯齿
-        helper.setText(R.id.tv1, "¥");
+//        helper.setText(R.id.tv1, "¥");
+        if (helper.getAdapterPosition()==0){
+            ivTj.setVisibility(View.VISIBLE);
+        }else {
+            ivTj.setVisibility(View.GONE);
+        }
 
     }
 

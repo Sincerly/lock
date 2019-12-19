@@ -25,6 +25,8 @@ import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
+import com.ysxsoft.lock.ui.activity.UseCouponActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -182,9 +184,23 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
         if (helper.getAdapterPosition() % 2 == 0) {
             tv6.setVisibility(View.VISIBLE);
             iv1.setVisibility(View.GONE);
+
+            tv6.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UseCouponActivity.start();
+                }
+            });
+
         } else {
             tv6.setVisibility(View.GONE);
             iv1.setVisibility(View.VISIBLE);
+            iv1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    KeyManagerActivity.start();
+                }
+            });
         }
         Drawable down = getResources().getDrawable(R.mipmap.icon_down_arrow);
         Drawable up = getResources().getDrawable(R.mipmap.icon_up_arrow);

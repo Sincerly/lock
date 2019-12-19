@@ -2,7 +2,9 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -93,6 +95,14 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
     FrameLayout FL3;
     @BindView(R.id.FL4)
     FrameLayout FL4;
+    @BindView(R.id.tvShopList)
+    TextView tvShopList;
+    @BindView(R.id.tvShopType)
+    TextView tvShopType;
+    @BindView(R.id.tvAiSort)
+    TextView tvAiSort;
+    @BindView(R.id.tvSelect)
+    TextView tvSelect;
 
 
     public static void start() {
@@ -155,24 +165,51 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("社区商圈");
     }
-
+    public boolean isClick1 = false;
+    public boolean isClick2 = false;
+    public boolean isClick3 = false;
+    public boolean isClick4 = false;
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2, R.id.FL3, R.id.FL4,})
     public void onViewClicked(View view) {
+        Drawable down = getResources().getDrawable(R.mipmap.icon_black_down_arrow);
+        Drawable up = getResources().getDrawable(R.mipmap.icon_theme_up_arrow);
+        down.setBounds(0, 0, down.getIntrinsicWidth(), down.getIntrinsicHeight());
+        up.setBounds(0, 0, up.getIntrinsicWidth(), up.getIntrinsicHeight());
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
             case R.id.FL1:
-
+                isClick1=!isClick1;
+                if (isClick1){
+                    tvShopList.setCompoundDrawables(null, null, down, null);
+                }else {
+                    tvShopList.setCompoundDrawables(null, null, up, null);
+                }
                 break;
             case R.id.FL2:
-
+                isClick2=!isClick2;
+                if (isClick2) {
+                    tvShopType.setCompoundDrawables(null, null, down, null);
+                }else {
+                    tvShopType.setCompoundDrawables(null, null, up, null);
+                }
                 break;
             case R.id.FL3:
-
+                isClick3=!isClick3;
+                if (isClick3) {
+                    tvAiSort.setCompoundDrawables(null, null, down, null);
+                }else {
+                    tvAiSort.setCompoundDrawables(null, null, up, null);
+                }
                 break;
             case R.id.FL4:
-
+                isClick4=!isClick4;
+                if (isClick4) {
+                    tvSelect.setCompoundDrawables(null, null, down, null);
+                }else {
+                    tvSelect.setCompoundDrawables(null, null, up, null);
+                }
                 break;
         }
     }

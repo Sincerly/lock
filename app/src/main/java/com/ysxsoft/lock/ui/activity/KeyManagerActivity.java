@@ -17,6 +17,7 @@ import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
+import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
@@ -72,13 +73,12 @@ public class KeyManagerActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    @BindView(R.id.tv1)
-    TextView tv1;
+
 
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
-    NoScrollViewPager viewPager;
+    ViewPager viewPager;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getKeyManagerActivity()).navigation();
@@ -128,13 +128,14 @@ public class KeyManagerActivity extends BaseActivity {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             tab.setCustomView(R.layout.view_tab);
             TextView textView = tab.getCustomView().findViewById(R.id.tab);
+            textView.setWidth(DisplayUtils.getDisplayWidth(mContext) * 1 / 3);
             textView.setText(titles.get(i));
             if (i == 0) {
                 textView.setTextColor(getResources().getColor(R.color.colorTabSelectedIndictor));
                 textView.setTextSize(17);
             } else {
                 textView.setTextColor(getResources().getColor(R.color.colorTabNormalIndictor));
-                textView.setTextSize(15);
+                textView.setTextSize(13);
             }
         }
         tabLayout.addOnTabSelectedListener(onTabSelectedListener);
@@ -157,7 +158,7 @@ public class KeyManagerActivity extends BaseActivity {
                 return;
             }
             TextView tv = tab.getCustomView().findViewById(R.id.tab);
-            tv.setTextSize(15);
+            tv.setTextSize(13);
             tv.setTextColor(getResources().getColor(R.color.colorTabNormalIndictor));
         }
 
@@ -173,15 +174,15 @@ public class KeyManagerActivity extends BaseActivity {
         title.setText("钥匙管理");
     }
 
-    @OnClick({R.id.backLayout, R.id.tv1})
+    @OnClick({R.id.backLayout/*, R.id.tv1*/})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
-            case R.id.tv1:
-                ApplyKeyActivity.start();
-                break;
+//            case R.id.tv1:
+//                ApplyKeyActivity.start();
+//                break;
         }
     }
 

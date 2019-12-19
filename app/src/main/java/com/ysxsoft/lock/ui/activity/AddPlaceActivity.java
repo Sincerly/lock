@@ -12,6 +12,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.ui.dialog.CitySelectDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -80,13 +81,24 @@ public class AddPlaceActivity extends BaseActivity {
         title.setText("添加新小区");
     }
 
-    @OnClick({R.id.backLayout, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.tvOk, R.id.tv1, R.id.tv2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
+            case R.id.tv1:
+                CitySelectDialog.show(mContext, new CitySelectDialog.OnDialogClickListener() {
 
+                    @Override
+                    public void sure(String provice, String city, String area) {
+                        tv1.setText(provice+city+area);
+                    }
+                });
+                break;
+            case R.id.tv2:
+
+                break;
             case R.id.tvOk:
                 if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
                     showToast("城市不能为空");
@@ -96,7 +108,6 @@ public class AddPlaceActivity extends BaseActivity {
                     showToast("小区不能为空");
                     return;
                 }
-
                 break;
 
 

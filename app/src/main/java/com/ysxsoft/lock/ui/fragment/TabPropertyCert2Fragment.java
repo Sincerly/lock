@@ -92,10 +92,28 @@ public class TabPropertyCert2Fragment extends BaseFragment {
                 break;
 
             case R.id.tv3:
+                submitData();
                 break;
-
-
         }
+    }
+
+    private void submitData() {
+        OkHttpUtils.post()
+//                .url(Api.)
+                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+
+                    }
+                });
 
     }
 

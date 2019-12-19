@@ -94,6 +94,8 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="满20减10"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableLeft="@mipmap/icon_quan"
                 android:textColor="@color/color_999999"
                 android:textSize="11sp" />
 
@@ -103,6 +105,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableLeft="@mipmap/icon_hui"
                 android:text="到店立减5.00元"
                 android:textColor="@color/color_999999"
                 android:textSize="11sp" />

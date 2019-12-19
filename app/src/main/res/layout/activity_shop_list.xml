@@ -56,10 +56,11 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tvShopList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@mipmap/icon_down_arrow"
+                android:drawableRight="@mipmap/icon_black_down_arrow"
                 android:gravity="center"
                 android:text="商圈"
                 android:textColor="@color/color_282828"
@@ -73,10 +74,11 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tvShopType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@mipmap/icon_down_arrow"
+                android:drawableRight="@mipmap/icon_black_down_arrow"
                 android:gravity="center"
                 android:text="商户类型"
                 android:textColor="@color/color_282828"
@@ -90,10 +92,11 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tvAiSort"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@mipmap/icon_down_arrow"
+                android:drawableRight="@mipmap/icon_black_down_arrow"
                 android:gravity="center"
                 android:text="智能排序"
                 android:textColor="@color/color_282828"
@@ -107,10 +110,11 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/tvSelect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableRight="@mipmap/icon_down_arrow"
+                android:drawableRight="@mipmap/icon_black_down_arrow"
                 android:gravity="center"
                 android:text="筛选"
                 android:textColor="@color/color_282828"

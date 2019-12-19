@@ -76,5 +76,6 @@
         <activity android:name=".ui.activity.PropertyCertActivity"></activity>
         <!--意见反馈-->
         <activity android:name=".ui.activity.FeedBackActivity"></activity>
+        <activity android:name=".ui.activity.UnlockingModeActivity" />
     </application>
 </manifest>

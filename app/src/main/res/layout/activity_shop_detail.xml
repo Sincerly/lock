@@ -189,15 +189,12 @@
                         android:id="@+id/tv8"
                         android:layout_width="70dp"
                         android:layout_height="@dimen/dp_24"
-                        android:background="@drawable/bg_shape_theme_border_color_r24"
+                        android:background="@drawable/bg_white_border_theme_radius_r16"
                         android:gravity="center"
                         android:text="联系商家"
                         android:textColor="@color/color_3BB0D2"
                         android:textSize="@dimen/sp_14" />
-
-
                 </LinearLayout>
-
 
             </LinearLayout>
 

@@ -10,50 +10,31 @@
         android:id="@+id/t"
         layout="@layout/include_title" />
 
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/include_list"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:background="@color/colorWhite"
-                app:tabIndicator="@drawable/bg_tablayout_indictor"
-                app:tabIndicatorColor="@color/colorPrimary"
-                app:tabIndicatorFullWidth="false"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/colorPrimary"
-                app:tabTextColor="@color/color_989898"/>
-
-            <com.ysxsoft.common_base.view.widgets.NoScrollViewPager
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="50dp" />
-
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/tv1"
-            android:layout_width="match_parent"
-            android:layout_height="49dp"
-            android:layout_alignParentBottom="true"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
             android:background="@color/colorWhite"
-            android:gravity="center"
-            android:text="小区钥匙申请"
-            android:textColor="@color/color_3BB0D2"
-            android:textSize="17sp" />
-    </RelativeLayout>
+            app:tabIndicator="@drawable/bg_tablayout_indictor"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorFullWidth="false"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabTextColor="@color/color_989898" />
+
+    </LinearLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_height="match_parent" />
 </LinearLayout>

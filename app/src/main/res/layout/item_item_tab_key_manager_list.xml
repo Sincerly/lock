@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:layout_marginTop="@dimen/dp_10"
+    android:orientation="horizontal">
+
+
+    <com.ysxsoft.common_base.view.custom.image.RoundImageView
+        android:id="@+id/riv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="@dimen/dp_10"
+        android:src="@mipmap/ic_launcher"
+        app:radius="@dimen/dp_10" />
+
+    <TextView
+        android:id="@+id/tvKey"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:text="大门钥匙"
+        android:textColor="@color/color_282828"
+        android:textSize="@dimen/sp_14" />
+
+    <TextView
+        android:id="@+id/tvOpenMethod"
+        android:layout_width="70dp"
+        android:layout_height="@dimen/dp_24"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/bg_white_border_gray__radius_16"
+        android:gravity="center"
+        android:text="开锁方式"
+        android:textColor="@color/color_999999"
+        android:textSize="@dimen/sp_12" />
+
+
+</LinearLayout>
