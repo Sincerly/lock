@@ -151,4 +151,123 @@ public class ARouterPath {
         return "/main/UnlockingModeActivity";
     }
 
+    /**
+     * 商户中心
+     */
+    public static String getShopCenterActivity(){
+        return "/main/ShopCenterActivity";
+    }
+
+    /**
+     * 商户认证
+     */
+    public static String getShopAuthenticationActivity(){
+        return "/main/ShopAuthenticationActivity";
+    }
+
+    /**
+     * 商户认证审核通过
+     */
+    public static String getShopEgisActivity(){
+        return "/main/ShopEgisActivity";
+    }
+
+    /**
+     * 商户认证审核失败
+     */
+    public static String getShopAuditFailedActivity(){
+        return "/main/ShopAuditFailedActivity";
+    }
+
+    /**
+     * 商户信息
+     */
+    public static String getShopInfoActivity(){
+        return "/main/ShopInfoActivity";
+    }
+
+    /**
+     * 店铺管理
+     */
+    public static String getShopManagerActivity(){
+        return "/main/ShopManagerActivity";
+    }
+
+    /**
+     * 核销成功
+     */
+    public static String getCheckSucessActivity(){
+        return "/main/CheckSucessActivity";
+    }
+
+    /**
+     * 核销记录
+     */
+    public static String getCheckRecordActivity(){
+        return "/main/CheckRecordActivity";
+    }
+
+    /**
+     * 添加卡卷现金券
+     */
+    public static String getAddPacketMoneyActivity(){
+        return "/main/AddPacketMoneyActivity";
+    }
+
+    /**
+     * 添加卡卷团购券
+     */
+    public static String getAddPacketGroupActivity(){
+        return "/main/AddPacketGroupActivity";
+    }
+
+    /**
+     * 添加卡卷会员卡券
+     */
+    public static String getAddPacketVipActivity(){
+        return "/main/AddPacketVipActivity";
+    }
+
+    /**
+     * 添加卡卷体验券
+     */
+    public static String getAddPacketExperienceActivity(){
+        return "/main/AddPacketExperienceActivity";
+    }
+
+    /**
+     * 开始投放
+     */
+    public static String getStartAdServingActivity(){
+        return "/main/StartAdServingActivity";
+    }
+
+    /**
+     * 卡劵投放
+     */
+    public static String getPacketServingActivity(){
+        return "/main/PacketServingActivity";
+    }
+
+    /**
+     * 卡劵投放充值
+     */
+    public static String getPacketRechargeActivity(){
+        return "/main/PacketRechargeActivity";
+    }
+
+    /**
+     * 充值成功
+     */
+    public static String getRechargeSucessActivity(){
+        return "/main/RechargeSucessActivity";
+    }
+
+    /**
+     * 帮助
+     */
+    public static String getHelpActivity(){
+        return "/main/HelpActivity";
+    }
+
 }

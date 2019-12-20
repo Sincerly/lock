@@ -77,5 +77,40 @@
         <!--意见反馈-->
         <activity android:name=".ui.activity.FeedBackActivity"></activity>
         <activity android:name=".ui.activity.UnlockingModeActivity" />
+
+        <!--商户中心-->
+        <activity android:name=".ui.activity.ShopCenterActivity"></activity>
+        <!--商户认证-->
+        <activity android:name=".ui.activity.ShopAuthenticationActivity"></activity>
+        <!--商户认证审核通过-->
+        <activity android:name=".ui.activity.ShopEgisActivity"></activity>
+        <!--商户认证审核失败-->
+        <activity android:name=".ui.activity.ShopAuditFailedActivity"></activity>
+        <!--商户信息-->
+        <activity android:name=".ui.activity.ShopInfoActivity"></activity>
+        <!--店铺管理-->
+        <activity android:name=".ui.activity.ShopManagerActivity"></activity>
+        <!--核销成功-->
+        <activity android:name=".ui.activity.CheckSucessActivity"></activity>
+        <!--核销记录-->
+        <activity android:name=".ui.activity.CheckRecordActivity"></activity>
+        <!--添加卡卷现金券-->
+        <activity android:name=".ui.activity.AddPacketMoneyActivity"></activity>
+        <!--添加卡卷团购券-->
+        <activity android:name=".ui.activity.AddPacketGroupActivity"></activity>
+        <!--添加卡卷会员卡券-->
+        <activity android:name=".ui.activity.AddPacketVipActivity"></activity>
+        <!--添加卡卷体验券-->
+        <activity android:name=".ui.activity.AddPacketExperienceActivity"></activity>
+        <!--开始投放-->
+        <activity android:name=".ui.activity.StartAdServingActivity"></activity>
+        <!--卡劵投放-->
+        <activity android:name=".ui.activity.PacketServingActivity"></activity>
+        <!--卡劵投放充值-->
+        <activity android:name=".ui.activity.PacketRechargeActivity"></activity>
+        <!--充值成功-->
+        <activity android:name=".ui.activity.RechargeSucessActivity"></activity>
+        <!--帮助-->
+        <activity android:name=".ui.activity.HelpActivity"></activity>
     </application>
 </manifest>
