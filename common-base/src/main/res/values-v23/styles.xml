@@ -1,19 +1,5 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <!-- AppCompatEditText默认状态状态设置底线颜色 -->
-        <item name="colorControlNormal">@color/hint</item>
-        <!-- AppCompatEditText选择的底线颜色 -->
-        <item name="colorControlActivated">@color/colorPrimary</item>
-    </style>
-
     <style name="oauthActivityParent" parent="android:Theme.Translucent.NoTitleBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:fitsSystemWindows">true</item>
@@ -25,4 +11,5 @@
         <item name="android:configChanges">orientation|keyboardHidden|screenSize</item>
         <item name="android:launchMode">singleTask</item>
     </style>
+
 </resources>
