@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
@@ -12,7 +12,43 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/FL1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tvToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="今日"
+                android:layout_gravity="center"
+                android:drawableRight="@mipmap/icon_black_down_arrow"
+                android:textColor="@color/color_282828"
+                android:textSize="@dimen/sp_13"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/FL2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tvAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="全部"
+                android:layout_gravity="center"
+                android:drawableRight="@mipmap/icon_black_down_arrow"
+                android:textColor="@color/color_282828"
+                android:textSize="@dimen/sp_13"/>
+        </FrameLayout>
+
     </LinearLayout>
+
+    <include layout="@layout/include_list"/>
 </LinearLayout>

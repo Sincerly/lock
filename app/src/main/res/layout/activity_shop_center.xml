@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@mipmap/icon_shop_center" />
 
     <include
         android:id="@+id/t"
         layout="@layout/include_title" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvApplyShop"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-    </LinearLayout>
-</LinearLayout>
+        android:layout_height="@dimen/dp_44"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="申请商户"
+        android:textColor="@color/color_3BB0D2"
+        android:textSize="17sp"
+        android:layout_marginHorizontal="35dp"
+        android:layout_marginBottom="35dp"
+        android:gravity="center"
+        android:background="@drawable/bg_white_radius_16"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

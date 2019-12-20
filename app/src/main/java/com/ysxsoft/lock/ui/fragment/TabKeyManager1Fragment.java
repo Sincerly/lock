@@ -72,7 +72,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
         for (int i = 0; i < 5; i++) {
             Item item = new Item();
             item.setGroupId(String.valueOf(i));
-            item.setGroupName("分组" + i);
+            item.setGroupName("碧水蓝天小区");
             item.setExpanded(false);
             List<Item.Child> children = new ArrayList<>();
             for (int j = 0; j < 10; j++) {

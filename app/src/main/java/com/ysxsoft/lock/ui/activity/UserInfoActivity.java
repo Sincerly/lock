@@ -13,6 +13,7 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
+import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -112,6 +113,12 @@ public class UserInfoActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {
+            @Override
+            public void sure() {
+                ApplyKeyActivity.start();
+            }
+        });
         initTitle();
         initData();
     }
@@ -150,8 +157,11 @@ public class UserInfoActivity extends BaseActivity {
                 PropertyCertActivity.start();
                 break;
             case R.id.tv8:
+                ShopCenterActivity.start();
                 break;
             case R.id.tv9:
+//                ShopInfoActivity.start();
+                ShopManagerActivity.start();
                 break;
             case R.id.tv10:
                 FeedBackActivity.start();

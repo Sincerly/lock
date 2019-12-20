@@ -1,16 +1,26 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.CircleImageView;
+import com.ysxsoft.lock.config.AppConfig;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,9 +28,17 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.ShopInfoResponse;
 import com.ysxsoft.lock.net.Api;
+
+import java.io.File;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
+import cn.bingoogolapple.photopicker.util.BGAPhotoHelper;
+import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
+import io.reactivex.functions.Consumer;
 import okhttp3.Call;
 
 /**
@@ -50,7 +68,28 @@ public class ShopInfoActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
+    @BindView(R.id.logo)
+    CircleImageView logo;
+    @BindView(R.id.tvShopName)
+    TextView tvShopName;
+    @BindView(R.id.tvSaleType)
+    TextView tvSaleType;
+    @BindView(R.id.tvWorkTime)
+    TextView tvWorkTime;
+    @BindView(R.id.tvShopAddress)
+    TextView tvShopAddress;
+    @BindView(R.id.etPhone)
+    EditText etPhone;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
+    private BGAPhotoHelper mPhotoHelper;
+    private RxPermissions r;
+    private static final int RC_CHOOSE_PHOTO = 0x01;
+    public static final int REQUEST_CODE_CROP = 0x02;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopInfoActivity()).navigation();
     }
 
@@ -63,6 +102,25 @@ public class ShopInfoActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        initPhotoHelper();
+    }
+
+    private void initPhotoHelper() {
+        r = new RxPermissions(this);
+        if (r.isGranted(Manifest.permission.READ_EXTERNAL_STORAGE) && r.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            File takePhotoDir = new File(AppConfig.PHOTO_CACHE_PATH);
+            mPhotoHelper = new BGAPhotoHelper(takePhotoDir);
+        } else {
+            r.requestEach(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}).subscribe(new Consumer<Permission>() {
+                @Override
+                public void accept(Permission permission) throws Exception {
+                    if (permission.granted) {
+                        File takePhotoDir = new File(AppConfig.PHOTO_CACHE_PATH);
+                        mPhotoHelper = new BGAPhotoHelper(takePhotoDir);
+                    }
+                }
+            });
+        }
     }
 
     private void initTitle() {
@@ -72,9 +130,51 @@ public class ShopInfoActivity extends BaseActivity {
         title.setText("商户信息");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.LL1, R.id.tvShopName, R.id.tvSaleType, R.id.tvWorkTime, R.id.tvShopAddress, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.LL1:
+                choicePhotoWrapper();
+                break;
+            case R.id.tvShopName:
+                break;
+            case R.id.tvSaleType:
+                break;
+            case R.id.tvWorkTime:
+                break;
+            case R.id.tvShopAddress:
+                break;
+            case R.id.tvOk:
+                CheckSucessActivity.start();
+                break;
+        }
+    }
+
+    private void choicePhotoWrapper() {
+        r.request(Manifest.permission.CAMERA).subscribe(new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean aBoolean) throws Exception {
+                if (aBoolean) {
+                    // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话就没有拍照功能
+                    File takePhotoDir = new File(AppConfig.PHOTO_PATH, "space");
+                    File f = new File(AppConfig.PHOTO_PATH);
+                    if (!f.exists()) {
+                        f.mkdirs();
+                    }
+                    Intent photoPickerIntent = new BGAPhotoPickerActivity.IntentBuilder(mContext)
+                            .cameraFileDir(takePhotoDir) // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话则不开启图库里的拍照功能
+                            .maxChooseCount(1) // 图片选择张数的最大值
+                            .selectedPhotos(null) // 当前已选中的图片路径集合
+                            .pauseOnScroll(false) // 滚动列表时是否暂停加载图片
+                            .build();
+                    startActivityForResult(photoPickerIntent, RC_CHOOSE_PHOTO);
+                }
+            }
+        });
+
     }
 
     public void request() {
@@ -93,7 +193,7 @@ public class ShopInfoActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        ShopInfoResponse resp = JsonUtils.parseByGson(response,ShopInfoResponse.class);
+                        ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
@@ -108,5 +208,38 @@ public class ShopInfoActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case RC_CHOOSE_PHOTO:
+                    if (data != null) {
+                        List<String> selectedPhotos = BGAPhotoPickerActivity.getSelectedPhotos(data);
+                        if (selectedPhotos != null && selectedPhotos.size() > 0) {
+                            //拍照返回
+                            try {
+                                startActivityForResult(mPhotoHelper.getCropIntent(selectedPhotos.get(0), 200, 200), REQUEST_CODE_CROP);
+                            } catch (Exception e) {
+                                mPhotoHelper.deleteCameraFile();
+                                mPhotoHelper.deleteCropFile();
+                                BGAPhotoPickerUtil.show(R.string.bga_pp_not_support_crop);
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    break;
+                case REQUEST_CODE_CROP:
+                    String cropPath = mPhotoHelper.getCropFilePath();
+                    String path = ImageUtils.compress(mContext, System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
+                    //裁剪后的
+                    Glide.with(mContext).load(new File(path)).into(logo);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

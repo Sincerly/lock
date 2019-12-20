@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_44"
         android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
         android:orientation="horizontal">
 
         <TextView
@@ -43,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="身份证号"
+            android:text="护照号"
             android:gravity="center_vertical"
             android:textColor="@color/color_282828"
             android:layout_marginHorizontal="15dp"
@@ -55,7 +56,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:textSize="@dimen/sp_14"
-            android:hint="请输入您的姓名"
+            android:hint="请输入您的护照号"
             android:gravity="center_vertical"
             android:layout_marginRight="15dp"
             android:singleLine="true"
@@ -87,7 +88,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:textSize="@dimen/sp_14"
-            android:hint="请输入您的姓名"
+            android:hint="请输入您的手机号码"
             android:gravity="center_vertical"
             android:layout_marginRight="15dp"
             android:singleLine="true"

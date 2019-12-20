@@ -3,16 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
         layout="@layout/include_title" />
 
-    <LinearLayout
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_20"
+        android:src="@mipmap/icon_checking" />
+
+    <TextView
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:text="信息审核中！"
+        android:layout_marginTop="@dimen/dp_10"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_282828"
+        android:textSize="17sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_999999"
+        android:textSize="11sp"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="信息审核需要1-2个工作日"/>
 </LinearLayout>

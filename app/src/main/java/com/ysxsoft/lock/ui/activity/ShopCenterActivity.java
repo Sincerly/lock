@@ -18,6 +18,8 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.ShopCenterResponse;
 import com.ysxsoft.lock.net.Api;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,9 +50,12 @@ public class ShopCenterActivity extends BaseActivity {
     @BindView(R.id.bottomLineView)
     View bottomLineView;
     @BindView(R.id.parent)
-    LinearLayout parent;
+    ConstraintLayout parent;
 
-    public static void start(){
+    @BindView(R.id.tvApplyShop)
+    TextView tvApplyShop;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopCenterActivity()).navigation();
     }
 
@@ -66,15 +71,23 @@ public class ShopCenterActivity extends BaseActivity {
     }
 
     private void initTitle() {
-        bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+        bg.setBackgroundColor(getResources().getColor(R.color.transparent));
         backLayout.setVisibility(View.VISIBLE);
-        back.setImageResource(R.mipmap.icon_gray_back);
+        bottomLineView.setVisibility(View.GONE);
+        back.setImageResource(R.mipmap.icon_white_back);
         title.setText("");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tvApplyShop})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tvApplyShop:
+                ShopAuthenticationActivity.start();
+                break;
+        }
     }
 
     public void request() {
@@ -93,7 +106,7 @@ public class ShopCenterActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        ShopCenterResponse resp = JsonUtils.parseByGson(response,ShopCenterResponse.class);
+                        ShopCenterResponse resp = JsonUtils.parseByGson(response, ShopCenterResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

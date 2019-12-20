@@ -18,6 +18,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.CheckSucessResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -49,8 +50,10 @@ public class CheckSucessActivity extends BaseActivity {
     View bottomLineView;
     @BindView(R.id.parent)
     LinearLayout parent;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
 
-    public static void start(){
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getCheckSucessActivity()).navigation();
     }
 
@@ -72,9 +75,16 @@ public class CheckSucessActivity extends BaseActivity {
         title.setText("核销成功");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tvOk:
+                finish();
+                break;
+        }
     }
 
     public void request() {
@@ -93,7 +103,7 @@ public class CheckSucessActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        CheckSucessResponse resp = JsonUtils.parseByGson(response,CheckSucessResponse.class);
+                        CheckSucessResponse resp = JsonUtils.parseByGson(response, CheckSucessResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

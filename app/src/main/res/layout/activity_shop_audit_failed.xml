@@ -10,9 +10,41 @@
         android:id="@+id/t"
         layout="@layout/include_title" />
 
-    <LinearLayout
+   <ImageView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:src="@mipmap/icon_check_fail"
+       android:layout_marginTop="@dimen/dp_20"
+       android:layout_gravity="center_horizontal"/>
+
+    <TextView
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:text="信息审核失败！"
+        android:layout_marginTop="@dimen/dp_10"
+        android:gravity="center_horizontal"
+        android:textColor="@color/color_282828"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tvTip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_999999"
+        android:textSize="11sp"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="提供的营业执照已过期；请核对后重新上传"/>
+
+    <TextView
+        android:id="@+id/tvAgain"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:background="@drawable/shape_btn_bg"
+        android:textColor="@color/colorWhite"
+        android:textSize="17sp"
+        android:layout_marginTop="60dp"
+        android:layout_marginHorizontal="35dp"
+        android:text="重新上传"
+        android:gravity="center"/>
 </LinearLayout>

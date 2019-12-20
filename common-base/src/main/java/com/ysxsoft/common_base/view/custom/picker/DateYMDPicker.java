@@ -22,9 +22,10 @@ public class DateYMDPicker {
     public void init(Context context){
         this.context=context;
         Calendar selectedDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
         Calendar startDate = Calendar.getInstance();
         //startDate.set(2013,1,1);
-        //endDate.set(2020,1,1);
+        endDate.set(2050,12,31);
         //正确设置方式 原因：注意事项有说明
         startDate.set(1900,0,1);
 
@@ -62,7 +63,7 @@ public class DateYMDPicker {
 //                .setTitleBgColor(0xFF666666)//标题背景颜色 Night mode
 //                .setBgColor(0xFF333333)//滚轮背景颜色 Night mode
                 .setDate(selectedDate)// 如果不设置的话，默认是系统时间*/
-                .setRangDate(startDate,Calendar.getInstance())//起始终止年月日设定
+                .setRangDate(startDate,endDate)//起始终止年月日设定
                 .setLabel("年","月","日","时","分","秒")//默认设置为年月日时分秒
                 .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
                 .isDialog(true)//是否显示为对话框样式

@@ -18,6 +18,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.ShopAuditFailedResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -49,8 +50,12 @@ public class ShopAuditFailedActivity extends BaseActivity {
     View bottomLineView;
     @BindView(R.id.parent)
     LinearLayout parent;
+    @BindView(R.id.tvTip)
+    TextView tvTip;
+    @BindView(R.id.tvAgain)
+    TextView tvAgain;
 
-    public static void start(){
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopAuditFailedActivity()).navigation();
     }
 
@@ -72,9 +77,16 @@ public class ShopAuditFailedActivity extends BaseActivity {
         title.setText("商户认证");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tvAgain})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tvAgain:
+                ShopAuthenticationActivity.start();
+                break;
+        }
     }
 
     public void request() {
@@ -93,7 +105,7 @@ public class ShopAuditFailedActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        ShopAuditFailedResponse resp = JsonUtils.parseByGson(response,ShopAuditFailedResponse.class);
+                        ShopAuditFailedResponse resp = JsonUtils.parseByGson(response, ShopAuditFailedResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

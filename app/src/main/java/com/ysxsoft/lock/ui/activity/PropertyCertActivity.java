@@ -13,6 +13,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
@@ -116,6 +117,7 @@ public class PropertyCertActivity extends BaseActivity {
             TabLayout.Tab tab =tabLayout.getTabAt(i);
             tab.setCustomView(R.layout.view_tab);
             TextView textView = tab.getCustomView().findViewById(R.id.tab);
+            textView.setWidth(DisplayUtils.getDisplayWidth(mContext) * 1 / 3);
             textView.setText(titles.get(i));
             if (i == 0) {
                 textView.setTextColor(getResources().getColor(R.color.colorTabSelectedIndictor));

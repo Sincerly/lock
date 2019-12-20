@@ -1,10 +1,13 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.content.Intent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -13,7 +16,9 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
+import com.ysxsoft.common_base.zxing.ScanActivity;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 
@@ -29,9 +34,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
-* 店铺管理
-* create by Sincerly on 9999/9/9 0009
-**/
+ * 店铺管理
+ * create by Sincerly on 9999/9/9 0009
+ **/
 @Route(path = "/main/ShopManagerActivity")
 public class ShopManagerActivity extends BaseActivity {
     @BindView(R.id.statusBar)
@@ -55,9 +60,27 @@ public class ShopManagerActivity extends BaseActivity {
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
-    NoScrollViewPager viewPager;
+    ViewPager viewPager;
 
-    public static void start(){
+    @BindView(R.id.cl1)
+    ConstraintLayout cl1;
+    @BindView(R.id.civ)
+    CircleImageView civ;
+    @BindView(R.id.tvName)
+    TextView tvName;
+    @BindView(R.id.tvType)
+    TextView tvType;
+    @BindView(R.id.tv1)
+    TextView tv1;
+    @BindView(R.id.tv2)
+    TextView tv2;
+    @BindView(R.id.tv3)
+    TextView tv3;
+    @BindView(R.id.tv4)
+    TextView tv4;
+
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopManagerActivity()).navigation();
     }
 
@@ -66,9 +89,31 @@ public class ShopManagerActivity extends BaseActivity {
         return R.layout.activity_shop_manager;
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.cl1, R.id.tv1, R.id.tv2, R.id.tv3, R.id.tv4})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.cl1:
+                ShopInfoActivity.start();
+                break;
+            case R.id.tv1:
+//                CheckSucessActivity.start();
+                Intent intent = new Intent(mContext, ScanActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.tv2:
+                CheckRecordActivity.start();
+                break;
+            case R.id.tv3:
+                StartAdServingActivity.start();
+                break;
+            case R.id.tv4:
+                HelpActivity.start();
+                break;
+
+        }
     }
 
     private void initTitle() {
@@ -119,7 +164,7 @@ public class ShopManagerActivity extends BaseActivity {
 
     private void initTabLayout(List<String> titles) {
         for (int i = 0; i < titles.size(); i++) {
-            TabLayout.Tab tab =tabLayout.getTabAt(i);
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
             tab.setCustomView(R.layout.view_tab);
             TextView textView = tab.getCustomView().findViewById(R.id.tab);
             textView.setText(titles.get(i));

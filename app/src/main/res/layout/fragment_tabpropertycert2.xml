@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             android:drawableTop="@mipmap/icon_no"
             android:drawablePadding="25dp"
-            android:text="上传房产证复印件"
+            android:text="上传租房合同照片"
             android:textColor="@color/color_cccccc"
             android:textSize="11sp" />
     </androidx.cardview.widget.CardView>
