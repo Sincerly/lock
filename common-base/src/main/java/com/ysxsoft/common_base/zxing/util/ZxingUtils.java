@@ -58,7 +58,7 @@ public class ZxingUtils {
             //容错级别
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
             //设置空白边距的宽度
-            hints.put(EncodeHintType.MARGIN,0); //default is 4
+            hints.put(EncodeHintType.MARGIN, 0); //default is 4
             // 图像数据转换，使用了矩阵转换
             BitMatrix bitMatrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, widthPix, heightPix, hints);
             int[] pixels = new int[widthPix * heightPix];
@@ -79,7 +79,7 @@ public class ZxingUtils {
             //必须使用compress方法将bitmap保存到文件中再进行读取。直接返回的bitmap是没有任何压缩的，内存消耗巨大！
 //            return bitmap != null && bitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(filePath));
             return bitmap;
-        } catch (WriterException  e) {
+        } catch (WriterException e) {
             e.printStackTrace();
         }
 
@@ -143,7 +143,7 @@ public class ZxingUtils {
             Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
             hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-            hints.put(EncodeHintType.MARGIN,0);
+            hints.put(EncodeHintType.MARGIN, 0);
             BitMatrix matrix = new QRCodeWriter().encode(str, BarcodeFormat.QR_CODE, width, height);
             matrix = deleteWhite(matrix);//删除白边
             width = matrix.getWidth();
@@ -184,7 +184,7 @@ public class ZxingUtils {
     }
 
     public static Bitmap createBarcode(Context context, String contents,
-                                     int desiredWidth, int desiredHeight, boolean displayCode) {
+                                       int desiredWidth, int desiredHeight, boolean displayCode) {
         Bitmap ruseltBitmap = null;
         int marginW = 20;
         BarcodeFormat barcodeFormat = BarcodeFormat.CODE_128;
@@ -276,5 +276,23 @@ public class ZxingUtils {
 
         return newBitmap;
     }
-
 }
+
+///////////////////////////////////////////////////////////////////////////
+// 条形码类型
+///////////////////////////////////////////////////////////////////////////
+//        BarcodeFormat.CODE_128; // 表示高密度数据， 字符串可变长，符号内含校验码
+//        BarcodeFormat.CODE_39;
+//        BarcodeFormat.CODE_93;
+//        BarcodeFormat.CODABAR; // 可表示数字0 - 9，字符$、+、 -、还有只能用作起始/终止符的a,b,c d四个字符，可变长度，没有校验位
+//        BarcodeFormat.DATA_MATRIX;
+//        BarcodeFormat.EAN_8;
+//        BarcodeFormat.EAN_13;
+//        BarcodeFormat.ITF;
+//        BarcodeFormat.PDF417; // 二维码
+//        BarcodeFormat.QR_CODE; // 二维码
+//        BarcodeFormat.RSS_EXPANDED;
+//        BarcodeFormat.RSS14;
+//        BarcodeFormat.UPC_E; // 统一产品代码E:7位数字,最后一位为校验位
+//        BarcodeFormat.UPC_A; // 统一产品代码A:12位数字,最后一位为校验位
+//        BarcodeFormat.UPC_EAN_EXTENSION;

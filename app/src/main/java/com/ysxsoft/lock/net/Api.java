@@ -44,4 +44,39 @@ public interface Api {
     public final String GET_PROPERTY_CERT= AppConfig.BASE_URL+"";
     //意见反馈
     public final String GET_FEED_BACK= AppConfig.BASE_URL+"";
+
+    //商户中心
+    public final String GET_SHOP_CENTER= AppConfig.BASE_URL+"";
+    //商户认证
+    public final String GET_SHOP_AUTHENTICATION= AppConfig.BASE_URL+"";
+    //商户认证审核通过
+    public final String GET_SHOP_EGIS= AppConfig.BASE_URL+"";
+    //商户认证审核失败
+    public final String GET_SHOP_AUDIT_FAILED= AppConfig.BASE_URL+"";
+    //商户信息
+    public final String GET_SHOP_INFO= AppConfig.BASE_URL+"";
+    //店铺管理
+    public final String GET_SHOP_MANAGER= AppConfig.BASE_URL+"";
+    //核销成功
+    public final String GET_CHECK_SUCESS= AppConfig.BASE_URL+"";
+    //核销记录
+    public final String GET_CHECK_RECORD= AppConfig.BASE_URL+"";
+    //添加卡卷现金券
+    public final String GET_ADD_PACKET_MONEY= AppConfig.BASE_URL+"";
+    //添加卡卷团购券
+    public final String GET_ADD_PACKET_GROUP= AppConfig.BASE_URL+"";
+    //添加卡卷会员卡券
+    public final String GET_ADD_PACKET_VIP= AppConfig.BASE_URL+"";
+    //添加卡卷体验券
+    public final String GET_ADD_PACKET_EXPERIENCE= AppConfig.BASE_URL+"";
+    //开始投放
+    public final String GET_START_AD_SERVING_LIST= AppConfig.BASE_URL+"";
+    //卡劵投放
+    public final String GET_PACKET_SERVING_LIST= AppConfig.BASE_URL+"";
+    //卡劵投放充值
+    public final String GET_PACKET_RECHARGE= AppConfig.BASE_URL+"";
+    //充值成功
+    public final String GET_RECHARGE_SUCESS= AppConfig.BASE_URL+"";
+    //帮助
+    public final String GET_HELP_LIST= AppConfig.BASE_URL+"";
 }
