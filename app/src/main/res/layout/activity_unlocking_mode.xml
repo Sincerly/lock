@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="蓝牙开门"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="靠近门锁连接蓝牙，点击开启"
+            android:textColor="@color/color_999999"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tv1"
+            app:layout_constraintTop_toBottomOf="@id/tv1" />
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dp_24"
+            android:gravity="center"
+            android:text="立即开启"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_12"
+            android:background="@drawable/bg_white_border_theme_radius_r16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码开门"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="获得6位数密码，输入密码开门"
+            android:textColor="@color/color_999999"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tv3"
+            app:layout_constraintTop_toBottomOf="@id/tv3" />
+
+        <TextView
+            android:id="@+id/tv4"
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dp_24"
+            android:gravity="center"
+            android:text="获取密码"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_12"
+            android:background="@drawable/bg_white_border_theme_radius_r16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="远程开门"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="通过手机远程控制开门"
+            android:textColor="@color/color_999999"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tv5"
+            app:layout_constraintTop_toBottomOf="@id/tv5" />
+
+        <TextView
+            android:id="@+id/tv6"
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dp_24"
+            android:gravity="center"
+            android:text="立即开启"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_12"
+            android:background="@drawable/bg_white_border_theme_radius_r16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人脸识别"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="现场AI人脸比对开门"
+            android:textColor="@color/color_999999"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tv7"
+            app:layout_constraintTop_toBottomOf="@id/tv7" />
+
+        <TextView
+            android:id="@+id/tv8"
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dp_24"
+            android:gravity="center"
+            android:text="立即开通"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_12"
+            android:background="@drawable/bg_white_border_theme_radius_r16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_marginTop="@dimen/dp_10"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/tv9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刷卡开门"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="现场持IP卡，刷卡开门"
+            android:textColor="@color/color_999999"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tv9"
+            app:layout_constraintTop_toBottomOf="@id/tv9" />
+
+        <TextView
+            android:id="@+id/tv10"
+            android:layout_width="70dp"
+            android:layout_height="@dimen/dp_24"
+            android:gravity="center"
+            android:text="立即开通"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_12"
+            android:visibility="gone"
+            android:background="@drawable/bg_white_border_theme_radius_r16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

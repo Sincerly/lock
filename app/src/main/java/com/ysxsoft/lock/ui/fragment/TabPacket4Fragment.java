@@ -21,6 +21,7 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
+import com.ysxsoft.lock.ui.dialog.CodeDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -71,6 +72,12 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
                 //   //无视频的
                 //   ARouter.getInstance().build(ARouterPath.getArticleDetailActivity()).withString("nid", "" + item.getNid()).withString("tname", "帖子").withBoolean("isFriendCircle", true).navigation();
                 //}
+                CodeDialog.show(getActivity(), new CodeDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure() {
+
+                    }
+                });
             }
         });
         request(1);

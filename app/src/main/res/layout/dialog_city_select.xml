@@ -3,82 +3,176 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_white_radius_8"
-    android:minHeight="150dp"
+    android:layout_gravity="bottom"
+    android:background="@drawable/bg_white_left_top_radius_16"
+    android:minHeight="550dp"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/content"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_gravity="center_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="选择地区"
+            android:textColor="@color/color_282828"
+            android:textSize="17sp" />
 
-            <TextView
-                android:id="@+id/message"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp_16"
-                android:layout_marginRight="@dimen/dp_16"
-                android:text=""
-                android:gravity="center"
-                android:paddingLeft="@dimen/dp_8"
-                android:textStyle="bold"
-                android:paddingRight="@dimen/dp_8"
-                android:textColor="@color/color_282828"
-                android:textSize="@dimen/sp_16"/>
-        </LinearLayout>
-
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/dp_10"
+            android:src="@mipmap/icon_gray_close" />
 
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1"
-        android:background="@color/color_spacing"
-        app:layout_constraintTop_toBottomOf="@id/content" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:text="已选择"
+        android:textColor="@color/color_999999"
+        android:textSize="@dimen/sp_12" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="@dimen/dp_40"
+        android:background="#f9f9f9"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:paddingBottom="@dimen/dp_8"
-            android:paddingTop="@dimen/dp_8"
-            android:text="取消"
-            android:textSize="@dimen/sp_14"
-            android:textColor="@color/color_282828" />
-
-        <View
-            android:layout_width="@dimen/dp_1"
+        <LinearLayout
+            android:id="@+id/LL1"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:background="@color/color_spacing" />
-
-        <TextView
-            android:id="@+id/sure"
-            android:layout_width="wrap_content"
-            android:layout_height="44dp"
             android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:paddingBottom="@dimen/dp_8"
-            android:paddingTop="@dimen/dp_8"
-            android:textSize="@dimen/sp_14"
-            android:text="确定"
-            android:textColor="@color/colorPrimary" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="请选择"
+                android:textColor="@color/color_282828"
+                android:textColorHint="@color/color_3BB0D2" />
+
+            <View
+                android:id="@+id/viewLine1"
+                android:layout_width="15dp"
+                android:layout_height="@dimen/dp_2"
+                android:layout_marginTop="@dimen/dp_5"
+                android:background="@color/color_3BB0D2" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/tv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="请选择"
+                android:textColor="@color/color_282828"
+                android:textColorHint="@color/color_3BB0D2" />
+
+            <View
+                android:id="@+id/viewLine2"
+                android:layout_width="15dp"
+                android:layout_height="@dimen/dp_2"
+                android:layout_marginTop="@dimen/dp_5"
+                android:background="@color/color_3BB0D2" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/tv3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="请选择"
+                android:textColor="@color/color_282828"
+                android:textColorHint="@color/color_3BB0D2" />
+
+            <View
+                android:id="@+id/viewLine3"
+                android:layout_width="15dp"
+                android:layout_height="@dimen/dp_2"
+                android:layout_marginTop="@dimen/dp_5"
+                android:background="@color/color_3BB0D2" />
+
+
+        </LinearLayout>
+
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dp_10"
+        android:layout_marginLeft="15dp"
+        android:text="选择区县"
+        android:textColor="@color/color_999999"
+        android:textSize="@dimen/sp_12" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.ysxsoft.lock.SideLetterBar
+            android:id="@+id/sideletterbar"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"/>
+
+    </LinearLayout>
+
+
 </LinearLayout>

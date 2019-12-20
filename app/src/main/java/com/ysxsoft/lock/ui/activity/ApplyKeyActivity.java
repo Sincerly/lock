@@ -21,6 +21,7 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.ui.dialog.RidgepoleSelectDialog;
 import com.ysxsoft.lock.ui.fragment.TabApplyKey1Fragment;
 import com.ysxsoft.lock.ui.fragment.TabApplyKey2Fragment;
 
@@ -94,10 +95,36 @@ public class ApplyKeyActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tv1:
-                showToast("几栋楼");
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < 10; i++) {
+                    strings.add(i+1+"栋");
+                }
+
+                RidgepoleSelectDialog ridgepoleSelectDialog = new RidgepoleSelectDialog(mContext,R.style.CenterDialogStyle);
+                ridgepoleSelectDialog.setTitle("栋数选择");
+                ridgepoleSelectDialog.setData(strings, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
+                    @Override
+                    public void OnSelect(String data1, int position1) {
+                        tv1.setText(data1);
+                    }
+                });
+                ridgepoleSelectDialog.showDialog();
                 break;
             case R.id.tv2:
-                showToast("几单元");
+                ArrayList<String> strings1 = new ArrayList<>();
+                for (int i = 0; i < 10; i++) {
+                    strings1.add(i+1+"单元");
+                }
+
+                RidgepoleSelectDialog ridgepoleSelectDialog1 = new RidgepoleSelectDialog(mContext,R.style.CenterDialogStyle);
+                ridgepoleSelectDialog1.setTitle("单元选择");
+                ridgepoleSelectDialog1.setData(strings1, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
+                    @Override
+                    public void OnSelect(String data1, int position1) {
+                        tv2.setText(data1);
+                    }
+                });
+                ridgepoleSelectDialog1.showDialog();
                 break;
             case R.id.tvOk:
                 finish();

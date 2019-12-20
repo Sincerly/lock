@@ -10,14 +10,5 @@
     <color name="color_62C0B3">#62C0B3</color>
     <color name="color_3BB0D2">#3BB0D2</color>
     <color name="transparent">#00000000</color>
-    <color name="white">#ffffff</color>
-    <color name="black">#000000</color>
-    <color name="red">#861E21</color> <!-- 红色 -->
-    <color name="text_red">#884848</color>
-    <color name="gray">#999999</color>
-    <color name="default_tab_title_color">#001026</color>
-    <color name="blue">#1D47C8</color>
-    <color name="gray_blue">#D0D6E8</color>
-    <color name="text_gray">#8F8F8F</color>
-
+    <color name="color_F6F6F6">#F6F6F6</color>
 </resources>

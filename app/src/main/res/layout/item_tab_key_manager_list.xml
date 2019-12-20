@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginLeft="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="碧水蓝天小区"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvNormal"
+            android:layout_width="30dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:background="@drawable/shape_btn_bg"
+            android:gravity="center"
+            android:text="默认"
+            android:textColor="@color/colorWhite"
+            android:textSize="6sp"
+            app:layout_constraintBottom_toBottomOf="@id/tvName"
+            app:layout_constraintLeft_toRightOf="@id/tvName"
+            app:layout_constraintTop_toTopOf="@id/tvName" />
+
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="湖南省长沙市金水区"
+            android:textColor="@color/color_999999"
+            android:textSize="9sp"
+            app:layout_constraintLeft_toLeftOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/color_ebebeb"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginHorizontal="15dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/itemRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_1"
+        android:descendantFocusability="blocksDescendants"
+        android:fadingEdge="none"/>
+
+</LinearLayout>

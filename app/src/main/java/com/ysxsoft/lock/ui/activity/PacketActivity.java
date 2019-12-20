@@ -20,6 +20,8 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
+import com.ysxsoft.lock.ui.dialog.CouponDialog;
 import com.ysxsoft.lock.ui.fragment.TabPacket1Fragment;
 import com.ysxsoft.lock.ui.fragment.TabPacket2Fragment;
 import com.ysxsoft.lock.ui.fragment.TabPacket3Fragment;
@@ -36,26 +38,26 @@ import butterknife.OnClick;
 public class PacketActivity extends BaseActivity {
     @BindView(R.id.statusBar)
     View statusBar;
-    @BindView(R.id.backWithText)
-    TextView backWithText;
+//    @BindView(R.id.backWithText)
+//    TextView backWithText;
     @BindView(R.id.back)
     ImageView back;
     @BindView(R.id.backLayout)
     LinearLayout backLayout;
-    @BindView(R.id.title)
-    TextView title;
-    @BindView(R.id.customCenterTabView)
-    LinearLayout customCenterTabView;
-    @BindView(R.id.rightWithIcon)
-    TextView rightWithIcon;
+//    @BindView(R.id.title)
+//    TextView title;
+//    @BindView(R.id.customCenterTabView)
+//    LinearLayout customCenterTabView;
+//    @BindView(R.id.rightWithIcon)
+//    TextView rightWithIcon;
     @BindView(R.id.bg)
     LinearLayout bg;
-    @BindView(R.id.bottomLineView)
-    View bottomLineView;
+//    @BindView(R.id.bottomLineView)
+//    View bottomLineView;
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
-    NoScrollViewPager viewPager;
+    ViewPager viewPager;
 
     public static void start(){
         ARouter.getInstance().build(ARouterPath.getPacketActivity()).navigation();
@@ -75,12 +77,24 @@ public class PacketActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("");
+//        title.setText("");
     }
 
     @Override
     public void doWork() {
         super.doWork();
+        CheckAddressDialog.show(mContext, new CheckAddressDialog.OnDialogClickListener() {
+            @Override
+            public void sure() {
+
+            }
+        });
+//        CouponDialog.show(mContext, new CouponDialog.OnDialogClickListener() {
+//            @Override
+//            public void sure() {
+//
+//            }
+//        });
         initTitle();
         tabLayout.removeAllTabs();
         List<Fragment> fragmentList = new ArrayList<>();

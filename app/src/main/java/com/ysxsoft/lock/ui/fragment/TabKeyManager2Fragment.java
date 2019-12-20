@@ -12,9 +12,13 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.utils.ImageUtils;
+import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.net.Api;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.File;
 import java.util.List;
@@ -25,6 +29,7 @@ import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.util.BGAPhotoHelper;
 import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
 import io.reactivex.functions.Consumer;
+import okhttp3.Call;
 
 /**
  * Create By 胡
@@ -46,12 +51,12 @@ public class TabKeyManager2Fragment extends BaseFragment {
     public static final int REQUEST_CODE_CROP = 0x02;
     @Override
     public int getLayoutId() {
-        return R.layout.fragment_tab_property_cert1;
+        return R.layout.fragment_tabkeymanager2;
     }
 
     @Override
     protected void doWork(View view) {
-
+        initPhotoHelper();
     }
     @SuppressLint("CheckResult")
     private void initPhotoHelper() {
@@ -77,16 +82,33 @@ public class TabKeyManager2Fragment extends BaseFragment {
         switch (view.getId()) {
             case R.id.tv1:
                 break;
-
             case R.id.tv2:
                 choicePhotoWrapper();
                 break;
-
             case R.id.tv3:
+                submitData();
                 break;
 
-
         }
+    }
+
+    private void submitData() {
+        OkHttpUtils.post()
+//                .url(Api.)
+                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+
+                    }
+                });
 
     }
 

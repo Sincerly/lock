@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,18 +30,14 @@ public class CouponDialog extends Dialog {
 
     private View init() {
         View view = View.inflate(mContext, R.layout.dialog_coupon, null);
-        TextView sure = view.findViewById(R.id.sure);
-        TextView cancel = view.findViewById(R.id.cancel);
-        sure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.sure();
-                }
-                dismiss();
-            }
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
+        TextView tvYHQ = view.findViewById(R.id.tvYHQ);
+        TextView tvMoney = view.findViewById(R.id.tvMoney);
+        TextView tvmj = view.findViewById(R.id.tvmj);
+        TextView tv3 = view.findViewById(R.id.tv3);
+        TextView tvRule = view.findViewById(R.id.tvRule);
+        TextView tvTime = view.findViewById(R.id.tvTime);
+        ImageView ivClose = view.findViewById(R.id.ivClose);
+        ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
@@ -68,8 +65,8 @@ public class CouponDialog extends Dialog {
         if (!isShowing()) {
             show();
             WindowManager.LayoutParams lp = getWindow().getAttributes();
-//          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
-            lp.width = DisplayUtils.getDisplayWidth(mContext);
+          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
+//            lp.width = DisplayUtils.getDisplayWidth(mContext);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(lp);
             getWindow().setGravity(Gravity.CENTER);
