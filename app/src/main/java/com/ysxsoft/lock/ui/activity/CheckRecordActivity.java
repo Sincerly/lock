@@ -1,6 +1,10 @@
 package com.ysxsoft.lock.ui.activity;
 
-import android.os.Bundle;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -16,7 +20,8 @@ import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
-import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.ui.dialog.AllDialog;
+import com.ysxsoft.lock.ui.dialog.TodayDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -29,7 +34,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 
@@ -70,11 +74,16 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
     TextView tvToday;
     @BindView(R.id.tvAll)
     TextView tvAll;
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
 
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     private ListManager<String> manager;
+    private TodayDialog todayDialog;
+    private AllDialog allDialog;
+    private MyBroadCast myBroadCast;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getCheckRecordActivity()).navigation();
@@ -90,6 +99,32 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
         super.doWork();
         initTitle();
         initList();
+        myBroadCast = new MyBroadCast();
+        IntentFilter filter = new IntentFilter("UPDATE_TEXT");
+        registerReceiver(myBroadCast, filter);
+    }
+
+    public class MyBroadCast extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("UPDATE_TEXT".equals(intent.getAction())) {
+                String flag = intent.getStringExtra("flag");
+                Drawable down = getResources().getDrawable(R.mipmap.icon_black_down_arrow);
+                down.setBounds(0, 0, down.getMinimumWidth(), down.getMinimumHeight());// 设置边界
+                Drawable up = getResources().getDrawable(R.mipmap.icon_theme_up_arrow);
+                up.setBounds(0, 0, down.getMinimumWidth(), down.getMinimumHeight());// 设置边界
+                switch (flag) {
+                    case "1":
+                        tvToday.setCompoundDrawables(null, null, down, null);
+                        tvToday.setTextColor(getResources().getColor(R.color.color_282828));
+                        break;
+                    case "2":
+                        tvAll.setCompoundDrawables(null, null, down, null);
+                        tvAll.setTextColor(getResources().getColor(R.color.color_282828));
+                        break;
+                }
+            }
+        }
     }
 
     private void initList() {
@@ -120,15 +155,97 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
 
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
+
+        Drawable down = getResources().getDrawable(R.mipmap.icon_black_down_arrow);
+        down.setBounds(0, 0, down.getMinimumWidth(), down.getMinimumHeight());// 设置边界
+        Drawable up = getResources().getDrawable(R.mipmap.icon_theme_up_arrow);
+        up.setBounds(0, 0, down.getMinimumWidth(), down.getMinimumHeight());// 设置边界
+
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
             case R.id.FL1:
-                showToast("今日");
+                if (allDialog != null) {
+                    if (allDialog.isShowing())
+                        allDialog.dismiss();
+                }
+                todayDialog = new TodayDialog();
+                todayDialog.init(CheckRecordActivity.this);
+                todayDialog.setOnPopupWindowListener(new TodayDialog.OnPopupWindowListener() {
+                    @Override
+                    public void select(int type) {
+                        switch (type) {
+                            case 1:
+                                showToast("今日");
+                                break;
+                            case 2:
+                                showToast("现金券");
+                                break;
+                            case 3:
+                                showToast("团购套餐");
+                                break;
+                            case 4:
+                                showToast("免费体验");
+                                break;
+                            case 5:
+                                showToast("会员卡");
+                                break;
+                        }
+                    }
+                });
+                todayDialog.showPopDown(LL1, 0, 0);
+                if (todayDialog.isShowing()) {
+                    tvToday.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                    tvToday.setCompoundDrawables(null, null, up, null);
+                } else {
+                    tvToday.setTextColor(getResources().getColor(R.color.color_282828));
+                    tvToday.setCompoundDrawables(null, null, down, null);
+
+                }
+                tvAll.setCompoundDrawables(null, null, down, null);
+                tvAll.setTextColor(getResources().getColor(R.color.color_282828));
                 break;
             case R.id.FL2:
-                showToast("全部");
+                if (todayDialog != null) {
+                    if (todayDialog.isShowing())
+                        todayDialog.dismiss();
+                }
+                allDialog = new AllDialog();
+                allDialog.init(CheckRecordActivity.this);
+                allDialog.setOnPopupWindowListener(new AllDialog.OnPopupWindowListener() {
+                    @Override
+                    public void select(int type) {
+                        switch (type) {
+                            case 1:
+                                showToast("全部");
+                                break;
+                            case 2:
+                                showToast("现金券");
+                                break;
+                            case 3:
+                                showToast("团购套餐");
+                                break;
+                            case 4:
+                                showToast("免费体验");
+                                break;
+                            case 5:
+                                showToast("会员卡");
+                                break;
+                        }
+                    }
+                });
+                allDialog.showPopDown(LL1, 0, 0);
+                if (allDialog.isShowing()) {
+                    tvAll.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                    tvAll.setCompoundDrawables(null, null, up, null);
+                } else {
+                    tvAll.setTextColor(getResources().getColor(R.color.color_282828));
+                    tvAll.setCompoundDrawables(null, null, down, null);
+                }
+                tvToday.setCompoundDrawables(null, null, down, null);
+                tvToday.setTextColor(getResources().getColor(R.color.color_282828));
+
                 break;
         }
     }
@@ -217,5 +334,11 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
     @Override
     public int[] getMuteLayouts() {
         return new int[0];
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myBroadCast);
     }
 }

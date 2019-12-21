@@ -108,6 +108,7 @@ public class ShopManagerActivity extends BaseActivity {
                 break;
             case R.id.tv3:
                 StartAdServingActivity.start();
+//                PacketRechargeActivity.start();
                 break;
             case R.id.tv4:
                 HelpActivity.start();

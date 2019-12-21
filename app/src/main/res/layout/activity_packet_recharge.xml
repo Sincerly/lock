@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
@@ -12,7 +12,232 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/shape_btn_bg_radius_10"
+            android:minHeight="120dp">
+
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我的点券数"
+                android:textColor="@color/colorWhite"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toTopOf="@id/tv2"
+                app:layout_constraintLeft_toLeftOf="@id/tv2" />
+
+            <TextView
+                android:id="@+id/tv2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:text="680000"
+                android:textColor="@color/colorWhite"
+                android:textSize="40sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv3"
+                android:layout_width="60dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bg_white_bord_radius_20"
+                android:gravity="center"
+                android:text="点券明细"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/sp_10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="@dimen/dp_20"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="点券充值"
+                android:textColor="@color/color_282828"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tvTip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(1元可购买100点券)"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_12" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:layout_marginVertical="@dimen/sp_10"
+            android:background="@color/color_ebebeb" />
+
+        <TextView
+            android:id="@+id/tv4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:drawableRight="@mipmap/icon_card_normal"
+            android:gravity="center_vertical"
+            android:text="1万点券100元"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="@dimen/sp_10"
+            android:background="@color/color_ebebeb" />
+
+        <TextView
+            android:id="@+id/tv5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:drawableRight="@mipmap/icon_card_normal"
+            android:gravity="center_vertical"
+            android:text="5万点券500元"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="@dimen/sp_10"
+            android:background="@color/color_ebebeb" />
+
+        <TextView
+            android:id="@+id/tv6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:drawableRight="@mipmap/icon_card_normal"
+            android:gravity="center_vertical"
+            android:text="10万点券1000元"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_14" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_1"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="@dimen/sp_10"
+            android:background="@color/color_ebebeb" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="@dimen/sp_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自定义点券数"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_14" />
+
+            <EditText
+                android:id="@+id/etInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="right"
+                android:hint="请输入点券数"
+                android:textColor="@color/color_282828"
+                android:textColorHint="@color/color_cccccc"
+                android:textSize="@dimen/sp_14" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="@dimen/dp_10">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="原价"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_13" />
+
+        <TextView
+            android:id="@+id/tvGrayMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="￥300"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_13" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="@dimen/dp_10">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="实付金额"
+            android:textStyle="bold"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_13" />
+
+        <TextView
+            android:id="@+id/tvMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="￥280"
+            android:textColor="@color/colorRed"
+            android:textSize="@dimen/sp_16" />
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tvOk"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_44"
+        android:background="@drawable/shape_btn_bg"
+        android:gravity="center"
+        android:text="立即充值"
+        android:layout_marginVertical="50dp"
+        android:layout_marginHorizontal="35dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="17sp" />
+
+
 </LinearLayout>

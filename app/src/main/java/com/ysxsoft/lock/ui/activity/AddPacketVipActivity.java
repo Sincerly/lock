@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.picker.DateYMDPicker;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -18,6 +20,10 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.AddPacketVipResponse;
 import com.ysxsoft.lock.net.Api;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -50,7 +56,17 @@ public class AddPacketVipActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
-    public static void start(){
+    @BindView(R.id.tvPacketType)
+    TextView tvPacketType;
+    @BindView(R.id.etMoneyZL)
+    EditText etMoneyZL;
+    @BindView(R.id.etLimitNum)
+    EditText etLimitNum;
+    @BindView(R.id.etName)
+    EditText etName;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getAddPacketVipActivity()).navigation();
     }
 
@@ -72,9 +88,19 @@ public class AddPacketVipActivity extends BaseActivity {
         title.setText("添加卡卷");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tvPacketType, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tvPacketType:
+                showToast("会员卡");
+                break;
+            case R.id.tvOk:
+                showToast("确认添加");
+                break;
+        }
     }
 
     public void request() {
@@ -93,7 +119,7 @@ public class AddPacketVipActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        AddPacketVipResponse resp = JsonUtils.parseByGson(response,AddPacketVipResponse.class);
+                        AddPacketVipResponse resp = JsonUtils.parseByGson(response, AddPacketVipResponse.class);
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功

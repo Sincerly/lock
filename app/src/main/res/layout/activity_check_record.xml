@@ -11,6 +11,7 @@
         layout="@layout/include_title" />
 
     <LinearLayout
+        android:id="@+id/LL1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"
         android:background="@color/colorWhite"

@@ -1,14 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/colorWhite"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:gravity="center"
-        android:text="TextView" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="@dimen/dp_10"
+        android:drawableRight="@drawable/bg_help_down_up_selector"
+        android:text="如何投放卡券？"
+        android:textColor="@color/color_282828"
+        android:textSize="@dimen/sp_14" />
+
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        tools:ignore="WebViewLayout" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_666666"
+        android:layout_marginHorizontal="15dp"
+        android:textSize="@dimen/sp_13"
+        android:visibility="gone"
+        android:text="千佛山位于绵阳安州区、北川县和四川阿坝州茂县三县交界处。横亘于岷山山脉南段，古老而又神秘。
+当你登上千佛顶，去看红日升腾，感受云卷云舒，彩霞满天，普照群山，置身其中，宛如漂浮于万顷波涛之上，流连于仙山楼阁之间。
+不仅仅是观日、云海、更是赏雪圣地，景色迷人。"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/color_ebebeb" />
+
 </LinearLayout>

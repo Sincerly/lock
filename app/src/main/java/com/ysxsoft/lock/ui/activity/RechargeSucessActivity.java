@@ -50,6 +50,8 @@ public class RechargeSucessActivity extends BaseActivity {
     @BindView(R.id.parent)
     LinearLayout parent;
 
+    @BindView(R.id.tvOk)
+    TextView tvOk;
     public static void start(){
         ARouter.getInstance().build(ARouterPath.getRechargeSucessActivity()).navigation();
     }
@@ -72,9 +74,16 @@ public class RechargeSucessActivity extends BaseActivity {
         title.setText("充值成功");
     }
 
-    @OnClick(R.id.backLayout)
-    public void onViewClicked() {
-        backToActivity();
+    @OnClick({R.id.backLayout, R.id.tvOk})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.backLayout:
+                backToActivity();
+                break;
+            case R.id.tvOk:
+                finish();
+                break;
+        }
     }
 
     public void request() {

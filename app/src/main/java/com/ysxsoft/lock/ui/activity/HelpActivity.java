@@ -3,6 +3,7 @@ package com.ysxsoft.lock.ui.activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -151,10 +153,27 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
                     });
         }
     }
-
+    private boolean isClick=false;
     @Override
     public void fillView(BaseViewHolder helper, String s) {
-
+//        helper.setText(R.id.textView,"");
+        WebView webview = helper.getView(R.id.webview);
+        TextView textView = helper.getView(R.id.textView);
+        TextView tvDesc = helper.getView(R.id.tvDesc);
+        helper.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isClick=!isClick;
+                if (isClick){
+                    webview.setVisibility(View.VISIBLE);
+                    tvDesc.setVisibility(View.VISIBLE);
+                }else {
+                    webview.setVisibility(View.GONE);
+                    tvDesc.setVisibility(View.GONE);
+                }
+                textView.setSelected(isClick);
+            }
+        });
     }
 
     @Override

@@ -31,6 +31,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.PacketServingResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -66,7 +67,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
     RecyclerView recyclerView;
     private ListManager<String> manager;
 
-    public static void start(){
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getPacketServingActivity()).navigation();
     }
 
@@ -116,9 +117,9 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
 
     @Override
     public void request(int page) {
-        if(IS_DEBUG_ENABLED){
+        if (IS_DEBUG_ENABLED) {
             debug(manager);
-        }else{
+        } else {
             OkHttpUtils.post()
                     .url(Api.GET_PACKET_SERVING_LIST)
                     .addParams("uid", SharedPreferencesUtils.getUid(PacketServingActivity.this))
@@ -154,6 +155,16 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
 
     @Override
     public void fillView(BaseViewHolder helper, String s) {
+//        helper.setText(R.id.tvType, "");
+//        helper.setText(R.id.tvTime, "日期："+"");
+        TextView tvMoney = helper.getView(R.id.tvMoney);
+        if (helper.getAdapterPosition()%2==0){
+            tvMoney.setText("500点");
+            tvMoney.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+        }else {
+            tvMoney.setText("-2000点");
+            tvMoney.setTextColor(getResources().getColor(R.color.color_282828));
+        }
 
     }
 

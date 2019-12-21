@@ -2,10 +2,13 @@ package com.ysxsoft.lock.ui.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +23,7 @@ import com.ysxsoft.common_base.utils.DisplayUtils;
 public class SelectPayMethodDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
+    private int type=1;
 
     public SelectPayMethodDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -28,19 +32,45 @@ public class SelectPayMethodDialog extends Dialog {
     }
 
     private View init() {
+        Drawable no = mContext.getResources().getDrawable(R.mipmap.icon_card_normal);
+        no.setBounds(0, 0, no.getMinimumWidth(), no.getMinimumHeight());// 设置边界
+        Drawable ok = mContext.getResources().getDrawable(R.mipmap.icon_card_select);
+        ok.setBounds(0, 0, ok.getMinimumWidth(), ok.getMinimumHeight());// 设置边界
         View view = View.inflate(mContext, R.layout.dialog_select_pay_method, null);
-        TextView sure = view.findViewById(R.id.sure);
-        TextView cancel = view.findViewById(R.id.cancel);
-        sure.setOnClickListener(new View.OnClickListener() {
+        LinearLayout LL1 = view.findViewById(R.id.LL1);
+        LinearLayout LL2 = view.findViewById(R.id.LL2);
+        TextView tvOk = view.findViewById(R.id.tvOk);
+        TextView tvWeChat = view.findViewById(R.id.tvWeChat);
+        tvWeChat.setCompoundDrawables(null,null,ok,null);
+        TextView tvAliPay = view.findViewById(R.id.tvAliPay);
+        ImageView ivClose = view.findViewById(R.id.ivClose);
+        LL1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type=1;
+                tvWeChat.setCompoundDrawables(null,null,ok,null);
+                tvAliPay.setCompoundDrawables(null,null,no,null);
+            }
+        });
+        LL2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                type=2;
+                tvWeChat.setCompoundDrawables(null,null,no,null);
+                tvAliPay.setCompoundDrawables(null,null,ok,null);
+            }
+        });
+
+        tvOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.sure();
+                    listener.sure(type);
                 }
                 dismiss();
             }
         });
-        cancel.setOnClickListener(new View.OnClickListener() {
+        ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
@@ -72,18 +102,19 @@ public class SelectPayMethodDialog extends Dialog {
             lp.width = DisplayUtils.getDisplayWidth(mContext);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(lp);
-            getWindow().setGravity(Gravity.CENTER);
+            getWindow().setGravity(Gravity.BOTTOM);
         }
     }
 
     public static SelectPayMethodDialog show(Context context, OnDialogClickListener listener) {
-        SelectPayMethodDialog dialog = new SelectPayMethodDialog(context, R.style.CenterDialogStyle);
+//        SelectPayMethodDialog dialog = new SelectPayMethodDialog(context, R.style.CenterDialogStyle);
+        SelectPayMethodDialog dialog = new SelectPayMethodDialog(context, R.style.BottomDialogStyle);
         dialog.setListener(listener);
         dialog.showDialog();
         return dialog;
     }
 
     public interface OnDialogClickListener {
-        void sure();
+        void sure(int type);
     }
 }

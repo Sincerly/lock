@@ -68,8 +68,8 @@ public class CheckPutInDialog extends Dialog {
         if (!isShowing()) {
             show();
             WindowManager.LayoutParams lp = getWindow().getAttributes();
-//          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
-            lp.width = DisplayUtils.getDisplayWidth(mContext);
+          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
+//            lp.width = DisplayUtils.getDisplayWidth(mContext);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(lp);
             getWindow().setGravity(Gravity.CENTER);

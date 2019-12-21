@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -22,15 +23,22 @@ import com.ysxsoft.common_base.base.frame.list.ListManager;
 import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.RoundImageView;
+import com.ysxsoft.common_base.view.custom.picker.DateYMDPicker;
+import com.ysxsoft.lock.base.RBaseAdapter;
+import com.ysxsoft.lock.base.RViewHolder;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.StartAdServingResponse;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -43,7 +51,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * create by Sincerly on 9999/9/9 0009
  **/
 @Route(path = "/main/StartAdServingActivity")
-public class StartAdServingActivity extends BaseActivity implements IListAdapter<String> {
+public class StartAdServingActivity extends BaseActivity {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -64,9 +72,14 @@ public class StartAdServingActivity extends BaseActivity implements IListAdapter
     View bottomLineView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private ListManager<String> manager;
+    @BindView(R.id.tvStartTime)
+    TextView tvStartTime;
+    @BindView(R.id.tvEndTime)
+    TextView tvEndTime;
 
-    public static void start(){
+    private RBaseAdapter<String> adapter;
+
+    public static void start() {
         ARouter.getInstance().build(ARouterPath.getStartAdServingActivity()).navigation();
     }
 
@@ -83,11 +96,6 @@ public class StartAdServingActivity extends BaseActivity implements IListAdapter
         initList();
     }
 
-    @Override
-    public int getItemLayoutId() {
-        return R.layout.item_start_ad_serving_activity_list;
-    }
-
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
@@ -96,46 +104,82 @@ public class StartAdServingActivity extends BaseActivity implements IListAdapter
     }
 
     private void initList() {
-        manager = new ListManager(this);
-        manager.init(getWindow().findViewById(android.R.id.content));
-        manager.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        ArrayList<String> strings = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            strings.add(String.valueOf(i));
+        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        adapter = new RBaseAdapter<String>(mContext, R.layout.item_start_ad_serving_activity_list, strings) {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //setResult(RESULT_OK, intent);
-                //finish();
+            protected void fillItem(RViewHolder holder, String item, int position) {
+                RoundImageView riv = holder.getView(R.id.riv);
+                ImageView ivClose = holder.getView(R.id.ivClose);
+                ImageView ivMius = holder.getView(R.id.ivMius);
+                ImageView ivadd = holder.getView(R.id.ivadd);
+//                Glide.with(mContext).load("").into(riv);
+//                holder.setText(R.id.tvName,"");
+//                holder.setText(R.id.tvAddress,"");
+                TextView tvNum = holder.getView(R.id.tvNum);
+                ivClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        strings.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+
+                ivMius.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int num = Integer.parseInt(tvNum.getText().toString().trim());
+                        if (num <= 0) {
+                            showToast("数量不能小于0");
+                        } else {
+                            num = num - 1;
+                        }
+                        tvNum.setText(String.valueOf(num));
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                ivadd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int num = Integer.parseInt(tvNum.getText().toString().trim());
+                        num++;
+                        tvNum.setText(String.valueOf(num));
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
-        });
-        manager.getAdapter().setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+
             @Override
-            public void onLoadMoreRequested() {
-                request(manager.nextPage());
+            protected int getViewType(String item, int position) {
+                return 0;
             }
-        }, recyclerView);
-        request(1);
+        };
+        recyclerView.setAdapter(adapter);
+
     }
 
-    @Override
-    public void request(int page) {
-        if(IS_DEBUG_ENABLED){
-            debug(manager);
-        }else{
-            OkHttpUtils.post()
-                    .url(Api.GET_START_AD_SERVING_LIST)
-                    .addParams("uid", SharedPreferencesUtils.getUid(StartAdServingActivity.this))
-                    .addParams("page", String.valueOf(page))
-                    .tag(this)
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-                            manager.releaseRefresh();
-                        }
 
-                        @Override
-                        public void onResponse(String response, int id) {
-                            manager.releaseRefresh();
-                            StartAdServingResponse resp = JsonUtils.parseByGson(response, StartAdServingResponse.class);
-                            if (resp != null) {
+    public void request(int page) {
+        OkHttpUtils.post()
+                .url(Api.GET_START_AD_SERVING_LIST)
+                .addParams("uid", SharedPreferencesUtils.getUid(StartAdServingActivity.this))
+                .addParams("page", String.valueOf(page))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+
+                        StartAdServingResponse resp = JsonUtils.parseByGson(response, StartAdServingResponse.class);
+                        if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
 //                                    List<StartAdServingResponse.DataBean> data = resp.getData();
@@ -144,59 +188,48 @@ public class StartAdServingActivity extends BaseActivity implements IListAdapter
 //                                    //请求失败
 //                                    showToast(resp.getMsg());
 //                                }
-                            } else {
-                                showToast("获取失败");
-                            }
+                        } else {
+                            showToast("获取失败");
                         }
-                    });
-        }
-    }
-
-    @Override
-    public void fillView(BaseViewHolder helper, String s) {
+                    }
+                });
 
     }
 
-    @Override
-    public void fillMuteView(BaseViewHolder helper, String s) {
-
-    }
-
-    @Override
-    public void attachActivity(AppCompatActivity activity) {
-
-    }
-
-    @Override
-    public void dettachActivity() {
-
-    }
-
-    @Override
-    public RecyclerView.LayoutManager getLayoutManager() {
-        return new LinearLayoutManager(this);
-    }
-
-    @Override
-    public boolean isMuteAdapter() {
-        return false;
-    }
-
-    @Override
-    public int[] getMuteTypes() {
-        return new int[0];
-    }
-
-    @Override
-    public int[] getMuteLayouts() {
-        return new int[0];
-    }
-
-    @OnClick({R.id.backLayout})
+    @OnClick({R.id.backLayout, R.id.tvStartTime, R.id.tvEndTime, R.id.tvOk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
+                break;
+            case R.id.tvStartTime:
+                //时间选择器
+                DateYMDPicker dateYMDPicker = new DateYMDPicker();
+                dateYMDPicker.init(mContext);
+                dateYMDPicker.show(new DateYMDPicker.OnSelectedListener() {
+                    @Override
+                    public void onSelected(Date date) {
+                        SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
+                        String format = dateFormat3.format(date);
+                        tvStartTime.setText(format);
+                    }
+                });
+
+                break;
+            case R.id.tvEndTime:
+                DateYMDPicker picker = new DateYMDPicker();
+                picker.init(mContext);
+                picker.show(new DateYMDPicker.OnSelectedListener() {
+                    @Override
+                    public void onSelected(Date date) {
+                        SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
+                        String format = dateFormat3.format(date);
+                        tvEndTime.setText(format);
+                    }
+                });
+                break;
+            case R.id.tvOk:
+                PacketServingActivity.start();
                 break;
         }
     }
