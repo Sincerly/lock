@@ -55,7 +55,7 @@ public class DateYMDPicker {
                 .setContentSize(18)//滚轮文字大小
                 .setTitleSize(20)//标题文字大小
 //                .setTitleText("Title")//标题文字
-                .setOutSideCancelable(false)//点击屏幕，点在控件外部范围时，是否取消显示
+                .setOutSideCancelable(true)//点击屏幕，点在控件外部范围时，是否取消显示
                 .isCyclic(false)//是否循环滚动
 //                .setTitleColor(Color.BLACK)//标题文字颜色
 //                .setSubmitColor(Color.BLUE)//确定按钮文字颜色

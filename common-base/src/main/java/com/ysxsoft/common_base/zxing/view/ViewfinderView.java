@@ -157,7 +157,7 @@ public final class ViewfinderView extends View {
 		} else {
 
 			//8个角
-			paint.setColor(Color.parseColor("#DB2B1F"));
+			paint.setColor(Color.parseColor("#3BB0D2"));
 			canvas.drawRect(frame.left, frame.top, frame.left + ScreenRate,
 					frame.top + CORNER_WIDTH, paint);
 			canvas.drawRect(frame.left, frame.top, frame.left + CORNER_WIDTH, frame.top
@@ -188,7 +188,7 @@ public final class ViewfinderView extends View {
 			paint.setTextSize(TEXT_SIZE * density);
 			paint.setAlpha(0x40);
 			paint.setTypeface(Typeface.create("System", Typeface.BOLD));
-			canvas.drawText(getResources().getString(R.string.scan_text), frame.left, (float) (frame.bottom + (float)TEXT_PADDING_TOP *density), paint);
+//			canvas.drawText(getResources().getString(R.string.scan_text), frame.left, (float) (frame.bottom + (float)TEXT_PADDING_TOP *density), paint);
 
 
 			Collection<ResultPoint> currentPossible = possibleResultPoints;

@@ -31,7 +31,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="96dp"
                 android:layout_marginTop="8dp"
-                android:text="我的二维码"
+                android:text="将二维码/条码放入框内，即可自动扫描"
                 android:textColor="#FFFFFF" />
         </RelativeLayout>
 
@@ -44,13 +44,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
-                android:background="@color/colorPrimaryDark" />
+                android:background="@color/baseColorBlack" />
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:layout_alignParentTop="true"
-                android:background="@color/colorPrimaryDark">
+                android:background="@color/baseColorBlack">
 
                 <ImageView
                     android:id="@+id/back"
