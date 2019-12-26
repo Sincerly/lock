@@ -1,4 +1,4 @@
-package com.ysxsoft.lock;
+package com.ysxsoft.lock.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

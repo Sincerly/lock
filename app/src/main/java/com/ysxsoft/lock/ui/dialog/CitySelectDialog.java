@@ -3,8 +3,6 @@ package com.ysxsoft.lock.ui.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,7 +18,7 @@ import com.ysxsoft.common_base.utils.CityUtils;
 import com.ysxsoft.common_base.view.custom.picker.JsonBean;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.common_base.utils.DisplayUtils;
-import com.ysxsoft.lock.SideLetterBar;
+import com.ysxsoft.lock.view.SideLetterBar;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 

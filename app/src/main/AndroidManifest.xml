@@ -28,11 +28,18 @@
         <activity
             android:name="com.ysxsoft.common_base.ui.welcome.SplashActivity"
             android:launchMode="singleTask">
+        </activity>
 
+        <activity android:name=".ui.activity.WelcomeActivity">
         </activity>
 
         <!--首页-->
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!--登录-->
         <activity android:name=".ui.activity.LoginActivity"></activity>
         <!--其他方式登录-->
@@ -43,10 +50,6 @@
         <activity android:name=".ui.activity.ForgetPwdActivity"></activity>
         <!--卡包-->
         <activity android:name=".ui.activity.PacketActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!--商铺详情-->
         <activity android:name=".ui.activity.ShopDetailActivity"></activity>
@@ -112,5 +115,28 @@
         <activity android:name=".ui.activity.RechargeSucessActivity"></activity>
         <!--帮助-->
         <activity android:name=".ui.activity.HelpActivity"></activity>
+
+        <!--联通电信授权页-->
+        <activity
+            android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/authsdk_activity_dialog" ></activity>
+        <!--协议页面webview-->
+        <activity
+            android:name="com.mobile.auth.gatewayauth.activity.AuthWebVeiwActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind" ></activity>
+        <!--移动授权页-->
+        <activity
+            android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/authsdk_activity_dialog" ></activity>
     </application>
 </manifest>

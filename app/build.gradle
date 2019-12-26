@@ -80,21 +80,20 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'],dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation project(':common-base')
-
-
     //桌面数字
-    implementation "me.leolin:ShortcutBadger:1.1.22@aar"
+    implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     annotationProcessor rootProject.ext.dependencies["arouter-compiler"]
     annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
     implementation 'org.jsoup:jsoup:1.10.2'
     implementation 'com.yanzhenjie.recyclerview:x:1.3.2'
-    implementation (name:'phoneNumber-AuthSDK-2.7.0.2-20191204',ext:'aar')
+    implementation(name: 'phoneNumber-AuthSDK-2.7.0.2-20191204', ext: 'aar')
+    implementation files('libs/bluelock_lib_dahao_onekey_20170412.jar')
+    implementation 'androidx.viewpager2:viewpager2:1.0.0-beta04'
 }

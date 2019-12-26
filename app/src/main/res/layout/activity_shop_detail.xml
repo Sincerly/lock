@@ -246,7 +246,7 @@
                 app:tabTextColor="@color/color_989898">
             </com.google.android.material.tabs.TabLayout>
 
-            <com.ysxsoft.lock.MyViewPager
+            <com.ysxsoft.lock.view.MyViewPager
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

@@ -2,7 +2,6 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,21 +11,16 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.tabs.TabLayout;
-import com.umeng.commonsdk.debug.E;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
-import com.ysxsoft.common_base.view.widgets.MatchHeightViewPager;
-import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
-import com.ysxsoft.lock.MyViewPager;
+import com.ysxsoft.lock.view.MyViewPager;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.ui.fragment.TabShopDetailFragment1;
 import com.ysxsoft.lock.ui.fragment.TabShopDetailFragment2;
-import com.ysxsoft.lock.ui.fragment.TabTuanDetailFragment1;
-import com.ysxsoft.lock.ui.fragment.TabTuanDetailFragment2;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -43,7 +37,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 

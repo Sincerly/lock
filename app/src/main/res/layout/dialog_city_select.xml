@@ -148,7 +148,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <com.ysxsoft.lock.SideLetterBar
+        <com.ysxsoft.lock.view.SideLetterBar
             android:id="@+id/sideletterbar"
             android:layout_width="36dp"
             android:layout_height="match_parent"

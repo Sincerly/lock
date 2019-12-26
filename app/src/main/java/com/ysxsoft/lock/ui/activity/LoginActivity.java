@@ -64,6 +64,7 @@ public class LoginActivity extends BaseActivity {
             Manifest.permission.ACCESS_FINE_LOCATION
     };
     private static final String TAG = "LoginActivity";
+    PhoneNumberAuthHelper helper = null;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getLoginActivity()).navigation();
@@ -78,22 +79,13 @@ public class LoginActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         requestPermissions();
-        initTitle();
-        initConfig();
-    }
-
-    private void initTitle() {
-//        bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-//        backLayout.setVisibility(View.VISIBLE);
-//        back.setImageResource(R.mipmap.icon_gray_back);
-//        title.setText("");
+        call();
     }
 
     @OnClick({R.id.login, R.id.otherLogin, R.id.LL})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.login:
-                call();
                 break;
             case R.id.otherLogin:
                 OtherLoginActivity.start();
@@ -103,11 +95,12 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    public void request() {
+    public void getMobile(String accessToken) {
         showLoadingDialog("请求中");
-        OkHttpUtils.post()
-                .url(Api.GET_LOGIN)
-                .addParams("uid", SharedPreferencesUtils.getUid(LoginActivity.this))
+        OkHttpUtils.get()
+                .url(Api.GET_MOBILE)
+                .addParams("accessToken",accessToken)
+                .addParams("outId", System.currentTimeMillis()+"")
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -129,6 +122,7 @@ public class LoginActivity extends BaseActivity {
 //                                    //请求失败
 //                                    showToast(resp.getMsg());
 //                                }
+                            Phone.setText(resp.getPhone());
                         } else {
                             showToast("获取登录失败");
                         }
@@ -138,8 +132,8 @@ public class LoginActivity extends BaseActivity {
 
     private TokenResultListener tokenResultListener = new TokenResultListener() {
         @Override
-        public void onTokenSuccess(String s) {
-            Log.e("tag", "onTokenSuccess" + s);
+        public void onTokenSuccess(String token) {
+            Log.e("tag", "onTokenSuccess" + token);
             helper.setAuthUIConfig(new AuthUIConfig.Builder()
                     .setLogBtnText("手机号码一键登录")
                     .setNavHidden(true)
@@ -161,18 +155,19 @@ public class LoginActivity extends BaseActivity {
                     .setAppPrivacyOne("《服务协议》","11")
                     .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
                     .create());
-
-            helper.accelerateLoginPage(30000, new PreLoginResultListener() {
-                @Override
-                public void onTokenSuccess(String s) {
-                    Log.e("tag", "login onTokenSuccess" + s);
-                }
-
-                @Override
-                public void onTokenFailed(String type, String s1) {
-                    Log.e("tag", "login onTokenFailed" + type + " " + s1);
-                }
-            });
+//
+//            helper.accelerateLoginPage(30000, new PreLoginResultListener() {
+//                @Override
+//                public void onTokenSuccess(String s) {
+//                    Log.e("tag", "login onTokenSuccess" + s);
+//                }
+//
+//                @Override
+//                public void onTokenFailed(String type, String s1) {
+//                    Log.e("tag", "login onTokenFailed" + type + " " + s1);
+//                }
+//            });
+//            getMobile(token);
         }
 
         @Override
@@ -180,7 +175,6 @@ public class LoginActivity extends BaseActivity {
             Log.e("tag", "onTokenFailed" + s);
         }
     };
-    PhoneNumberAuthHelper helper = null;
 
     private void call() {
         helper = PhoneNumberAuthHelper.getInstance(this, tokenResultListener);
@@ -190,23 +184,6 @@ public class LoginActivity extends BaseActivity {
             //检查终端是否支持号码认证
             helper.getLoginToken(LoginActivity.this, 30000);
         }
-        helper.setUIClickListener(new AuthUIControlClickListener() {
-            @Override
-            public void onClick(String s, Context context, JSONObject jsonObject) {
-                Log.e("tag","onClick "+s+" context"+context+" jsonObject:");
-                switch (s){
-                    case "700004":
-                        //隐私协议
-                        break;
-                    case "700001":
-                        //切换登录方式 CUCC中国联通
-                        break;
-                }
-            }
-        });
-    }
-
-    private void initConfig() {
     }
 
     private void requestPermissions() {

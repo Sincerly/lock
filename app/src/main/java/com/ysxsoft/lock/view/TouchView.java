@@ -133,13 +133,13 @@ public class TouchView extends View {
                 float offsetX=touchX-downX;
                 float offsetY=touchY-downY;
                 if(offsetX<0&&offsetY<0){
-                    Log.e("tag","向下");
+                    Log.e("tag","offsetX<0&&offsetY<0");
                 }else if(offsetX<0&&offsetY>0){
-                    Log.e("tag","向上");
+                    Log.e("tag","offsetX<0&&offsetY>0");
                 }else if(offsetX>0&&offsetY<0){
-
+                    Log.e("tag","offsetX>0&&offsetY<0");
                 }else if(offsetX>0&&offsetY>0){
-
+                    Log.e("tag","offsetX>0&&offsetY>0");
                 }
                 break;
             case MotionEvent.ACTION_UP:
