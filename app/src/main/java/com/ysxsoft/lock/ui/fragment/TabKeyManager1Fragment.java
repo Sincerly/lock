@@ -13,12 +13,14 @@ import com.yanzhenjie.recyclerview.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.utils.DisplayUtils;
+import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.TabKeyManager1FragmentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.ApplyKeyActivity;
@@ -231,9 +233,9 @@ public class TabKeyManager1Fragment extends BaseFragment {
     }
 
     private void request() {
-        OkHttpUtils.post()
-//                .url(Api.)
-                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
+        OkHttpUtils.get()
+                .url(Api.GET_BIND_PLACE_LIST)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -244,7 +246,10 @@ public class TabKeyManager1Fragment extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        TabKeyManager1FragmentResponse gson = JsonUtils.parseByGson(response, TabKeyManager1FragmentResponse.class);
+                        if (gson != null) {
 
+                        }
                     }
                 });
     }

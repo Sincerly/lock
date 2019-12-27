@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,7 +13,9 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.models.response.VillageResponse;
 import com.ysxsoft.lock.ui.dialog.CitySelectDialog;
+import com.ysxsoft.lock.ui.dialog.SelectVillageDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -81,6 +84,9 @@ public class AddPlaceActivity extends BaseActivity {
         title.setText("添加新小区");
     }
 
+    private String cityCode1;
+    private String areaCode1;
+
     @OnClick({R.id.backLayout, R.id.tvOk, R.id.tv1, R.id.tv2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -89,15 +95,20 @@ public class AddPlaceActivity extends BaseActivity {
                 break;
             case R.id.tv1:
                 CitySelectDialog.show(mContext, new CitySelectDialog.OnDialogClickListener() {
-
                     @Override
-                    public void sure(String provice, String city, String area) {
-                        tv1.setText(provice+city+area);
+                    public void sure(String proviceName, String proviceCode, String cityName, String cityCode, String areaName, String areaCode) {
+                        cityCode1 = cityCode;
+                        areaCode1 = areaCode;
+                        tv1.setText(proviceName + cityName + areaName);
                     }
                 });
                 break;
             case R.id.tv2:
-
+                if (TextUtils.isEmpty(cityCode1) || TextUtils.isEmpty(areaCode1)) {
+                    showToast("城市选择不能为空");
+                    return;
+                }
+                requestData(cityCode1, areaCode1);
                 break;
             case R.id.tvOk:
                 if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
@@ -112,6 +123,37 @@ public class AddPlaceActivity extends BaseActivity {
 
 
         }
+    }
+
+    private void requestData(String cityCode1, String areaCode1) {
+        OkHttpUtils.get()
+                .url(Api.GET_ADDRESS_LIST)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("citycode", cityCode1)
+                .addParams("areacode", areaCode1)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        VillageResponse resp = JsonUtils.parseByGson(response, VillageResponse.class);
+                        if (resp != null) {
+                            SelectVillageDialog.show(mContext, new SelectVillageDialog.OnDialogClickListener() {
+                                @Override
+                                public void sure(String villageName, String villageCode) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
+
     }
 
     public void request() {

@@ -1,6 +1,9 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.app.ActivityManager;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -10,6 +13,8 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.utils.AppManager;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.StringUtils;
@@ -115,7 +120,15 @@ public class OtherLoginActivity extends BaseActivity {
                 break;
 
             case R.id.tvOk:
-                MainActivity.start();
+                if (TextUtils.isEmpty(inputLoginPhone.getText().toString().trim())) {
+                    showToast("手机号不能为空");
+                    return;
+                }
+                if (TextUtils.isEmpty(inputLoginPwd.getText().toString().trim())) {
+                    showToast("密码不能为空");
+                    return;
+                }
+                request();
                 break;
 
 
@@ -126,7 +139,9 @@ public class OtherLoginActivity extends BaseActivity {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.GET_OTHER_LOGIN)
-                .addParams("uid", SharedPreferencesUtils.getUid(OtherLoginActivity.this))
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("username", inputLoginPhone.getText().toString().trim())
+                .addParams("password", inputLoginPwd.getText().toString().trim())
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -137,17 +152,21 @@ public class OtherLoginActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "json====" + response);
                         hideLoadingDialog();
                         OtherLoginResponse resp = JsonUtils.parseByGson(response, OtherLoginResponse.class);
                         if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<OtherLoginResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                SharedPreferencesUtils.saveToken(mContext,resp.getApitoken());
+                                MainActivity.start();
+                                AppManager.getAppManager().finishAllActivity();
+                                finish();
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
                         } else {
                             showToast("获取其他方式登录失败");
                         }

@@ -11,6 +11,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -86,9 +87,11 @@ public class ShopCenterActivity extends BaseActivity {
                 break;
             case R.id.tvApplyShop:
                 ShopAuthenticationActivity.start();
+                finish();
                 break;
         }
     }
+
 
     public void request() {
         showLoadingDialog("请求中");

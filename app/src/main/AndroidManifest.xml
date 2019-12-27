@@ -25,21 +25,24 @@
         </provider>
 
         <!--启动页-->
-        <activity
-            android:name="com.ysxsoft.common_base.ui.welcome.SplashActivity"
-            android:launchMode="singleTask">
-        </activity>
+<!--        <activity-->
+<!--            android:name="com.ysxsoft.common_base.ui.welcome.SplashActivity"-->
+<!--            android:launchMode="singleTask">-->
+<!--        </activity>-->
 
         <activity android:name=".ui.activity.WelcomeActivity">
         </activity>
 
         <!--首页-->
-        <activity android:name=".MainActivity">
+        <activity android:name="com.ysxsoft.common_base.ui.welcome.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity"/>
+
         <!--登录-->
         <activity android:name=".ui.activity.LoginActivity"></activity>
         <!--其他方式登录-->

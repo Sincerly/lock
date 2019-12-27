@@ -13,14 +13,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import okhttp3.Call;
 
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.CityUtils;
+import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.view.custom.picker.JsonBean;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.common_base.utils.DisplayUtils;
+import com.ysxsoft.lock.models.response.CityResponse;
+import com.ysxsoft.lock.models.response.DistrictListResponse;
+import com.ysxsoft.lock.models.response.ProvinceListResponse;
+import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.view.SideLetterBar;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +46,7 @@ public class CitySelectDialog extends Dialog {
     private LinearLayout ll3;
     private TextView tv1;
     private TextView tv2;
-    private TextView tv3,tvTip;
+    private TextView tv3, tvTip;
     private View viewLine1;
     private View viewLine2;
     private View viewLine3;
@@ -74,31 +83,7 @@ public class CitySelectDialog extends Dialog {
         recyclerView1.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView2.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView3.setLayoutManager(new LinearLayoutManager(mContext));
-        ArrayList<JsonBean> province = CityUtils.getProvince(mContext);
-        RBaseAdapter<JsonBean> adapter = new RBaseAdapter<JsonBean>(mContext, R.layout.item_city_layout, province) {
-            @Override
-            protected void fillItem(RViewHolder holder, JsonBean item, int position) {
-                holder.setText(R.id.tvName, item.getName());
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        tv1.setText(item.getName());
-                        recyclerView1.setVisibility(View.GONE);
-                        viewLine1.setVisibility(View.GONE);
-                        ll2.setVisibility(View.VISIBLE);
-                        cityList = item.getCityList();
-                        tvTip.setText("选择市");
-                        setCityData(recyclerView2, item.getCityList());
-                    }
-                });
-            }
-
-            @Override
-            protected int getViewType(JsonBean item, int position) {
-                return 0;
-            }
-        };
-        recyclerView1.setAdapter(adapter);
+//        ArrayList<JsonBean> province = CityUtils.getProvince(mContext);
 //        ll1.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -177,65 +162,158 @@ public class CitySelectDialog extends Dialog {
                 dismiss();
             }
         });
+        requestData();
         return view;
+    }
+
+    private void requestData() {
+        OkHttpUtils.get()
+                .url(Api.PROVINCE_LIST)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        ProvinceListResponse resp = JsonUtils.parseByGson(response, ProvinceListResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                List<ProvinceListResponse.DataBean> province = resp.getData();
+                                RBaseAdapter<ProvinceListResponse.DataBean> adapter = new RBaseAdapter<ProvinceListResponse.DataBean>(mContext, R.layout.item_city_layout, province) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, ProvinceListResponse.DataBean item, int position) {
+                                        holder.setText(R.id.tvName, item.getName());
+                                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                tv1.setText(item.getName());
+                                                recyclerView1.setVisibility(View.GONE);
+                                                viewLine1.setVisibility(View.GONE);
+                                                ll2.setVisibility(View.VISIBLE);
+                                                tvTip.setText("选择市");
+                                                setCityData(recyclerView2, item.getCode(),item.getName(),item.getCode());
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    protected int getViewType(ProvinceListResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                recyclerView1.setAdapter(adapter);
+                            }
+                        }
+                    }
+                });
+
     }
 
     /**
      * 设置城市
      *
      * @param recyclerView2
-     * @param cityList
+     * @param provinceCode
+     * @param provinceName
      */
-    private void setCityData(RecyclerView recyclerView2, List<JsonBean.CityBean> cityList) {
-        RBaseAdapter<JsonBean.CityBean> rBaseAdapter = new RBaseAdapter<JsonBean.CityBean>(mContext, R.layout.item_city_layout, cityList) {
-            @Override
-            protected void fillItem(RViewHolder holder, JsonBean.CityBean item, int position) {
-                holder.setText(R.id.tvName, item.getName());
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
+    private void setCityData(RecyclerView recyclerView2, String code, String provinceName, String provinceCode) {
+        OkHttpUtils.get()
+                .url(Api.CITY_LIST)
+                .addParams("provincecode", code)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
                     @Override
-                    public void onClick(View v) {
-                        tv2.setText(item.getName());
-                        recyclerView2.setVisibility(View.GONE);
-                        viewLine2.setVisibility(View.GONE);
-                        ll3.setVisibility(View.VISIBLE);
-                        tvTip.setText("选择区县");
-                        setAreaData(recyclerView3, item.getArea());
+                    public void onError(Call call, Exception e, int id) {
+
                     }
-                });
-            }
 
-            @Override
-            protected int getViewType(JsonBean.CityBean item, int position) {
-                return 0;
-            }
-        };
-        recyclerView2.setAdapter(rBaseAdapter);
-    }
-
-    private void setAreaData(RecyclerView recyclerView3, List<String> area) {
-        RBaseAdapter<String> rBaseAdapter = new RBaseAdapter<String>(mContext, R.layout.item_city_layout, area) {
-            @Override
-            protected void fillItem(RViewHolder holder, String item, int position) {
-                holder.setText(R.id.tvName, item);
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        tv3.setText(item);
-                        viewLine3.setVisibility(View.GONE);
-                        if (listener!=null){
-                            dismiss();
-                            listener.sure(tv1.getText().toString(),tv2.getText().toString(),item);
+                    public void onResponse(String response, int id) {
+                        CityResponse city = JsonUtils.parseByGson(response, CityResponse.class);
+                        if (city != null) {
+                            if (HttpResponse.SUCCESS.equals(city.getCode())) {
+                                List<CityResponse.DataBean> citys = city.getData();
+                                RBaseAdapter<CityResponse.DataBean> rBaseAdapter = new RBaseAdapter<CityResponse.DataBean>(mContext, R.layout.item_city_layout, citys) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, CityResponse.DataBean item, int position) {
+                                        holder.setText(R.id.tvName, item.getName());
+                                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                tv2.setText(item.getName());
+                                                recyclerView2.setVisibility(View.GONE);
+                                                viewLine2.setVisibility(View.GONE);
+                                                ll3.setVisibility(View.VISIBLE);
+                                                tvTip.setText("选择区县");
+                                                setAreaData(recyclerView3, item.getCode(),provinceName,provinceCode,item.getName());
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    protected int getViewType(CityResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                recyclerView2.setAdapter(rBaseAdapter);
+                            }
                         }
                     }
                 });
-            }
 
-            @Override
-            protected int getViewType(String item, int position) {
-                return 0;
-            }
-        };
-        recyclerView3.setAdapter(rBaseAdapter);
+
+    }
+
+    private void setAreaData(RecyclerView recyclerView3, String code, String provinceName, String provinceCode ,String cityName) {
+        OkHttpUtils.get()
+                .url(Api.DISTRICT_LIST)
+                .addParams("citycode", code)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        DistrictListResponse resp = JsonUtils.parseByGson(response, DistrictListResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                List<DistrictListResponse.DataBean> areas = resp.getData();
+                                RBaseAdapter<DistrictListResponse.DataBean> rBaseAdapter = new RBaseAdapter<DistrictListResponse.DataBean>(mContext, R.layout.item_city_layout, areas) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, DistrictListResponse.DataBean item, int position) {
+                                        holder.setText(R.id.tvName, item.getName());
+                                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                tv3.setText(item.getName());
+                                                viewLine3.setVisibility(View.GONE);
+                                                if (listener != null) {
+                                                    dismiss();
+                                                    listener.sure(provinceName,provinceCode,cityName,code, item.getName(),item.getCode());
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    protected int getViewType(DistrictListResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                recyclerView3.setAdapter(rBaseAdapter);
+                            }
+                        }
+                    }
+                });
     }
 
     public OnDialogClickListener getListener() {
@@ -274,6 +352,6 @@ public class CitySelectDialog extends Dialog {
     }
 
     public interface OnDialogClickListener {
-        void sure(String provice,String city,String area);
+        void sure(String proviceName,String proviceCode, String cityName, String cityCode, String areaName, String areaCode);
     }
 }

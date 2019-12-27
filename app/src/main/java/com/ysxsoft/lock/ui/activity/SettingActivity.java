@@ -15,11 +15,13 @@ import com.bumptech.glide.Glide;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -160,9 +162,34 @@ public class SettingActivity extends BaseActivity {
                 AboutMeActivity.start();
                 break;
             case R.id.LoginOut:
-                toLogin();
+                LoginOutData();
                 break;
         }
+    }
+
+    private void LoginOutData() {
+        OkHttpUtils.post()
+                .url(Api.LOGOUT)
+                .addHeader("Authorization",SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse gson = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (gson!=null){
+                            if (HttpResponse.SUCCESS.equals(gson.getCode())){
+                                toLogin();
+                            }
+                        }
+                    }
+                });
     }
 
     private void choicePhotoWrapper() {
@@ -246,13 +273,36 @@ public class SettingActivity extends BaseActivity {
                     String cropPath = mPhotoHelper.getCropFilePath();
                     String path = ImageUtils.compress(this, System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
                     //裁剪后的
-                    Glide.with(mContext).load(new File(path)).into(ivAvatar);
-
-                    //edit(null, null, path, null, null);
+                    EditHead(path);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void EditHead(String path) {
+        OkHttpUtils.post()
+                .url(Api.EDIT_LOGO)
+                .addHeader("Authorization",SharedPreferencesUtils.getToken(mContext))
+                .addFile("headimg",new File(path).getName(),new File(path))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp!=null){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                Glide.with(mContext).load(new File(path)).into(ivAvatar);
+                            }
+                        }
+                    }
+                });
     }
 }

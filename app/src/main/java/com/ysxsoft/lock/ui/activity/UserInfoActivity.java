@@ -1,6 +1,7 @@
 package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -9,10 +10,12 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -113,14 +116,49 @@ public class UserInfoActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
-        CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {
-            @Override
-            public void sure() {
-                ApplyKeyActivity.start();
-            }
-        });
         initTitle();
         initData();
+    }
+
+    private void IsAuth() {
+        OkHttpUtils.post()
+                .url(Api.IS_AUTH)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            switch (resp.getCode()) {
+                                case "200":
+                                    break;
+                                case "201":
+                                    showToast("审核中");
+                                    break;
+                                case "202":
+                                    showToast("审核失败");
+                                    break;
+                                case "203":
+                                    CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {
+                                        @Override
+                                        public void sure() {
+                                            IdcardCertActivity.start();
+                                        }
+                                    });
+                                    break;
+                            }
+                        } else {
+                            showToast("获取意见反馈失败");
+                        }
+                    }
+                });
     }
 
     private void initData() {
@@ -151,17 +189,16 @@ public class UserInfoActivity extends BaseActivity {
                 KeyManagerActivity.start();
                 break;
             case R.id.tv6:
-                IdcardCertActivity.start();
+                IsAuth();
                 break;
             case R.id.tv7:
                 PropertyCertActivity.start();
                 break;
             case R.id.tv8:
-                ShopCenterActivity.start();
+                IsShopCert();
                 break;
-            case R.id.tv9:
-//                ShopInfoActivity.start();
-                ShopManagerActivity.start();
+            case R.id.tv9://广告中心
+                showToast("广告中心");
                 break;
             case R.id.tv10:
                 FeedBackActivity.start();
@@ -177,6 +214,44 @@ public class UserInfoActivity extends BaseActivity {
                 break;
         }
 
+    }
+
+    //是否通过商户认证
+    private void IsShopCert() {
+        OkHttpUtils.post()
+                .url(Api.IS_SHOP_CERT)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            switch (resp.getCode()) {
+                                case "200":
+                                    ShopManagerActivity.start();
+                                    break;
+                                case "201":
+                                    ShopEgisActivity.start();
+                                    break;
+                                case "202":
+                                    ShopAuditFailedActivity.start();
+                                    break;
+                                case "203":
+                                    ShopCenterActivity.start();
+                                    break;
+                            }
+                        } else {
+                            showToast("获取意见反馈失败");
+                        }
+                    }
+                });
     }
 
     public void request() {

@@ -93,7 +93,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("卡劵投放");
+        title.setText("点券明细");
     }
 
     private void initList() {

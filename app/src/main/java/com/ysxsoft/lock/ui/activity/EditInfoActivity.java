@@ -11,8 +11,10 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -84,7 +86,7 @@ public class EditInfoActivity extends BaseActivity {
         title.setText("昵称");
     }
 
-    @OnClick({R.id.backLayout,R.id.ivClose,R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.ivClose, R.id.tvOk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
@@ -94,11 +96,11 @@ public class EditInfoActivity extends BaseActivity {
                 name.setText("");
                 break;
             case R.id.tvOk:
-                if (TextUtils.isEmpty(name.getText().toString().trim())){
+                if (TextUtils.isEmpty(name.getText().toString().trim())) {
                     showToast("昵称不能为空");
                     return;
                 }
-
+                request();
                 break;
         }
     }
@@ -106,8 +108,9 @@ public class EditInfoActivity extends BaseActivity {
     public void request() {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
-                .url(Api.GET_EDIT_INFO)
-                .addParams("uid", SharedPreferencesUtils.getUid(EditInfoActivity.this))
+                .url(Api.EDIT_NICKNAME)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("nickname", name.getText().toString().trim())
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -119,16 +122,16 @@ public class EditInfoActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        EditInfoResponse resp = JsonUtils.parseByGson(response, EditInfoResponse.class);
+//                        EditInfoResponse resp = JsonUtils.parseByGson(response, EditInfoResponse.class);
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<EditInfoResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                finish();
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
                         } else {
                             showToast("获取信息编辑失败");
                         }

@@ -12,11 +12,13 @@ import com.bumptech.glide.Glide;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -53,6 +55,8 @@ public class TabPropertyCert1Fragment extends BaseFragment {
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
     public static final int REQUEST_CODE_CROP = 0x02;
+    private String path;
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_tabpropertycert1;
@@ -104,9 +108,15 @@ public class TabPropertyCert1Fragment extends BaseFragment {
     }
 
     private void submitData() {
+        if (TextUtils.isEmpty(path)) {
+            showToast("照片不能为空");
+            return;
+        }
+        File file = new File(path);
         OkHttpUtils.post()
-//                .url(Api.)
-                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
+                .url(Api.OWNER)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addFile("img", file.getName(), file)
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -117,7 +127,10 @@ public class TabPropertyCert1Fragment extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
-
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                        }
                     }
                 });
 
@@ -210,7 +223,7 @@ public class TabPropertyCert1Fragment extends BaseFragment {
                     tv1.setVisibility(View.GONE);
 
                     String cropPath = mPhotoHelper.getCropFilePath();
-                    String path = ImageUtils.compress(getActivity(), System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
+                    path = ImageUtils.compress(getActivity(), System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
                     //裁剪后的
                     Glide.with(getActivity()).load(new File(path)).into(riv);
                     break;

@@ -1,18 +1,21 @@
-package com.ysxsoft.lock.models.response;
+package com.ysxsoft.lock.models.response.resp;
 
 /**
-* 忘记密码
-* create by Sincerly on 9999/9/9 0009
-**/
-public class ForgetPwdResponse{
+ * Create By 胡
+ * on 2019/12/27 0027
+ */
+public class CommentResponse {
+
 
     /**
      * msg : 操作成功
      * code : 200
+     * data : false
      */
 
     private String msg;
     private String code;
+    private boolean data;
 
     public String getMsg() {
         return msg;
@@ -28,5 +31,13 @@ public class ForgetPwdResponse{
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public boolean isData() {
+        return data;
+    }
+
+    public void setData(boolean data) {
+        this.data = data;
     }
 }
