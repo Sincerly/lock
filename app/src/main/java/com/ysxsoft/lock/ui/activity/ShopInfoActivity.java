@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,10 +21,16 @@ import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
+import com.ysxsoft.common_base.utils.KeyBoardUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.TimeUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
+import com.ysxsoft.common_base.view.custom.picker.CitySelectPicker;
+import com.ysxsoft.common_base.view.custom.picker.TwoPicker;
+import com.ysxsoft.common_base.view.dialog.BaseInputCenterDialog;
 import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -33,6 +40,7 @@ import com.ysxsoft.lock.models.response.ShopInfoResponse;
 import com.ysxsoft.lock.net.Api;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -87,6 +95,9 @@ public class ShopInfoActivity extends BaseActivity {
     EditText etPhone;
     @BindView(R.id.tvOk)
     TextView tvOk;
+    @BindView(R.id.tvday)
+    TextView tvday;
+
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
@@ -106,6 +117,7 @@ public class ShopInfoActivity extends BaseActivity {
         super.doWork();
         initTitle();
         initPhotoHelper();
+        request();
     }
 
     private void initPhotoHelper() {
@@ -132,8 +144,16 @@ public class ShopInfoActivity extends BaseActivity {
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("商户信息");
     }
+    private String day1;
+    private String day2;
+    private String time1;
+    private String time2;
 
-    @OnClick({R.id.backLayout, R.id.LL1, R.id.tvShopName, R.id.tvSaleType, R.id.tvWorkTime, R.id.tvShopAddress, R.id.tvOk})
+    private String p;
+    private String c;
+    private String d;
+
+    @OnClick({R.id.backLayout, R.id.LL1, R.id.tvShopName, R.id.tvSaleType, R.id.tvWorkTime, R.id.tvShopAddress, R.id.tvday, R.id.tvOk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
@@ -143,14 +163,136 @@ public class ShopInfoActivity extends BaseActivity {
                 choicePhotoWrapper();
                 break;
             case R.id.tvShopName:
+                BaseInputCenterDialog dialog = new BaseInputCenterDialog(this, R.style.CenterDialogStyle);
+                dialog.initTitle("店铺名称");
+                dialog.initTips("请输入店铺名称");
+                dialog.initContent(tvShopName.getText().toString());
+                dialog.setListener(new BaseInputCenterDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure(String nickname) {
+                        //点击了确定
+                        tvShopName.setText(nickname);
+                    }
+                });
+                dialog.showDialog();
                 break;
             case R.id.tvSaleType:
+                BaseInputCenterDialog dialog1 = new BaseInputCenterDialog(this, R.style.CenterDialogStyle);
+                dialog1.initTitle("主营类目");
+                dialog1.initTips("请输入主营类目");
+                dialog1.initContent(tvShopName.getText().toString());
+                dialog1.setListener(new BaseInputCenterDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure(String nickname) {
+                        //点击了确定
+                        tvSaleType.setText(nickname);
+                    }
+                });
+                dialog1.showDialog();
+                break;
+            case R.id.tvday:
+                ArrayList<String> days = new ArrayList<>();
+                days.add("周一");
+                days.add("周二");
+                days.add("周三");
+                days.add("周四");
+                days.add("周五");
+                days.add("周六");
+                days.add("周日");
+                TwoPicker twoPicker = new TwoPicker(mContext, R.style.BottomDialogStyle);
+                twoPicker.setData(days,days,0,0);
+                twoPicker.setListener(new TwoPicker.OnDialogSelectListener() {
+                    @Override
+                    public void OnSelect(String data1, int position1, String data2, int position2) {
+                        day1 = data1;
+                        day2 = data2;
+                        tvday.setText(data1+"——"+data2);
+                    }
+                });
+                twoPicker.setTitle("请选择星期");
+                twoPicker.showDialog();
                 break;
             case R.id.tvWorkTime:
+                ArrayList<String> times = new ArrayList<>();
+                times.add("1:00");
+                times.add("1:30");
+                times.add("2:00");
+                times.add("2:30");
+                times.add("3:00");
+                times.add("3:30");
+                times.add("4:00");
+                times.add("4:30");
+                times.add("5:00");
+                times.add("5:30");
+                times.add("6:00");
+                times.add("6:30");
+                times.add("7:00");
+                times.add("7:30");
+                times.add("8:00");
+                times.add("8:30");
+                times.add("9:00");
+                times.add("9:30");
+                times.add("10:00");
+                times.add("10:30");
+                times.add("11:00");
+                times.add("11:30");
+                times.add("12:00");
+                times.add("12:30");
+                times.add("13:00");
+                times.add("13:30");
+                times.add("14:00");
+                times.add("14:30");
+                times.add("15:00");
+                times.add("15:30");
+                times.add("16:00");
+                times.add("16:30");
+                times.add("17:00");
+                times.add("17:30");
+                times.add("18:00");
+                times.add("18:30");
+                times.add("19:00");
+                times.add("19:30");
+                times.add("20:00");
+                times.add("20:30");
+                times.add("21:00");
+                times.add("21:30");
+                times.add("22:00");
+                times.add("22:30");
+                times.add("23:00");
+                times.add("23:30");
+                times.add("00:00");
+
+                TwoPicker timesPicker = new TwoPicker(mContext, R.style.BottomDialogStyle);
+                timesPicker.setData(times,times,0,0);
+                timesPicker.setListener(new TwoPicker.OnDialogSelectListener() {
+                    @Override
+                    public void OnSelect(String data1, int position1, String data2, int position2) {
+                        time1 = data1;
+                        time2 = data2;
+                        tvWorkTime.setText(data1+"——"+data2);
+                    }
+                });
+                timesPicker.setTitle("请选择时间");
+                timesPicker.showDialog();
+
                 break;
             case R.id.tvShopAddress:
+                KeyBoardUtils.hideInputMethod(this);
+                CitySelectPicker cityPicker = new CitySelectPicker();
+                cityPicker.initData(this);
+                cityPicker.setListener(new CitySelectPicker.OnCityPickerClickListener() {
+                    @Override
+                    public void onSelect(String province, String city, String district) {
+                        p = province;
+                        c = city;
+                        d = district;
+                        tvShopAddress.setText(p + c + d);
+                    }
+                });
+                cityPicker.show();
                 break;
             case R.id.tvOk:
+//                submintData()
                 CheckSucessActivity.start();
                 break;
         }
@@ -183,8 +325,8 @@ public class ShopInfoActivity extends BaseActivity {
     public void request() {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
-                .url(Api.GET_SHOP_INFO)
-                .addParams("uid", SharedPreferencesUtils.getUid(ShopInfoActivity.this))
+                .url(Api.SHOP_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -200,8 +342,7 @@ public class ShopInfoActivity extends BaseActivity {
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
-//                                    List<ShopInfoResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
+//
 //                                } else {
 //                                    //请求失败
 //                                    showToast(resp.getMsg());
@@ -247,7 +388,7 @@ public class ShopInfoActivity extends BaseActivity {
     }
 
     private void EditShopLogo(String path) {
-        if (TextUtils.isEmpty(path)){
+        if (TextUtils.isEmpty(path)) {
             showToast("店铺Logo不能为空");
             return;
         }
@@ -269,7 +410,7 @@ public class ShopInfoActivity extends BaseActivity {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
                             showToast(resp.getMsg());
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 Glide.with(mContext).load(new File(path)).into(logo);
                             }
                         }

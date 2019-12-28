@@ -12,6 +12,7 @@ import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -86,10 +87,50 @@ public class ShopCenterActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tvApplyShop:
-                ShopAuthenticationActivity.start();
-                finish();
+                IsAuth();
                 break;
         }
+    }
+
+    private void IsAuth() {
+        OkHttpUtils.post()
+                .url(Api.IS_AUTH)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            switch (resp.getCode()) {
+                                case "200":
+                                    ShopAuthenticationActivity.start();
+                                    finish();
+                                    break;
+                                case "201":
+                                    showToast("实名认证审核中");
+                                    break;
+                                case "202":
+                                    showToast("实名认证审核失败");
+                                    break;
+                                case "203":
+                                    CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {
+                                        @Override
+                                        public void sure() {
+                                            IdcardCertActivity.start();
+                                        }
+                                    });
+                                    break;
+                            }
+                        }
+                    }
+                });
     }
 
 

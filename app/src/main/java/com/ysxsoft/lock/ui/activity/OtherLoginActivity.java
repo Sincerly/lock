@@ -112,7 +112,7 @@ public class OtherLoginActivity extends BaseActivity {
                 break;
 
             case R.id.forgetPwd:
-                ForgetPwdActivity.start();
+                ForgetPwdActivity.start("1");
                 break;
 
             case R.id.regist:

@@ -76,6 +76,8 @@ public class StartAdServingActivity extends BaseActivity {
     TextView tvStartTime;
     @BindView(R.id.tvEndTime)
     TextView tvEndTime;
+    @BindView(R.id.tvTime)
+    TextView tvTime;
 
     private RBaseAdapter<String> adapter;
 
@@ -196,12 +198,27 @@ public class StartAdServingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.backLayout, R.id.tvStartTime, R.id.tvEndTime, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.tvTime, R.id.tvStartTime, R.id.tvEndTime, R.id.tvOk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
+
+            case R.id.tvTime:
+                //时间选择器
+                DateYMDPicker date = new DateYMDPicker();
+                date.init(mContext);
+                date.show(new DateYMDPicker.OnSelectedListener() {
+                    @Override
+                    public void onSelected(Date date) {
+                        SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
+                        String format = dateFormat3.format(date);
+                        tvTime.setText(format);
+                    }
+                });
+                break;
+
             case R.id.tvStartTime:
                 //时间选择器
                 DateYMDPicker dateYMDPicker = new DateYMDPicker();

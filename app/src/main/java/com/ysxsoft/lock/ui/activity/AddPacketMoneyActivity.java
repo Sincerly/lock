@@ -15,9 +15,11 @@ import android.widget.Toast;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.picker.DateYMDPicker;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -98,6 +100,7 @@ public class AddPacketMoneyActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        request();
     }
 
     private void initTitle() {
@@ -161,9 +164,47 @@ public class AddPacketMoneyActivity extends BaseActivity {
                 });
                 break;
             case R.id.tvOk:
-                showToast("确认添加");
+                submintData();
                 break;
         }
+    }
+
+    private void submintData() {
+        showLoadingDialog("请求中");
+        OkHttpUtils.post()
+                .url(Api.ADD_CARD)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("type", "1")//1=现金券 2=团购套餐 3=体验套餐 4=会员卡
+                .addParams("price", etYhq.getText().toString().trim())
+                .addParams("oprice", etUseTJ.getText().toString().trim())
+                .addParams("collar", etMoneyZL.getText().toString().trim())
+                .addParams("title", etName.getText().toString().trim())
+                .addParams("remark", etInputRules.getText().toString().trim())
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                finish();
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("获取意见反馈失败");
+                        }
+                    }
+                });
     }
 
     public void request() {

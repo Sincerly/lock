@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -77,9 +78,11 @@ public class ForgetPwdActivity extends BaseActivity {
     TextView tvOk;
     private boolean isRunning = false;
     private GetCodeTimerUtils utils;
+    @Autowired
+    String type;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getForgetPwdActivity()).navigation();
+    public static void start(String type) {
+        ARouter.getInstance().build(ARouterPath.getForgetPwdActivity()).withString("type",type).navigation();
     }
 
     @Override
@@ -90,6 +93,7 @@ public class ForgetPwdActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
         utils = GetCodeTimerUtils.getInstance();
     }
@@ -98,7 +102,15 @@ public class ForgetPwdActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("忘记密码");
+        switch (type){
+            case "1":
+                title.setText("忘记密码");
+                break;
+            case "2":
+                title.setText("修改密码");
+                break;
+        }
+
     }
 
     @OnClick({R.id.backLayout, R.id.sendMsg, R.id.ivClose, R.id.tvOk})

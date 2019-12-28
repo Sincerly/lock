@@ -20,8 +20,11 @@ import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
+import com.ysxsoft.common_base.view.dialog.BaseInputCenterDialog;
 import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.dialog.CheckLoginOutDialog;
+import com.ysxsoft.lock.utils.ClearCacheManagerUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -97,6 +100,7 @@ public class SettingActivity extends BaseActivity {
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
     public static final int REQUEST_CODE_CROP = 0x02;
+    private String cacheSize;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getSettingActivity()).navigation();
@@ -110,6 +114,12 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        try {
+            cacheSize = ClearCacheManagerUtils.getTotalCacheSize(mContext);
+            tvMemery.setText(cacheSize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initTitle();
         initPhotoHelper();
     }
@@ -152,25 +162,75 @@ public class SettingActivity extends BaseActivity {
                 EditInfoActivity.start();
                 break;
             case R.id.LL3:
+                BaseInputCenterDialog dialog = new BaseInputCenterDialog(this, R.style.CenterDialogStyle);
+                dialog.initTitle("个性签名");
+                dialog.initTips("请输入个性签名");
+                dialog.initContent(autograph.getText().toString());
+                dialog.setListener(new BaseInputCenterDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure(String nickname) {
+                        //点击了确定
+                        editSign(nickname);
+                    }
+                });
+                dialog.showDialog();
                 break;
             case R.id.LL4:
-                ForgetPwdActivity.start();
+                ForgetPwdActivity.start("2");
                 break;
             case R.id.LL5:
+                ClearCacheManagerUtils.clearAllCache(mContext);
+                tvMemery.setText("0MB");
+                showToast("清理缓存成功");
                 break;
             case R.id.LL6:
                 AboutMeActivity.start();
                 break;
             case R.id.LoginOut:
-                LoginOutData();
+                CheckLoginOutDialog.show(mContext, new CheckLoginOutDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure() {
+                        LoginOutData();
+                    }
+                });
                 break;
         }
+    }
+
+    private void editSign(String nickname) {
+        showLoadingDialog("请求中");
+        OkHttpUtils.post()
+                .url(Api.EDIT_SIGN)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("grap", nickname)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                autograph.setText(nickname);
+                            }
+                        }
+                    }
+                });
+
+
     }
 
     private void LoginOutData() {
         OkHttpUtils.post()
                 .url(Api.LOGOUT)
-                .addHeader("Authorization",SharedPreferencesUtils.getToken(mContext))
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                 .tag(this)
                 .build()
 
@@ -183,8 +243,8 @@ public class SettingActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         CommentResponse gson = JsonUtils.parseByGson(response, CommentResponse.class);
-                        if (gson!=null){
-                            if (HttpResponse.SUCCESS.equals(gson.getCode())){
+                        if (gson != null) {
+                            if (HttpResponse.SUCCESS.equals(gson.getCode())) {
                                 toLogin();
                             }
                         }
@@ -284,8 +344,8 @@ public class SettingActivity extends BaseActivity {
     private void EditHead(String path) {
         OkHttpUtils.post()
                 .url(Api.EDIT_LOGO)
-                .addHeader("Authorization",SharedPreferencesUtils.getToken(mContext))
-                .addFile("headimg",new File(path).getName(),new File(path))
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addFile("headimg", new File(path).getName(), new File(path))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -297,8 +357,8 @@ public class SettingActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                        if (resp!=null){
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 Glide.with(mContext).load(new File(path)).into(ivAvatar);
                             }
                         }

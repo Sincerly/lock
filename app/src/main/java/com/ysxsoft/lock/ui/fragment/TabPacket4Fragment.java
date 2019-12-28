@@ -134,7 +134,7 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
 //        helper.setText(R.id.tv1,"");
 //        helper.setText(R.id.tv2,"");
 //        helper.setText(R.id.tv3,"");
-        switch (helper.getAdapterPosition() % 3) {
+        switch (helper.getAdapterPosition() % 4) {
             case 0:
                 ivbg.setBackgroundResource(R.mipmap.icon_vip1);
                 break;
@@ -143,6 +143,9 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter {
                 break;
             case 2:
                 ivbg.setBackgroundResource(R.mipmap.icon_vip3);
+                break;
+            case 3:
+                ivbg.setBackgroundResource(R.mipmap.icon_vip_gray);
                 break;
         }
     }

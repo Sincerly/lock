@@ -154,8 +154,6 @@ public class UserInfoActivity extends BaseActivity {
                                     });
                                     break;
                             }
-                        } else {
-                            showToast("获取意见反馈失败");
                         }
                     }
                 });
@@ -199,6 +197,7 @@ public class UserInfoActivity extends BaseActivity {
                 break;
             case R.id.tv9://广告中心
                 showToast("广告中心");
+                ShopInfoActivity.start();
                 break;
             case R.id.tv10:
                 FeedBackActivity.start();
