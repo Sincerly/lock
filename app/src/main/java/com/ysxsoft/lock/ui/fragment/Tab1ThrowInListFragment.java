@@ -9,13 +9,18 @@ import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
+import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.ThrowInListResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.ThrowInMoneyRecordActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,7 +34,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * Create By 胡
  * on 2019/12/30 0030
  */
-public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapter {
+public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapter<ThrowInListResponse.DataBean> {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.multipleStatusView)
@@ -67,12 +72,15 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
+        if (false) {
             debug(manager);
         } else {
             OkHttpUtils.post()
-//                    .url(Api.)
+                    .url(Api.TOU_HISTORY)
                     .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                    .addParams("type", "1")
+                    .addParams("pageNum", String.valueOf(page))
+                    .addParams("pageSize", "10")
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
@@ -83,14 +91,23 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
 
                         @Override
                         public void onResponse(String response, int id) {
-
+                            ThrowInListResponse resp = JsonUtils.parseByGson(response, ThrowInListResponse.class);
+                            if (resp != null) {
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                    List<ThrowInListResponse.DataBean> data = resp.getData();
+                                    manager.setData(data);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
+                            }
                         }
                     });
         }
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, Object o) {
+    public void fillView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
         TextView tv1 = helper.getView(R.id.tv1);
         TextView tvMoney = helper.getView(R.id.tvMoney);
         TextView tvMj = helper.getView(R.id.tvMj);
@@ -99,7 +116,12 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
         TextView tvSumNum = helper.getView(R.id.tvSumNum);
         TextView tvStatus = helper.getView(R.id.tvStatus);
 
-        if (helper.getAdapterPosition()%2==0){
+        tvName.setText(o.getTitle());
+        tvCurrentNum.setText(o.getYs_num());
+        tvSumNum.setText(o.getTotal_num());
+
+
+        if (helper.getAdapterPosition() % 2 == 0) {
             tv1.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
             tvMoney.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
             tvName.setTextColor(getActivity().getResources().getColor(R.color.color_282828));
@@ -107,7 +129,7 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
             tvSumNum.setTextColor(getActivity().getResources().getColor(R.color.color_282828));
             tvStatus.setTextColor(getActivity().getResources().getColor(R.color.color_3BB0D2));
             tvStatus.setText("未结束");
-        }else {
+        } else {
             tv1.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
             tvMoney.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
             tvName.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
@@ -119,7 +141,7 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, Object o) {
+    public void fillMuteView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
 
     }
 

@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
@@ -29,6 +31,7 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.ShopInfoResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.fragment.TabShopManager1Fragment;
@@ -88,15 +91,55 @@ public class ShopManagerActivity extends BaseActivity {
     @BindView(R.id.tv4)
     TextView tv4;
 
+    private String business_id;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopManagerActivity()).navigation();
     }
 
     @Override
+    public void doWork() {
+        super.doWork();
+        initTitle();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         requestData();
+        tabLayout.removeAllTabs();
+        List<Fragment> fragmentList = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+        titles.add("现金券");
+        titles.add("团购套餐");
+        titles.add("免费体验");
+        titles.add("会员卡");
+        TabShopManager1Fragment tabShopManager1Fragment = new TabShopManager1Fragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("business_id", business_id);
+        tabShopManager1Fragment.setArguments(bundle);
+        fragmentList.add(tabShopManager1Fragment);
+
+        TabShopManager2Fragment tabShopManager2Fragment = new TabShopManager2Fragment();
+        Bundle bundle2 = new Bundle();
+        bundle2.putString("business_id", business_id);
+        tabShopManager2Fragment.setArguments(bundle2);
+        fragmentList.add(tabShopManager2Fragment);
+
+
+        TabShopManager3Fragment tabShopManager3Fragment = new TabShopManager3Fragment();
+        Bundle bundle3 = new Bundle();
+        bundle3.putString("business_id", business_id);
+        tabShopManager3Fragment.setArguments(bundle3);
+        fragmentList.add(tabShopManager3Fragment);
+
+        TabShopManager4Fragment tabShopManager4Fragment = new TabShopManager4Fragment();
+        Bundle bundle4 = new Bundle();
+        bundle4.putString("business_id", business_id);
+        tabShopManager4Fragment.setArguments(bundle4);
+        fragmentList.add(tabShopManager4Fragment);
+        initViewPage(fragmentList, titles);
+        initTabLayout(titles);
     }
 
     private void requestData() {
@@ -117,15 +160,18 @@ public class ShopManagerActivity extends BaseActivity {
                         hideLoadingDialog();
                         ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
                         if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                            Glide.with(mContext).load("").into(civ);
-//                            tvName.setText("");
-//                            tvType.setText("主营类目：");
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                if (resp.getData()!=null) {
+                                    business_id = resp.getData().getId();
+                                    //请求成功
+                                    Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(civ);
+                                    tvName.setText(resp.getData().getName());
+                                    tvType.setText("主营类目：" + resp.getData().getMainbusiness());
+                                }
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
                         } else {
                             showToast("获取商户信息失败");
                         }
@@ -172,25 +218,6 @@ public class ShopManagerActivity extends BaseActivity {
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("店铺管理");
-    }
-
-    @Override
-    public void doWork() {
-        super.doWork();
-        initTitle();
-        tabLayout.removeAllTabs();
-        List<Fragment> fragmentList = new ArrayList<>();
-        List<String> titles = new ArrayList<>();
-        titles.add("现金券");
-        titles.add("团购套餐");
-        titles.add("免费体验");
-        titles.add("会员卡");
-        fragmentList.add(new TabShopManager1Fragment());
-        fragmentList.add(new TabShopManager2Fragment());
-        fragmentList.add(new TabShopManager3Fragment());
-        fragmentList.add(new TabShopManager4Fragment());
-        initViewPage(fragmentList, titles);
-        initTabLayout(titles);
     }
 
     private void initViewPage(List<Fragment> fragmentList, List<String> titles) {

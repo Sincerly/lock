@@ -84,6 +84,7 @@ public class ApplyKeyActivity extends BaseActivity {
     private List<ListfloorDataResponse.DataBean> listFloors;
     private String floor_id;
     private String unit_id;
+    private List<ListUnitResponse.DataBean> unitDatas;
 
     public static void start(String requid) {
         ARouter.getInstance().build(ARouterPath.getApplyKeyActivity()).withString("requid", requid).navigation();
@@ -137,11 +138,17 @@ public class ApplyKeyActivity extends BaseActivity {
                     return;
                 }
                 ArrayList<String> strings1 = new ArrayList<>();
+
+                for (int i = 0; i < unitDatas.size(); i++) {
+                    strings1.add(unitDatas.get(i).getFloor_name());
+                }
+
                 RidgepoleSelectDialog ridgepoleSelectDialog1 = new RidgepoleSelectDialog(mContext, R.style.CenterDialogStyle);
                 ridgepoleSelectDialog1.setTitle("单元选择");
                 ridgepoleSelectDialog1.setData(strings1, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1) {
+                        unit_id = unitDatas.get(position1).getId();
                         tv2.setText(data1);
                     }
                 });
@@ -169,8 +176,8 @@ public class ApplyKeyActivity extends BaseActivity {
         OkHttpUtils.post()
                 .url(Api.SAVE_INFO)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("floor_id",floor_id)
-                .addParams("unit_id",unit_id)
+                .addParams("floor_id", floor_id)
+                .addParams("unit_id", unit_id)
                 .addParams("room", et1.getText().toString().trim())
                 .tag(this)
                 .build()
@@ -183,9 +190,9 @@ public class ApplyKeyActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                        if (resp!=null){
+                        if (resp != null) {
                             showToast(resp.getMsg());
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 finish();
                             }
                         }
@@ -230,7 +237,9 @@ public class ApplyKeyActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         ListUnitResponse resp = JsonUtils.parseByGson(response, ListUnitResponse.class);
                         if (resp != null) {
-
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                unitDatas = resp.getData();
+                            }
                         }
                     }
                 });

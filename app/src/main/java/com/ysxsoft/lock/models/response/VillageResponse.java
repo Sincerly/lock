@@ -54,6 +54,16 @@ public class VillageResponse {
         private String id;
         private String quarters_name;
         private String address;
+
+        public String getImg() {
+            return img;
+        }
+
+        public void setImg(String img) {
+            this.img = img;
+        }
+
+        private String img;
         private String lat;
         private String lng;
 
