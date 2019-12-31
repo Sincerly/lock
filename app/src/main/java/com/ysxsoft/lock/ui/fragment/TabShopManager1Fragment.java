@@ -40,6 +40,7 @@ import com.ysxsoft.lock.ui.activity.CheckRecordActivity;
 import com.ysxsoft.lock.ui.activity.CheckSucessActivity;
 import com.ysxsoft.lock.ui.activity.HelpActivity;
 import com.ysxsoft.lock.ui.activity.StartAdServingActivity;
+import com.ysxsoft.lock.ui.activity.ThrowInListActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -66,7 +67,11 @@ public class TabShopManager1Fragment extends BaseFragment {
 
     @BindView(R.id.FL1)
     FrameLayout FL1;
+    @BindView(R.id.FL2)
+    FrameLayout FL2;
+
     List<String> groups = new ArrayList<>();
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_tabshopmanager1;
@@ -91,7 +96,7 @@ public class TabShopManager1Fragment extends BaseFragment {
                 setNormalItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
                 setNormalItem.setBackgroundColor(Color.parseColor("#F9596C"));
                 setNormalItem.setTextSize(12);
-                setNormalItem.setText("删除\n" +"卡券" );
+                setNormalItem.setText("删除\n" + "卡券");
                 setNormalItem.setTextColor(Color.parseColor("#FFFFFF"));
                 rightMenu.addMenuItem(setNormalItem);
             }
@@ -120,6 +125,25 @@ public class TabShopManager1Fragment extends BaseFragment {
 //                holder.setText(R.id.tvNum,"");
 //                holder.setText(R.id.tvSum,"");
 //                holder.setText(R.id.tvTime,"");
+                TextView tvStatus = holder.getView(R.id.tvStatus);
+                switch (holder.getAdapterPosition() % 4) {
+                    case 0:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                        tvStatus.setText("待投中");
+                        break;
+                    case 1:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                        tvStatus.setText("投放结束");
+                        break;
+                    case 2:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                        tvStatus.setText("投放中");
+                        break;
+                    case 3:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                        tvStatus.setText("继续投放");
+                        break;
+                }
             }
 
             @Override
@@ -130,10 +154,13 @@ public class TabShopManager1Fragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
     }
 
-    @OnClick({R.id.FL1})
+    @OnClick({R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.FL1:
+                ThrowInListActivity.start(0);
+                break;
+            case R.id.FL2:
                 AddPacketMoneyActivity.start();
                 break;
         }

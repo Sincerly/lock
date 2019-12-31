@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -23,6 +24,8 @@ import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.ui.dialog.AllDialog;
 import com.ysxsoft.lock.ui.dialog.TodayDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.builder.GetBuilder;
+import com.zhy.http.okhttp.builder.PostFormBuilder;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import com.ysxsoft.lock.ARouterPath;
@@ -84,6 +87,8 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
     private TodayDialog todayDialog;
     private AllDialog allDialog;
     private MyBroadCast myBroadCast;
+
+    private String todayType;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getCheckRecordActivity()).navigation();
@@ -153,6 +158,7 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
         title.setText("核销记录");
     }
 
+
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
 
@@ -174,24 +180,9 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                 todayDialog.init(CheckRecordActivity.this);
                 todayDialog.setOnPopupWindowListener(new TodayDialog.OnPopupWindowListener() {
                     @Override
-                    public void select(int type) {
-                        switch (type) {
-                            case 1:
-                                showToast("今日");
-                                break;
-                            case 2:
-                                showToast("现金券");
-                                break;
-                            case 3:
-                                showToast("团购套餐");
-                                break;
-                            case 4:
-                                showToast("免费体验");
-                                break;
-                            case 5:
-                                showToast("会员卡");
-                                break;
-                        }
+                    public void select(String type) {
+                        todayType = type;
+                        request(1);
                     }
                 });
                 todayDialog.showPopDown(LL1, 0, 0);
@@ -214,25 +205,11 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                 allDialog = new AllDialog();
                 allDialog.init(CheckRecordActivity.this);
                 allDialog.setOnPopupWindowListener(new AllDialog.OnPopupWindowListener() {
+
                     @Override
-                    public void select(int type) {
-                        switch (type) {
-                            case 1:
-                                showToast("全部");
-                                break;
-                            case 2:
-                                showToast("现金券");
-                                break;
-                            case 3:
-                                showToast("团购套餐");
-                                break;
-                            case 4:
-                                showToast("免费体验");
-                                break;
-                            case 5:
-                                showToast("会员卡");
-                                break;
-                        }
+                    public void select(String type) {
+                        todayType = type;
+                        request(1);
                     }
                 });
                 allDialog.showPopDown(LL1, 0, 0);
@@ -245,7 +222,6 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                 }
                 tvToday.setCompoundDrawables(null, null, down, null);
                 tvToday.setTextColor(getResources().getColor(R.color.color_282828));
-
                 break;
         }
     }
@@ -261,9 +237,15 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
             debug(manager);
         } else {
             showLoadingDialog("请求中");
-            OkHttpUtils.post()
-                    .url(Api.GET_CHECK_RECORD)
-                    .addParams("uid", SharedPreferencesUtils.getUid(CheckRecordActivity.this))
+            GetBuilder getBuilder = OkHttpUtils.get().url(Api.HX_HISTORY);
+            getBuilder.addHeader("Authorization", SharedPreferencesUtils.getToken(mContext));
+            if (TextUtils.equals("true",todayType)||TextUtils.equals("false",todayType)){
+                getBuilder.addParams("today", todayType);
+            }else {
+                getBuilder.addParams("type", todayType);
+            }
+            getBuilder.addParams("pageNum", String.valueOf(page))
+                    .addParams("pageSize", "10")
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {

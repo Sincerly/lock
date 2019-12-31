@@ -44,40 +44,45 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select(1);
+                        listener.select("true");
                     }
+                    dismiss();
                 }
             });
             tv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select(2);
+                        listener.select("1");
                     }
+                    dismiss();
                 }
             });
             tv3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select(3);
+                        listener.select("2");
                     }
+                    dismiss();
                 }
             });
             tv4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select(4);
+                        listener.select("3");
                     }
+                    dismiss();
                 }
             });
             tv5.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select(5);
+                        listener.select("4");
                     }
+                    dismiss();
                 }
             });
             popupWindow = new PopupWindow(view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -117,6 +122,6 @@ public class TodayDialog {
     }
 
     public interface OnPopupWindowListener {
-        void select(int type);
+        void select(String  type);
     }
 }

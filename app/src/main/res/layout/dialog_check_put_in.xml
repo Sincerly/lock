@@ -14,9 +14,9 @@
         android:layout_weight="1">
 
         <LinearLayout
-            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
@@ -25,22 +25,57 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/dp_16"
                 android:layout_marginRight="@dimen/dp_16"
-                android:text="确认投放"
                 android:gravity="center"
                 android:paddingLeft="@dimen/dp_8"
-                android:textStyle="bold"
                 android:paddingRight="@dimen/dp_8"
+                android:text="确认投放"
                 android:textColor="@color/color_282828"
-                android:textSize="@dimen/sp_16"/>
+                android:textSize="@dimen/sp_16"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="本次投放消费"
+                    android:textColor="@color/color_999999"
+                    android:textSize="@dimen/sp_13" />
+
+                <TextView
+                    android:id="@+id/tvNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="2000点"
+                    android:textColor="@color/colorRed"
+                    android:textSize="@dimen/sp_13" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="，投放后将不可"
+                    android:textColor="@color/color_999999"
+                    android:textSize="@dimen/sp_13" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="投放后将不可撤销，是否立即投放"
-                android:textSize="@dimen/sp_13"
-                android:layout_marginTop="@dimen/dp_20"
                 android:gravity="center_horizontal"
-                android:textColor="@color/color_999999"/>
+                android:text="撤销，请确认是否投放？"
+                android:textColor="@color/color_999999"
+                android:textSize="@dimen/sp_13" />
+
 
         </LinearLayout>
 
@@ -65,11 +100,11 @@
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:paddingBottom="@dimen/dp_8"
             android:paddingTop="@dimen/dp_8"
+            android:paddingBottom="@dimen/dp_8"
             android:text="取消"
-            android:textSize="@dimen/sp_14"
-            android:textColor="@color/color_282828" />
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_14" />
 
         <View
             android:layout_width="@dimen/dp_1"
@@ -85,10 +120,10 @@
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:paddingBottom="@dimen/dp_8"
             android:paddingTop="@dimen/dp_8"
-            android:textSize="@dimen/sp_14"
+            android:paddingBottom="@dimen/dp_8"
             android:text="确定"
-            android:textColor="@color/color_3BB0D2" />
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_14" />
     </LinearLayout>
 </LinearLayout>

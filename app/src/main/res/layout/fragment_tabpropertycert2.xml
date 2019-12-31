@@ -8,7 +8,7 @@
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="@dimen/dp_10"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="@dimen/dp_20"
         android:minHeight="200dp"
@@ -18,7 +18,8 @@
             android:id="@+id/riv"
             app:radius="@dimen/dp_10"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
             android:visibility="gone" />
 
         <TextView

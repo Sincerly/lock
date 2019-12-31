@@ -35,6 +35,7 @@ import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.ui.activity.AddPacketExperienceActivity;
 import com.ysxsoft.lock.ui.activity.AddPacketVipActivity;
+import com.ysxsoft.lock.ui.activity.ThrowInListActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -44,6 +45,7 @@ import java.util.List;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.net.Api;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -51,7 +53,6 @@ import okhttp3.Call;
 import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
 
 /**
- * 
  * create by Sincerly on 9999/9/9 0009
  **/
 public class TabShopManager4Fragment extends BaseFragment {
@@ -60,7 +61,11 @@ public class TabShopManager4Fragment extends BaseFragment {
 
     @BindView(R.id.FL1)
     FrameLayout FL1;
+    @BindView(R.id.FL2)
+    FrameLayout FL2;
+
     List<String> groups = new ArrayList<>();
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_tabshopmanager4;
@@ -71,7 +76,7 @@ public class TabShopManager4Fragment extends BaseFragment {
         initList(view);
     }
 
-    private void initList(View view){
+    private void initList(View view) {
         for (int i = 0; i < 5; i++) {
             groups.add(String.valueOf(i));
         }
@@ -85,7 +90,7 @@ public class TabShopManager4Fragment extends BaseFragment {
                 setNormalItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
                 setNormalItem.setBackgroundColor(Color.parseColor("#F9596C"));
                 setNormalItem.setTextSize(12);
-                setNormalItem.setText("删除\n" +"卡券" );
+                setNormalItem.setText("删除\n" + "卡券");
                 setNormalItem.setTextColor(Color.parseColor("#FFFFFF"));
                 rightMenu.addMenuItem(setNormalItem);
             }
@@ -112,6 +117,25 @@ public class TabShopManager4Fragment extends BaseFragment {
 //                holder.setText(R.id.tvNum,"");
 //                holder.setText(R.id.tvSum,"");
 //                holder.setText(R.id.tvTime,"");
+                TextView tvStatus = holder.getView(R.id.tvStatus);
+                switch (holder.getAdapterPosition() % 4) {
+                    case 0:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                        tvStatus.setText("待投中");
+                        break;
+                    case 1:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                        tvStatus.setText("投放结束");
+                        break;
+                    case 2:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                        tvStatus.setText("投放中");
+                        break;
+                    case 3:
+                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                        tvStatus.setText("继续投放");
+                        break;
+                }
             }
 
             @Override
@@ -122,10 +146,13 @@ public class TabShopManager4Fragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
     }
 
-    @OnClick({R.id.FL1})
+    @OnClick({R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.FL1:
+                ThrowInListActivity.start(3);
+                break;
+            case R.id.FL2:
                 AddPacketVipActivity.start();
                 break;
         }

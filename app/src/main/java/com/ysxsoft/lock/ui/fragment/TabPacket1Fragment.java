@@ -114,13 +114,7 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //HomeArticleResponse.DataBean item = (HomeArticleResponse.DataBean) adapter.getItem(position);
-                //if ("1".equals(item.getStyle())) {
-                //    //有视频的
-                //   ARouter.getInstance().build(ARouterPath.getPlayActivity()).withString("nid", "" + item.getNid()).withBoolean("isFriendCircle", true).navigation();
-                //} else {
-                //   //无视频的
-                //   ARouter.getInstance().build(ARouterPath.getArticleDetailActivity()).withString("nid", "" + item.getNid()).withString("tname", "帖子").withBoolean("isFriendCircle", true).navigation();
-                //}
+
             }
         });
         request(1);
@@ -176,12 +170,19 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
 //        helper.setText(R.id.tv4, "");
 //        helper.setText(R.id.tv5, "");
 //        helper.setText(R.id.tv6, "");
+        TextView tv1 = helper.getView(R.id.tv1);
+        TextView tv2 = helper.getView(R.id.tv2);
+        TextView tv3 = helper.getView(R.id.tv3);
         TextView tv5 = helper.getView(R.id.tv5);
         TextView tv6 = helper.getView(R.id.tv6);
         ImageView iv1 = helper.getView(R.id.iv1);
         CardView cv1 = helper.getView(R.id.cv1);
 //        helper.setText(R.id.tv7, "");
         if (helper.getAdapterPosition() % 2 == 0) {
+            tv1.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
+            tv2.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
+            tv3.setTextColor(getActivity().getResources().getColor(R.color.color_282828));
+            tv5.setTextColor(getActivity().getResources().getColor(R.color.color_282828));
             tv6.setVisibility(View.VISIBLE);
             iv1.setVisibility(View.GONE);
 
@@ -193,6 +194,12 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
             });
 
         } else {
+
+            tv1.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
+            tv2.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
+            tv3.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
+            tv5.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
+
             tv6.setVisibility(View.GONE);
             iv1.setVisibility(View.VISIBLE);
             iv1.setOnClickListener(new View.OnClickListener() {

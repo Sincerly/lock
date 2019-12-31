@@ -10,7 +10,7 @@ public class AppConfig {
     public static final String PHOTO_CACHE_PATH = BASE_PATH + "/image/cache";
     public static final String PHOTO_PATH = BASE_PATH + "/image/";
     public static final String APK_URL = BASE_PATH + "/apk/";
-    public static final String BASE_URL = "http://alaing.cn/admin.php/";
+    public static final String BASE_URL = "http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/";
     public static final boolean IS_DEBUG_ENABLED = true;
     public static AppConfig INSTANCE;
 

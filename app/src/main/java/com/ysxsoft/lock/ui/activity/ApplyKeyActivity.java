@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.dh.bluelock.object.LEDevice;
@@ -16,6 +18,9 @@ import com.dh.bluelock.pub.BlueLockPub;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.utils.JsonUtils;
+import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
@@ -23,12 +28,19 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.models.response.ListUnitResponse;
+import com.ysxsoft.lock.models.response.ListfloorDataResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.dialog.RidgepoleSelectDialog;
 import com.ysxsoft.lock.ui.fragment.TabApplyKey1Fragment;
 import com.ysxsoft.lock.ui.fragment.TabApplyKey2Fragment;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 /**
  * 申请钥匙
@@ -69,8 +81,14 @@ public class ApplyKeyActivity extends BaseActivity {
     @BindView(R.id.et1)
     EditText et1;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getApplyKeyActivity()).navigation();
+    @Autowired
+    String requid;
+    private List<ListfloorDataResponse.DataBean> listFloors;
+    private String floor_id;
+    private String unit_id;
+
+    public static void start(String requid) {
+        ARouter.getInstance().build(ARouterPath.getApplyKeyActivity()).withString("requid", requid).navigation();
     }
 
     @Override
@@ -98,27 +116,30 @@ public class ApplyKeyActivity extends BaseActivity {
                 break;
             case R.id.tv1:
                 ArrayList<String> strings = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    strings.add(i+1+"栋");
+                for (int i = 0; i < listFloors.size(); i++) {
+                    strings.add(listFloors.get(i).getFloor_name());
                 }
-
-                RidgepoleSelectDialog ridgepoleSelectDialog = new RidgepoleSelectDialog(mContext,R.style.CenterDialogStyle);
+                RidgepoleSelectDialog ridgepoleSelectDialog = new RidgepoleSelectDialog(mContext, R.style.CenterDialogStyle);
                 ridgepoleSelectDialog.setTitle("栋数选择");
                 ridgepoleSelectDialog.setData(strings, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1) {
+                        floor_id = listFloors.get(position1).getId();
+                        String requ_id = listFloors.get(position1).getRequ_id();
                         tv1.setText(data1);
+                        tv2.setText("");
+                        requestListUnitData(floor_id);
                     }
                 });
                 ridgepoleSelectDialog.showDialog();
                 break;
             case R.id.tv2:
-                ArrayList<String> strings1 = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    strings1.add(i+1+"单元");
+                if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
+                    showToast("栋选择不能为空");
+                    return;
                 }
-
-                RidgepoleSelectDialog ridgepoleSelectDialog1 = new RidgepoleSelectDialog(mContext,R.style.CenterDialogStyle);
+                ArrayList<String> strings1 = new ArrayList<>();
+                RidgepoleSelectDialog ridgepoleSelectDialog1 = new RidgepoleSelectDialog(mContext, R.style.CenterDialogStyle);
                 ridgepoleSelectDialog1.setTitle("单元选择");
                 ridgepoleSelectDialog1.setData(strings1, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
                     @Override
@@ -129,14 +150,55 @@ public class ApplyKeyActivity extends BaseActivity {
                 ridgepoleSelectDialog1.showDialog();
                 break;
             case R.id.tvOk:
-                finish();
+                if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
+                    showToast("栋选择不能为空");
+                    return;
+                }
+                if (TextUtils.isEmpty(tv2.getText().toString().trim())) {
+                    showToast("单元选择不能为空");
+                    return;
+                }
+                if (TextUtils.isEmpty(et1.getText().toString().trim())) {
+                    showToast("房号选择不能为空");
+                    return;
+                }
+                submitData();
                 break;
         }
+    }
+
+    private void submitData() {
+        OkHttpUtils.post()
+                .url(Api.SAVE_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("floor_id",floor_id)
+                .addParams("unit_id",unit_id)
+                .addParams("room", et1.getText().toString().trim())
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp!=null){
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                finish();
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
 //        tabLayout.removeAllTabs();
 //        List<Fragment> fragmentList = new ArrayList<>();
@@ -147,7 +209,63 @@ public class ApplyKeyActivity extends BaseActivity {
 //        fragmentList.add(new TabApplyKey2Fragment());
 //        initViewPage(fragmentList, titles);
 //        initTabLayout(titles);
+        requestListfloorData();
     }
+
+    /**
+     * 获取小区楼栋单元信息
+     */
+    private void requestListUnitData(String floor_id) {
+        OkHttpUtils.get()
+                .url(Api.GET_FLOOR_CHILD_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("floorid", floor_id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        ListUnitResponse resp = JsonUtils.parseByGson(response, ListUnitResponse.class);
+                        if (resp != null) {
+
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 获取小区楼栋信息
+     */
+    private void requestListfloorData() {
+        OkHttpUtils.get()
+                .url(Api.GET_FLOOR_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("requid", requid)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        ListfloorDataResponse resp = JsonUtils.parseByGson(response, ListfloorDataResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                listFloors = resp.getData();
+                            }
+                        }
+                    }
+                });
+    }
+
 
     private void initViewPage(List<Fragment> fragmentList, List<String> titles) {
         viewPager.setAdapter(new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, titles));

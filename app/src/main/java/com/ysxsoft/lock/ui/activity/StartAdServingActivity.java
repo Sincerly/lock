@@ -2,7 +2,9 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,8 +27,14 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.custom.picker.DateYMDPicker;
+import com.ysxsoft.common_base.view.dialog.BaseInputCenterDialog;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.models.response.CardBanlanceResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.dialog.CheckPutInDialog;
+import com.ysxsoft.lock.ui.dialog.InputNumDialog;
+import com.ysxsoft.lock.ui.dialog.PacketNotEnoughDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -76,6 +84,16 @@ public class StartAdServingActivity extends BaseActivity {
     TextView tvStartTime;
     @BindView(R.id.tvEndTime)
     TextView tvEndTime;
+    @BindView(R.id.tvTime)
+    TextView tvTime;
+    @BindView(R.id.tvAdd)
+    TextView tvAdd;
+    @BindView(R.id.tvMoney)
+    TextView tvMoney;
+    @BindView(R.id.tvUseMoney)
+    TextView tvUseMoney;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
 
     private RBaseAdapter<String> adapter;
 
@@ -101,6 +119,37 @@ public class StartAdServingActivity extends BaseActivity {
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("开始投放");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestData();
+    }
+
+    private void requestData() {
+        OkHttpUtils.get()
+                .url(Api.CARD_BANLANCE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CardBanlanceResponse resp = JsonUtils.parseByGson(response, CardBanlanceResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) ;
+                            {
+                                tvUseMoney.setText("可用点数" + resp.getData());
+                            }
+                        }
+                    }
+                });
     }
 
     private void initList() {
@@ -150,6 +199,25 @@ public class StartAdServingActivity extends BaseActivity {
                         adapter.notifyDataSetChanged();
                     }
                 });
+
+                tvNum.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InputNumDialog dialog = new InputNumDialog(mContext, R.style.CenterDialogStyle);
+                        dialog.initTitle("数量");
+                        dialog.initTips("请输入数量");
+                        dialog.initContent(tvNum.getText().toString());
+                        dialog.setListener(new InputNumDialog.OnDialogClickListener() {
+                            @Override
+                            public void sure(String nickname) {
+                                //点击了确定
+                                tvNum.setText(nickname);
+                            }
+                        });
+                        dialog.showDialog();
+                    }
+                });
+
             }
 
             @Override
@@ -196,11 +264,35 @@ public class StartAdServingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.backLayout, R.id.tvStartTime, R.id.tvEndTime, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.tvAdd, R.id.tvUseMoney, R.id.tvTime, R.id.tvStartTime, R.id.tvEndTime, R.id.tvOk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
+                break;
+            case R.id.tvUseMoney:
+                PacketNotEnoughDialog.show(mContext, new PacketNotEnoughDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure() {
+                        PacketRechargeActivity.start();
+                    }
+                });
+                break;
+            case R.id.tvAdd:
+                AddPlaceActivity.start();
+                break;
+            case R.id.tvTime:
+                //时间选择器
+                DateYMDPicker date = new DateYMDPicker();
+                date.init(mContext);
+                date.show(new DateYMDPicker.OnSelectedListener() {
+                    @Override
+                    public void onSelected(Date date) {
+                        SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
+                        String format = dateFormat3.format(date);
+                        tvTime.setText(format);
+                    }
+                });
                 break;
             case R.id.tvStartTime:
                 //时间选择器
@@ -229,8 +321,49 @@ public class StartAdServingActivity extends BaseActivity {
                 });
                 break;
             case R.id.tvOk:
-                PacketServingActivity.start();
+                CheckPutInDialog.show(mContext, 2000, new CheckPutInDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure() {
+                        submintData();
+                        PacketServingActivity.start();
+                    }
+                });
                 break;
         }
+    }
+
+    private void submintData() {
+        String substring = tvMoney.getText().toString().trim().substring(0, tvMoney.getText().toString().trim().length() - 1);
+        showLoadingDialog("请求中...");
+        OkHttpUtils.post()
+                .url(Api.PUBLISH_CARD)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("card_id", "")
+                .addParams("requ_id", "")
+                .addParams("total_num", substring)
+                .addParams("start_time", tvStartTime.getText().toString().trim())
+                .addParams("end_time", tvEndTime.getText().toString().trim())
+                .addParams("card_time", tvTime.getText().toString().trim())
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+
+                            }
+                        }
+
+                    }
+                });
     }
 }

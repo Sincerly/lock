@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:layout_marginTop="@dimen/dp_10"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="@dimen/dp_10">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="超级会员专享酒店券"
+            android:textColor="@color/color_282828"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="手机号码：186***8686"
+            android:textColor="@color/color_666666"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
+
+
+        <TextView
+            android:id="@+id/tvNikeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="会员昵称：小小酥"
+            android:textColor="@color/color_666666"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tvPhone"
+            app:layout_constraintTop_toBottomOf="@id/tvPhone" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="核销日期：2019-12-18  15:00:00"
+            android:textColor="@color/color_666666"
+            android:textSize="11sp"
+            app:layout_constraintLeft_toLeftOf="@id/tvNikeName"
+            app:layout_constraintTop_toBottomOf="@id/tvNikeName" />
+
+
+        <TextView
+            android:id="@+id/tvCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已核销"
+            android:textColor="@color/color_666666"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvName"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/tvMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_15"
+            android:text="¥5000"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvPhone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/colorRed"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

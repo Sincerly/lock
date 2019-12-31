@@ -38,46 +38,45 @@ public class SplashActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         splashImage = findViewById(R.id.splashImage);
-        if (!TextUtils.isEmpty(SharedPreferencesUtils.getUid(SplashActivity.this))) {
-            OkHttpUtils.post()
-                    .url("http://192.168.1.179/admin.php/api/login/iscomplete")
-                    .addParams("uid", SharedPreferencesUtils.getUid(SplashActivity.this))
-                    .tag(this)
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-
-                        }
-
-                        @Override
-                        public void onResponse(String response, int id) {
-                            SplashResponse res = JsonUtils.parseByGson(response, SplashResponse.class);
-                            if (res != null) {
-                                if (HttpResponse.SUCCESS.equals(res.getCode())) {
-                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-//                                  if(SharedPreferencesUtils.hasShowGui(SplashActivity.this)){
-                                            if ("0".equals(res.getData())) {
-                                                //未登录 跳转到登录页面  Tips:宿主工程必须依赖 annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
-                                                ARouter.getInstance().build("/main/PerfectInformationActivity").withString("uid",SharedPreferencesUtils.getUid(SplashActivity.this)).navigation();
+        if (!TextUtils.isEmpty(SharedPreferencesUtils.getToken(SplashActivity.this))) {
+//            OkHttpUtils.post()
+//                    .url("http://192.168.1.179/admin.php/api/login/iscomplete")
+//                    .addParams("uid", SharedPreferencesUtils.getUid(SplashActivity.this))
+//                    .tag(this)
+//                    .build()
+//                    .execute(new StringCallback() {
+//                        @Override
+//                        public void onError(Call call, Exception e, int id) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onResponse(String response, int id) {
+//                            SplashResponse res = JsonUtils.parseByGson(response, SplashResponse.class);
+//                            if (res != null) {
+//                                if (HttpResponse.SUCCESS.equals(res.getCode())) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+//                                            if ("0".equals(res.getData())) {
+                    //未登录 跳转到登录页面  Tips:宿主工程必须依赖 annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
+//                                                ARouter.getInstance().build("/main/PerfectInformationActivity").withString("uid",SharedPreferencesUtils.getUid(SplashActivity.this)).navigation();
 //                                                ARouter.getInstance().build("/main/LoginActivity").navigation();
 //                                               ARouter.getInstance().build("/main/MainActivity").navigation();
-                                            } else {
-                                                //已登录 跳转到主页
-                                                ARouter.getInstance().build("/main/MainActivity").navigation();
-                                            }
+//                                            } else {
+                    //已登录 跳转到主页
+                    ARouter.getInstance().build("/main/MainActivity").navigation();
+//                                            }
 //                                  }else{
-//                                       ARouter.getInstance().build("/main/GuideActivity").navigation();//跳转到引导页
+//                    ARouter.getInstance().build("/main/GuideActivity").navigation();//跳转到引导页
 //                                   }
-                                            finish();
-                                        }
-                                    }, 500);
-                                }
-                            }
-                        }
-                    });
+                    finish();
+                }
+            }, 500);
+//                                }
+//                            }
+//                }
+//            });
 
         } else {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -85,8 +84,8 @@ public class SplashActivity extends BaseActivity {
                 public void run() {
 //                    if (SharedPreferencesUtils.hasShowGui(SplashActivity.this)) {
 //                        if ("".equals(SharedPreferencesUtils.getUid(SplashActivity.this))) {
-                            //未登录 跳转到登录页面  Tips:宿主工程必须依赖 annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
-                            ARouter.getInstance().build("/main/LoginActivity").navigation();
+                    //未登录 跳转到登录页面  Tips:宿主工程必须依赖 annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
+                    ARouter.getInstance().build("/main/LoginActivity").navigation();
 //                      ARouter.getInstance().build("/main/MainActivity").navigation();
 //                        } else {
 //                            //已登录 跳转到主页
@@ -100,7 +99,7 @@ public class SplashActivity extends BaseActivity {
             }, 500);
         }
 
-        request();
+//        request();
     }
 
     private void request() {

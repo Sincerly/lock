@@ -93,7 +93,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("卡劵投放");
+        title.setText("点券明细");
     }
 
     private void initList() {
@@ -155,15 +155,16 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
 
     @Override
     public void fillView(BaseViewHolder helper, String s) {
-//        helper.setText(R.id.tvType, "");
 //        helper.setText(R.id.tvTime, "日期："+"");
         TextView tvMoney = helper.getView(R.id.tvMoney);
         if (helper.getAdapterPosition()%2==0){
             tvMoney.setText("500点");
             tvMoney.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+            helper.setText(R.id.tvType, "点券充值");
         }else {
             tvMoney.setText("-2000点");
             tvMoney.setTextColor(getResources().getColor(R.color.color_282828));
+            helper.setText(R.id.tvType, "卡券投放");
         }
 
     }
@@ -185,7 +186,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
 
     @Override
     public RecyclerView.LayoutManager getLayoutManager() {
-        return new LinearLayoutManager(this);
+        return new LinearLayoutManager(mContext);
     }
 
     @Override

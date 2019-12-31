@@ -76,6 +76,7 @@
         android:gravity="center"
         android:minWidth="30dp"
         android:minHeight="@dimen/dp_20"
+        android:paddingHorizontal="@dimen/dp_5"
         android:text="0"
         android:textColor="@color/color_cccccc"
         android:textSize="@dimen/sp_12"

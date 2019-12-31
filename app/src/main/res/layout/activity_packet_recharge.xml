@@ -85,71 +85,17 @@
                 android:textSize="@dimen/sp_12" />
         </LinearLayout>
 
-        <View
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
-            android:layout_marginVertical="@dimen/sp_10"
-            android:background="@color/color_ebebeb" />
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/tv4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:drawableRight="@mipmap/icon_card_normal"
-            android:gravity="center_vertical"
-            android:text="1万点券100元"
-            android:textColor="@color/color_999999"
-            android:textSize="@dimen/sp_14" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginVertical="@dimen/sp_10"
-            android:background="@color/color_ebebeb" />
-
-        <TextView
-            android:id="@+id/tv5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:drawableRight="@mipmap/icon_card_normal"
-            android:gravity="center_vertical"
-            android:text="5万点券500元"
-            android:textColor="@color/color_999999"
-            android:textSize="@dimen/sp_14" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginVertical="@dimen/sp_10"
-            android:background="@color/color_ebebeb" />
-
-        <TextView
-            android:id="@+id/tv6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:drawableRight="@mipmap/icon_card_normal"
-            android:gravity="center_vertical"
-            android:text="10万点券1000元"
-            android:textColor="@color/color_999999"
-            android:textSize="@dimen/sp_14" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_1"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginVertical="@dimen/sp_10"
-            android:background="@color/color_ebebeb" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="15dp"
-            android:layout_marginBottom="@dimen/sp_10"
+            android:layout_marginVertical="@dimen/dp_10"
             android:orientation="horizontal">
 
             <TextView

@@ -36,10 +36,20 @@ public class CouponDialog extends Dialog {
         TextView tv3 = view.findViewById(R.id.tv3);
         TextView tvRule = view.findViewById(R.id.tvRule);
         TextView tvTime = view.findViewById(R.id.tvTime);
+        TextView sure = view.findViewById(R.id.sure);
         ImageView ivClose = view.findViewById(R.id.ivClose);
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dismiss();
+            }
+        });
+        sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener!=null){
+                    listener.sure();
+                }
                 dismiss();
             }
         });

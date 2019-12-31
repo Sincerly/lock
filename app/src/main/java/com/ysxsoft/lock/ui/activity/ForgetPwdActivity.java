@@ -2,20 +2,25 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.StringUtils;
 import com.ysxsoft.common_base.utils.action.GetCodeTimerUtils;
 import com.ysxsoft.lock.MainActivity;
+import com.ysxsoft.lock.models.response.VerfyCodeRes;
+import com.ysxsoft.lock.models.response.resp.SendMsgResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -73,9 +78,11 @@ public class ForgetPwdActivity extends BaseActivity {
     TextView tvOk;
     private boolean isRunning = false;
     private GetCodeTimerUtils utils;
+    @Autowired
+    String type;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getForgetPwdActivity()).navigation();
+    public static void start(String type) {
+        ARouter.getInstance().build(ARouterPath.getForgetPwdActivity()).withString("type",type).navigation();
     }
 
     @Override
@@ -86,6 +93,7 @@ public class ForgetPwdActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
         utils = GetCodeTimerUtils.getInstance();
     }
@@ -94,7 +102,15 @@ public class ForgetPwdActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("忘记密码");
+        switch (type){
+            case "1":
+                title.setText("忘记密码");
+                break;
+            case "2":
+                title.setText("修改密码");
+                break;
+        }
+
     }
 
     @OnClick({R.id.backLayout, R.id.sendMsg, R.id.ivClose, R.id.tvOk})
@@ -132,7 +148,7 @@ public class ForgetPwdActivity extends BaseActivity {
                     });
                     utils.startDelay();
                 }
-//                sendMsg(inputLoginPhone.getText().toString().trim());
+                SendMsg(inputLoginPhone.getText().toString().trim());
                 break;
             case R.id.ivClose:
                 inputLoginPhone.setText("");
@@ -164,17 +180,71 @@ public class ForgetPwdActivity extends BaseActivity {
                     showToast("两次输入密码不一致");
                     return;
                 }
-                finish();
+                request();
                 break;
         }
     }
 
+    private void SendMsg(String phone) {
+        OkHttpUtils.post()
+                .url(Api.GET_PHONE)
+                .addParams("phone", phone)
+                .addParams("businesstype", "MEMBER_RETRIEVE_PASSWORD")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        Log.e("tag", "e=====" + e.getMessage().toString());
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        SendMsgResponse resp = JsonUtils.parseByGson(response, SendMsgResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(String.valueOf(resp.getCode()))) {
+                                String key = resp.getKey();
+                                SharedPreferencesUtils.saveSp(mContext, "Forkey", key);
+                                CheckCode(key);
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void CheckCode(String key) {
+        OkHttpUtils.post()
+                .url(Api.VERFY_CODE)
+                .addParams("key", key)
+                .addParams("code", inputLoginCode.getText().toString().trim())
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("tag", "response==" + response);
+                        VerfyCodeRes verfyCodeRes = JsonUtils.parseByGson(response, VerfyCodeRes.class);
+                        if (verfyCodeRes != null) {
+                            showToast(verfyCodeRes.getMsg());
+                        }
+                    }
+                });
+    }
 
     public void request() {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
-                .url(Api.GET_FORGET_PWD)
-                .addParams("uid", SharedPreferencesUtils.getUid(ForgetPwdActivity.this))
+                .url(Api.FORGET_PWD)
+                .addParams("key", SharedPreferencesUtils.getSp(mContext, "Forkey"))
+                .addParams("password", inputLoginPwd.getText().toString().trim())
+                .addParams("phone", inputLoginPhone.getText().toString().trim())
+                .addParams("code", inputLoginCode.getText().toString().trim())
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -188,14 +258,11 @@ public class ForgetPwdActivity extends BaseActivity {
                         hideLoadingDialog();
                         ForgetPwdResponse resp = JsonUtils.parseByGson(response, ForgetPwdResponse.class);
                         if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<ForgetPwdResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                finish();
+                            }
                         } else {
                             showToast("获取忘记密码失败");
                         }

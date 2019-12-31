@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,11 +16,13 @@ import com.bumptech.glide.Glide;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -81,6 +84,7 @@ public class ShopAuthenticationActivity extends BaseActivity {
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
     public static final int REQUEST_CODE_CROP = 0x02;
+    private String path;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopAuthenticationActivity()).navigation();
@@ -136,16 +140,21 @@ public class ShopAuthenticationActivity extends BaseActivity {
                 choicePhotoWrapper();
                 break;
             case R.id.tv3:
-//                submitData();
-                ShopEgisActivity.start();
+                submitData();
                 break;
         }
     }
 
     private void submitData() {
+        if (TextUtils.isEmpty(path)) {
+            showToast("营业执照不能为空");
+            return;
+        }
+        File file = new File(path);
         OkHttpUtils.post()
-                .url(Api.GET_SHOP_AUTHENTICATION)
-                .addParams("uid", SharedPreferencesUtils.getUid(mContext))
+                .url(Api.SHOP_CERT)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addFile("img", file.getName(), file)
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -156,7 +165,14 @@ public class ShopAuthenticationActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                ShopEgisActivity.start();
+                                finish();
+                            }
+                        }
                     }
                 });
     }
@@ -243,7 +259,7 @@ public class ShopAuthenticationActivity extends BaseActivity {
                     tv1.setVisibility(View.GONE);
 
                     String cropPath = mPhotoHelper.getCropFilePath();
-                    String path = ImageUtils.compress(mContext, System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
+                    path = ImageUtils.compress(mContext, System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
                     //裁剪后的
                     Glide.with(mContext).load(new File(path)).into(riv);
                     break;

@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -59,6 +60,7 @@ public class TabIdcardCert2Fragment extends BaseFragment {
                     showToast("手机号不能为空");
                     return;
                 }
+                request();
                 break;
         }
 
@@ -71,8 +73,12 @@ public class TabIdcardCert2Fragment extends BaseFragment {
     public void request() {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
-//                .url(Api.GET_CODE)
-                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
+                .url(Api.SAVE_AUTH_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("realname", name.getText().toString().trim())
+                .addParams("cardno", IdCardNum.getText().toString().trim())
+                .addParams("phone", inputPhoneNum.getText().toString().trim())
+                .addParams("nationality", "2")
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -84,19 +90,11 @@ public class TabIdcardCert2Fragment extends BaseFragment {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-//                        ListResponse resp = JsonUtils.parseByGson(response, ListResponse.class);
-//                        if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<ListResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
-//                        } else {
-//                            showToast("获取失败");
-//                        }
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                        }
+
                     }
                 });
     }

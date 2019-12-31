@@ -27,7 +27,8 @@
 
         <EditText
             android:id="@+id/inputLoginPhone"
-            android:layout_width="300dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="@dimen/dp_44"
             android:background="@drawable/bg_white_alpha50_solid_radius_24"
             android:hint="请输入手机号"

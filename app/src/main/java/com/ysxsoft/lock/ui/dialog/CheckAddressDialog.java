@@ -9,10 +9,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
+import com.ysxsoft.common_base.utils.JsonUtils;
+import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.CheckAddressResponse;
+import com.ysxsoft.lock.net.Api;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import androidx.annotation.NonNull;
+import okhttp3.Call;
 
 /**
  * Create By 胡
@@ -21,16 +29,44 @@ import androidx.annotation.NonNull;
 public class CheckAddressDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
+    private TextView tvAddress;
 
     public CheckAddressDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         this.mContext = context;
         init();
+        requestData();
+    }
+
+    private void requestData() {
+        OkHttpUtils.get()
+                .url(Api.GET_NEAR_FLOOR_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("lat", "")
+                .addParams("lng", "")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CheckAddressResponse resp = JsonUtils.parseByGson(response, CheckAddressResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                tvAddress.setText(resp.getData().getAddress()+resp.getData().getQuarters_name());
+                            }
+                        }
+                    }
+                });
     }
 
     private View init() {
         View view = View.inflate(mContext, R.layout.dialog_check_address, null);
-        TextView tvAddress = view.findViewById(R.id.tvAddress);
+        tvAddress = view.findViewById(R.id.tvAddress);
         TextView sure = view.findViewById(R.id.sure);
         TextView cancel = view.findViewById(R.id.cancel);
         sure.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +106,7 @@ public class CheckAddressDialog extends Dialog {
         if (!isShowing()) {
             show();
             WindowManager.LayoutParams lp = getWindow().getAttributes();
-          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
+            lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
 //            lp.width = DisplayUtils.getDisplayWidth(mContext);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(lp);
