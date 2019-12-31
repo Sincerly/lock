@@ -12,6 +12,7 @@ import com.yanzhenjie.recyclerview.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
@@ -21,9 +22,11 @@ import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.TabKeyManager1FragmentResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.ApplyKeyActivity;
+import com.ysxsoft.lock.ui.activity.IdcardCertActivity;
 import com.ysxsoft.lock.ui.activity.UnlockingModeActivity;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -57,7 +60,12 @@ public class TabKeyManager1Fragment extends BaseFragment {
     @Override
     protected void doWork(View view) {
         initParent();
-//        request();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        request();
     }
 
     @OnClick({R.id.tv1})
@@ -65,7 +73,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
         switch (view.getId()) {
             case R.id.tv1:
                 AddPlaceActivity.start();
-//                ApplyKeyActivity.start();
+//
                 break;
         }
     }
@@ -122,10 +130,10 @@ public class TabKeyManager1Fragment extends BaseFragment {
                 int menuPosition = menuBridge.getPosition();
                 switch (menuPosition) {
                     case 0://设为默认
-                        showToast("设为默认");
+                        settingNormal("");
                         break;
                     case 1://删除小区
-                        showToast("删除小区");
+                        DeleteData("");
                         break;
                 }
             }
@@ -179,6 +187,69 @@ public class TabKeyManager1Fragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     * 设置默认
+     */
+    private void settingNormal(String requid) {
+        OkHttpUtils.post()
+                .url(Api.SET_DEFAULT_PLACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("requid", requid)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                request();
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * 删除小区
+     */
+    private void DeleteData(String requid) {
+        showLoadingDialog("正在删除...");
+        OkHttpUtils.post()
+                .url(Api.DELETE_PLACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("requid", requid)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                request();
+                            }
+                        }
+                    }
+                });
+
+    }
+
     private void initRecyclerView(RecyclerView itemRecyclerView, List<Item.Child> childList) {
         itemRecyclerView.setNestedScrollingEnabled(false);
         itemRecyclerView.setAdapter(null);
@@ -214,7 +285,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
                             CertificationDialog.show(getActivity(), new CertificationDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
-                                    ApplyKeyActivity.start();
+                                    IdcardCertActivity.start();
                                 }
                             });
                         }

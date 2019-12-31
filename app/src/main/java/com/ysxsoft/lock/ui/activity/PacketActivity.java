@@ -86,7 +86,8 @@ public class PacketActivity extends BaseActivity {
         CheckAddressDialog.show(mContext, new CheckAddressDialog.OnDialogClickListener() {
             @Override
             public void sure() {
-                UserInfoActivity.start();
+//                UserInfoActivity.start();
+                ShopManagerActivity.start();
             }
         });
 //        CouponDialog.show(mContext, new CouponDialog.OnDialogClickListener() {

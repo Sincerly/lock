@@ -63,6 +63,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv1Name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="15dp"
@@ -99,6 +100,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv2Name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="15dp"
@@ -132,147 +134,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:background="@color/colorWhite"
-                android:visibility="gone"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="15dp"
-                        android:layout_marginLeft="15dp"
-                        android:text="投放总数"
-                        android:textColor="@color/color_282828"
-                        android:textSize="@dimen/sp_14" />
-
-
-                    <EditText
-                        android:id="@+id/etMoneyZL"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="15dp"
-                        android:layout_weight="1"
-                        android:background="@null"
-                        android:gravity="right|center_vertical"
-                        android:hint="可被领取的总券数"
-                        android:singleLine="true"
-                        android:textColor="@color/color_282828"
-                        android:textColorHint="@color/color_cccccc"
-                        android:textSize="@dimen/sp_14" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="15dp"
-                        android:layout_marginLeft="15dp"
-                        android:text="每人限领"
-                        android:textColor="@color/color_282828"
-                        android:textSize="@dimen/sp_14" />
-
-
-                    <EditText
-                        android:id="@+id/etLimitNum"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="15dp"
-                        android:layout_weight="1"
-                        android:background="@null"
-                        android:gravity="center_vertical|right"
-                        android:hint="可被领取的券数"
-                        android:singleLine="true"
-                        android:textColor="@color/color_282828"
-                        android:textColorHint="@color/color_cccccc"
-                        android:textSize="@dimen/sp_14" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:background="@color/colorWhite"
-                android:visibility="gone"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="15dp"
-                    android:orientation="horizontal">
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="15dp"
-                        android:gravity="center_vertical"
-                        android:text="有效期开始时间"
-                        android:textColor="@color/color_282828"
-                        android:textSize="@dimen/sp_14" />
-
-                    <TextView
-                        android:id="@+id/tvStartTime"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="15dp"
-                        android:layout_weight="1"
-                        android:drawableRight="@mipmap/icon_right_arrow"
-                        android:drawablePadding="@dimen/dp_5"
-                        android:gravity="center_vertical|right"
-                        android:text="2019-12-18"
-                        android:textColor="@color/color_666666"
-                        android:textSize="@dimen/sp_14" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="15dp"
-                    android:orientation="horizontal">
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="15dp"
-                        android:gravity="center_vertical"
-                        android:text="有效期结束时间"
-                        android:textColor="@color/color_282828"
-                        android:textSize="@dimen/sp_14" />
-
-                    <TextView
-                        android:id="@+id/tvEndTime"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="15dp"
-                        android:layout_weight="1"
-                        android:drawableRight="@mipmap/icon_right_arrow"
-                        android:drawablePadding="@dimen/dp_5"
-                        android:gravity="center_vertical|right"
-                        android:text="2019-12-18"
-                        android:textColor="@color/color_666666"
-                        android:textSize="@dimen/sp_14" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-            <LinearLayout
                 android:id="@+id/LL1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -292,12 +153,13 @@
                     android:textSize="@dimen/sp_14" />
 
 
-                <ImageView
+                <com.ysxsoft.common_base.view.custom.image.RoundImageView
                     android:id="@+id/iv"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:layout_marginRight="@dimen/dp_10"
+                    app:radius="@dimen/dp_10"
                     android:src="@mipmap/icon_group" />
 
                 <ImageView
@@ -308,12 +170,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LL2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tv3Name"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="15dp"
@@ -339,6 +203,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv4Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -348,6 +213,7 @@
                 android:textSize="@dimen/sp_14" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

@@ -1,6 +1,7 @@
 package com.ysxsoft.lock.ui.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -13,9 +14,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.utils.JsonUtils;
+import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
 import com.ysxsoft.common_base.zxing.ScanActivity;
@@ -25,13 +29,18 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.models.response.ShopInfoResponse;
+import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.fragment.TabShopManager1Fragment;
 import com.ysxsoft.lock.ui.fragment.TabShopManager2Fragment;
 import com.ysxsoft.lock.ui.fragment.TabShopManager3Fragment;
 import com.ysxsoft.lock.ui.fragment.TabShopManager4Fragment;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 /**
  * 店铺管理
@@ -82,6 +91,47 @@ public class ShopManagerActivity extends BaseActivity {
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopManagerActivity()).navigation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestData();
+    }
+
+    private void requestData() {
+        showLoadingDialog("请求中");
+        OkHttpUtils.post()
+                .url(Api.SHOP_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
+                        if (resp != null) {
+//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+//                                    //请求成功
+//                            Glide.with(mContext).load("").into(civ);
+//                            tvName.setText("");
+//                            tvType.setText("主营类目：");
+//                                } else {
+//                                    //请求失败
+//                                    showToast(resp.getMsg());
+//                                }
+                        } else {
+                            showToast("获取商户信息失败");
+                        }
+                    }
+                });
+
     }
 
     @Override

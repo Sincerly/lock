@@ -103,6 +103,15 @@ public class ShopInfoActivity extends BaseActivity {
     private static final int RC_CHOOSE_PHOTO = 0x01;
     public static final int REQUEST_CODE_CROP = 0x02;
 
+    private String day1;
+    private String day2;
+    private String time1;
+    private String time2;
+
+    private String p;
+    private String c;
+    private String d;
+
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopInfoActivity()).navigation();
     }
@@ -117,6 +126,11 @@ public class ShopInfoActivity extends BaseActivity {
         super.doWork();
         initTitle();
         initPhotoHelper();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         request();
     }
 
@@ -144,14 +158,6 @@ public class ShopInfoActivity extends BaseActivity {
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("商户信息");
     }
-    private String day1;
-    private String day2;
-    private String time1;
-    private String time2;
-
-    private String p;
-    private String c;
-    private String d;
 
     @OnClick({R.id.backLayout, R.id.LL1, R.id.tvShopName, R.id.tvSaleType, R.id.tvWorkTime, R.id.tvShopAddress, R.id.tvday, R.id.tvOk})
     public void onViewClicked(View view) {
@@ -180,7 +186,7 @@ public class ShopInfoActivity extends BaseActivity {
                 BaseInputCenterDialog dialog1 = new BaseInputCenterDialog(this, R.style.CenterDialogStyle);
                 dialog1.initTitle("主营类目");
                 dialog1.initTips("请输入主营类目");
-                dialog1.initContent(tvShopName.getText().toString());
+                dialog1.initContent(tvSaleType.getText().toString());
                 dialog1.setListener(new BaseInputCenterDialog.OnDialogClickListener() {
                     @Override
                     public void sure(String nickname) {
@@ -200,13 +206,13 @@ public class ShopInfoActivity extends BaseActivity {
                 days.add("周六");
                 days.add("周日");
                 TwoPicker twoPicker = new TwoPicker(mContext, R.style.BottomDialogStyle);
-                twoPicker.setData(days,days,0,0);
+                twoPicker.setData(days, days, 0, 0);
                 twoPicker.setListener(new TwoPicker.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1, String data2, int position2) {
                         day1 = data1;
                         day2 = data2;
-                        tvday.setText(data1+"——"+data2);
+                        tvday.setText(data1 + "——" + data2);
                     }
                 });
                 twoPicker.setTitle("请选择星期");
@@ -263,13 +269,13 @@ public class ShopInfoActivity extends BaseActivity {
                 times.add("00:00");
 
                 TwoPicker timesPicker = new TwoPicker(mContext, R.style.BottomDialogStyle);
-                timesPicker.setData(times,times,0,0);
+                timesPicker.setData(times, times, 0, 0);
                 timesPicker.setListener(new TwoPicker.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1, String data2, int position2) {
                         time1 = data1;
                         time2 = data2;
-                        tvWorkTime.setText(data1+"——"+data2);
+                        tvWorkTime.setText(data1 + "——" + data2);
                     }
                 });
                 timesPicker.setTitle("请选择时间");
@@ -292,10 +298,48 @@ public class ShopInfoActivity extends BaseActivity {
                 cityPicker.show();
                 break;
             case R.id.tvOk:
-//                submintData()
+                submintData();
                 CheckSucessActivity.start();
                 break;
         }
+    }
+
+    private void submintData() {
+        showLoadingDialog("请求中...");
+        OkHttpUtils.post()
+                .url(Api.EDIT_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("name",tvShopName.getText().toString().trim())
+                .addParams("mainbusiness",tvSaleType.getText().toString().trim())
+                .addParams("week1",day1)
+                .addParams("week2",day2)
+                .addParams("time1",time1)
+                .addParams("time2",time2)
+                .addParams("address",tvShopAddress.getText().toString().trim())
+                .addParams("tel",etPhone.getText().toString().trim())
+                .addParams("lat","")
+                .addParams("lng","")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp!=null){
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                finish();
+                            }
+                        }
+                    }
+                });
+
     }
 
     private void choicePhotoWrapper() {
@@ -342,7 +386,13 @@ public class ShopInfoActivity extends BaseActivity {
                         if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
-//
+//                            Glide.with(mContext).load("").into(logo);
+//                            tvShopName.setText("");
+//                            tvSaleType.setText("");
+//                            tvday.setText("--");
+//                            tvWorkTime.setText("--");
+//                            tvShopAddress.setText("");
+//                            etPhone.setText("");
 //                                } else {
 //                                    //请求失败
 //                                    showToast(resp.getMsg());

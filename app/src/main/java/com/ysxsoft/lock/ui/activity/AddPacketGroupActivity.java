@@ -22,10 +22,13 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.custom.picker.DateYMDPicker;
 import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.dialog.PacketTypeSelectDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.builder.PostFormBuilder;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import com.ysxsoft.lock.ARouterPath;
@@ -39,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -81,18 +85,10 @@ public class AddPacketGroupActivity extends BaseActivity {
     EditText etYh;
     @BindView(R.id.etYj)
     EditText etYj;
-    @BindView(R.id.etMoneyZL)
-    EditText etMoneyZL;
-    @BindView(R.id.etLimitNum)
-    EditText etLimitNum;
-    @BindView(R.id.tvStartTime)
-    TextView tvStartTime;
-    @BindView(R.id.tvEndTime)
-    TextView tvEndTime;
     @BindView(R.id.LL1)
     LinearLayout LL1;
     @BindView(R.id.iv)
-    ImageView iv;
+    RoundImageView iv;
     @BindView(R.id.etName)
     EditText etName;
     @BindView(R.id.etInputRules)
@@ -101,12 +97,27 @@ public class AddPacketGroupActivity extends BaseActivity {
     ImageView ivAdd;
     @BindView(R.id.tvOk)
     TextView tvOk;
+
+    @BindView(R.id.tv1Name)
+    TextView tv1Name;
+    @BindView(R.id.tv2Name)
+    TextView tv2Name;
+    @BindView(R.id.tv3Name)
+    TextView tv3Name;
+    @BindView(R.id.tv4Name)
+    TextView tv4Name;
+    @BindView(R.id.LL2)
+    LinearLayout LL2;
+    @BindView(R.id.cl1)
+    ConstraintLayout cl1;
+
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
     public static final int REQUEST_CODE_CROP = 0x02;
     private String path;
 
+    private int typeClick = 1;
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getAddPacketGroupActivity()).navigation();
     }
@@ -123,6 +134,8 @@ public class AddPacketGroupActivity extends BaseActivity {
         initPhotoHelper();
         request();
     }
+
+    @SuppressLint("CheckResult")
     private void initPhotoHelper() {
         r = new RxPermissions(this);
         if (r.isGranted(Manifest.permission.READ_EXTERNAL_STORAGE) && r.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -140,6 +153,7 @@ public class AddPacketGroupActivity extends BaseActivity {
             });
         }
     }
+
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
@@ -147,44 +161,81 @@ public class AddPacketGroupActivity extends BaseActivity {
         title.setText("添加卡卷");
     }
 
-    @OnClick({R.id.backLayout, R.id.tvPacketType, R.id.tvStartTime, R.id.tvEndTime, R.id.LL1, R.id.ivAdd, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.tvPacketType, R.id.LL1, R.id.tvOk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
+            case R.id.tvPacketType:
+                PacketTypeSelectDialog.show(mContext, typeClick, new PacketTypeSelectDialog.OnDialogClickListener() {
+                    @Override
+                    public void sure(String data1, int type) {
+                        typeClick = type;
+                        tvPacketType.setText(data1);
+                        switch (type) {
+                            case 0:
+                                tv1Name.setText("券的面额");
+                                tv2Name.setText("使用条件");
+                                tv3Name.setText("现金券名称");
+                                tv4Name.setText("现金券规则");
+
+                                etYh.setHint("优惠券金额");
+                                etYj.setHint("用券最低订单金额，0元则全场通用");
+                                etName.setHint("请输入名称");
+                                etInputRules.setHint("请写下使用规则…");
+                                LL1.setVisibility(View.GONE);
+                                LL2.setVisibility(View.VISIBLE);
+                                tv4Name.setVisibility(View.VISIBLE);
+                                cl1.setVisibility(View.VISIBLE);
+                                break;
+                            case 1:
+                                tv1Name.setText("套餐价格");
+                                tv2Name.setText("套餐原价");
+                                tv3Name.setText("套餐名");
+                                tv4Name.setText("套餐详情");
+
+                                etYh.setHint("优惠金额");
+                                etYj.setHint("套餐金额");
+                                etName.setHint("请输入套餐名");
+                                etInputRules.setHint("请写下详情…");
+                                LL1.setVisibility(View.VISIBLE);
+                                LL2.setVisibility(View.VISIBLE);
+                                tv4Name.setVisibility(View.VISIBLE);
+                                cl1.setVisibility(View.VISIBLE);
+                                break;
+                            case 2:
+                                tv1Name.setText("套餐价格");
+                                tv2Name.setText("套餐原价");
+                                tv3Name.setText("套餐名");
+                                tv4Name.setText("套餐详情");
+
+                                etYh.setHint("优惠金额");
+                                etYj.setHint("套餐金额");
+                                etName.setHint("请输入套餐名");
+                                etInputRules.setHint("请写下详情…");
+                                LL1.setVisibility(View.VISIBLE);
+                                LL2.setVisibility(View.VISIBLE);
+                                tv4Name.setVisibility(View.VISIBLE);
+                                cl1.setVisibility(View.VISIBLE);
+                                break;
+                            case 3:
+                                tv1Name.setText("会员卡名称");
+                                tv2Name.setText("享受折扣");
+
+                                etYh.setHint("请输入名称");
+                                etYj.setHint("请输入享受折扣，如1,2,3");
+                                LL1.setVisibility(View.GONE);
+                                LL2.setVisibility(View.GONE);
+                                tv4Name.setVisibility(View.GONE);
+                                cl1.setVisibility(View.GONE);
+                                break;
+                        }
+                    }
+                });
+                break;
             case R.id.LL1:
                 choicePhotoWrapper();
-                break;
-            case R.id.ivAdd:
-                break;
-            case R.id.tvPacketType:
-                break;
-            case R.id.tvStartTime:
-                //时间选择器
-                DateYMDPicker dateYMDPicker = new DateYMDPicker();
-                dateYMDPicker.init(mContext);
-                dateYMDPicker.show(new DateYMDPicker.OnSelectedListener() {
-                    @Override
-                    public void onSelected(Date date) {
-                        SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
-                        String format = dateFormat3.format(date);
-                        tvStartTime.setText(format);
-                    }
-                });
-
-                break;
-            case R.id.tvEndTime:
-                DateYMDPicker picker = new DateYMDPicker();
-                picker.init(mContext);
-                picker.show(new DateYMDPicker.OnSelectedListener() {
-                    @Override
-                    public void onSelected(Date date) {
-                        SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd");
-                        String format = dateFormat3.format(date);
-                        tvEndTime.setText(format);
-                    }
-                });
                 break;
             case R.id.tvOk:
                 submintData();
@@ -193,23 +244,37 @@ public class AddPacketGroupActivity extends BaseActivity {
     }
 
     private void submintData() {
-        if (TextUtils.isEmpty(path)){
-            showToast("主图不能为空");
-            return;
-        }
-        File file = new File(path);
         showLoadingDialog("请求中");
-        OkHttpUtils.post()
-                .url(Api.ADD_CARD)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("type", "2")//1=现金券 2=团购套餐 3=体验套餐 4=会员卡
-                .addParams("price", etYh.getText().toString().trim())
-                .addParams("oprice", etYj.getText().toString().trim())
-                .addParams("collar", etMoneyZL.getText().toString().trim())
-                .addParams("title", etName.getText().toString().trim())
-                .addParams("remark", etInputRules.getText().toString().trim())
-                .addFile("cardimg",file.getName(),file)
-                .tag(this)
+        PostFormBuilder formBuilder = OkHttpUtils.post().url(Api.ADD_CARD);
+        formBuilder .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext));
+        formBuilder .addParams("type",  String.valueOf(typeClick + 1));//1=现金券 2=团购套餐 3=体验套餐 4=会员卡
+        switch (typeClick) {
+            case 0://现金券
+                formBuilder.addParams("price", etYh.getText().toString().trim());//现金券 券面额 、套餐价格、体验套餐价格、会员卡折扣
+                formBuilder.addParams("oprice", etYj.getText().toString().trim());//	现金券 使用条件、套餐原价、体验套餐原价 type=1,2,3必填
+                formBuilder.addParams("title", etName.getText().toString().trim());//卡券、套餐名称
+                formBuilder.addParams("remark", etInputRules.getText().toString().trim());//详情（或规则 ）或 会员卡有效期
+                break;
+            case 1://团购套餐
+            case 2://体验套餐
+                if (TextUtils.isEmpty(path)){
+                    showToast("主图不能为空");
+                    return;
+                }
+                File file = new File(path);
+                formBuilder.addParams("price", etYh.getText().toString().trim());//现金券 券面额 、套餐价格、体验套餐价格、会员卡折扣
+                formBuilder.addParams("oprice", etYj.getText().toString().trim());//	现金券 使用条件、套餐原价、体验套餐原价 type=1,2,3必填
+                formBuilder.addParams("title", etName.getText().toString().trim());//卡券、套餐名称
+                formBuilder.addParams("remark", etInputRules.getText().toString().trim());//详情（或规则 ）或 会员卡有效期
+                formBuilder.addFile("cardimg",file.getName(),file);
+                break;
+            case 3://会员卡
+                formBuilder.addParams("price", etYj.getText().toString().trim());//现金券 券面额 、套餐价格、体验套餐价格、会员卡折扣
+                formBuilder.addParams("title", etYh.getText().toString().trim());
+                break;
+        }
+
+        formBuilder .tag(this)
                 .build()
                 .execute(new StringCallback() {
                     @Override

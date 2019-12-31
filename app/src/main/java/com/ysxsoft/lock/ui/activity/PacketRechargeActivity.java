@@ -12,8 +12,12 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.base.RBaseAdapter;
+import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.models.response.PacketRechargeListResponse;
 import com.ysxsoft.lock.ui.dialog.SelectPayMethodDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -23,6 +27,10 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.PacketRechargeResponse;
 import com.ysxsoft.lock.net.Api;
 
+import java.util.ArrayList;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -61,12 +69,7 @@ public class PacketRechargeActivity extends BaseActivity {
     TextView tv3;
     @BindView(R.id.tvTip)
     TextView tvTip;
-    @BindView(R.id.tv4)
-    TextView tv4;
-    @BindView(R.id.tv5)
-    TextView tv5;
-    @BindView(R.id.tv6)
-    TextView tv6;
+
     @BindView(R.id.etInput)
     EditText etInput;
     @BindView(R.id.tvGrayMoney)
@@ -75,7 +78,10 @@ public class PacketRechargeActivity extends BaseActivity {
     TextView tvMoney;
     @BindView(R.id.tvOk)
     TextView tvOk;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
 
+    private int Click=-1;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getPacketRechargeActivity()).navigation();
@@ -89,32 +95,79 @@ public class PacketRechargeActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
-        Drawable no = getResources().getDrawable(R.mipmap.icon_card_normal);
-        no.setBounds(0, 0, no.getMinimumWidth(), no.getMinimumHeight());// 设置边界
-        Drawable ok = getResources().getDrawable(R.mipmap.icon_card_select);
-        ok.setBounds(0, 0, ok.getMinimumWidth(), ok.getMinimumHeight());// 设置边界
-        tv4.setCompoundDrawables(null, null, ok, null);
-        tv5.setCompoundDrawables(null, null, no, null);
-        tv6.setCompoundDrawables(null, null, no, null);
         tvGrayMoney.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         initTitle();
+        initList();
+        requestData();
+    }
+
+    private void requestData() {
+        OkHttpUtils.post()
+                .url(Api.CARD_RECHARGE_LIST)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        PacketRechargeListResponse resp = JsonUtils.parseByGson(response, PacketRechargeListResponse.class);
+                        if (resp!=null){
+//                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+//
+//                            }
+                        }
+                    }
+                });
+    }
+
+    private void initList() {
+        ArrayList<String> strings = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            strings.add(String.valueOf(i));
+        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        RBaseAdapter<String> adapter = new RBaseAdapter<String>(mContext, R.layout.item_packet_recharge, strings) {
+            @Override
+            protected void fillItem(RViewHolder holder, String item, int position) {
+//                holder.setText(R.id.tv,"");
+                ImageView iv = holder.getView(R.id.iv);
+                if (Click==position){
+                    iv.setBackgroundResource(R.mipmap.icon_card_select);
+                }else {
+                    iv.setBackgroundResource(R.mipmap.icon_card_normal);
+                }
+            }
+
+            @Override
+            protected int getViewType(String item, int position) {
+                return 0;
+            }
+        };
+        adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(RViewHolder holder, View view, int position) {
+                Click=position;
+                adapter.notifyDataSetChanged();
+            }
+        });
+        recyclerView.setAdapter(adapter);
+
     }
 
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("卡劵投放");
+        title.setText("点券充值");
     }
 
-    @OnClick({R.id.backLayout, R.id.tv3, R.id.tv4, R.id.tv5, R.id.tv6, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.tv3, R.id.tvOk})
     public void onViewClicked(View view) {
-
-        Drawable no = getResources().getDrawable(R.mipmap.icon_card_normal);
-        no.setBounds(0, 0, no.getMinimumWidth(), no.getMinimumHeight());// 设置边界
-        Drawable ok = getResources().getDrawable(R.mipmap.icon_card_select);
-        ok.setBounds(0, 0, ok.getMinimumWidth(), ok.getMinimumHeight());// 设置边界
-
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
@@ -122,22 +175,11 @@ public class PacketRechargeActivity extends BaseActivity {
             case R.id.tv3:
                 PacketServingActivity.start();
                 break;
-            case R.id.tv4:
-                tv4.setCompoundDrawables(null, null, ok, null);
-                tv5.setCompoundDrawables(null, null, no, null);
-                tv6.setCompoundDrawables(null, null, no, null);
-                break;
-            case R.id.tv5:
-                tv4.setCompoundDrawables(null, null, no, null);
-                tv5.setCompoundDrawables(null, null, ok, null);
-                tv6.setCompoundDrawables(null, null, no, null);
-                break;
-            case R.id.tv6:
-                tv4.setCompoundDrawables(null, null, no, null);
-                tv5.setCompoundDrawables(null, null, no, null);
-                tv6.setCompoundDrawables(null, null, ok, null);
-                break;
             case R.id.tvOk:
+                if (Click==-1){
+                    showToast("请选择充值点数");
+                    return;
+                }
                 SelectPayMethodDialog.show(mContext, new SelectPayMethodDialog.OnDialogClickListener() {
                     @Override
                     public void sure(int type) {// type 1 微信  2 支付宝

@@ -154,120 +154,156 @@ public class ARouterPath {
     /**
      * 商户中心
      */
-    public static String getShopCenterActivity(){
+    public static String getShopCenterActivity() {
         return "/main/ShopCenterActivity";
     }
 
     /**
      * 商户认证
      */
-    public static String getShopAuthenticationActivity(){
+    public static String getShopAuthenticationActivity() {
         return "/main/ShopAuthenticationActivity";
     }
 
     /**
      * 商户认证审核通过
      */
-    public static String getShopEgisActivity(){
+    public static String getShopEgisActivity() {
         return "/main/ShopEgisActivity";
     }
 
     /**
      * 商户认证审核失败
      */
-    public static String getShopAuditFailedActivity(){
+    public static String getShopAuditFailedActivity() {
         return "/main/ShopAuditFailedActivity";
     }
 
     /**
      * 商户信息
      */
-    public static String getShopInfoActivity(){
+    public static String getShopInfoActivity() {
         return "/main/ShopInfoActivity";
     }
 
     /**
      * 店铺管理
      */
-    public static String getShopManagerActivity(){
+    public static String getShopManagerActivity() {
         return "/main/ShopManagerActivity";
     }
 
     /**
      * 核销成功
      */
-    public static String getCheckSucessActivity(){
+    public static String getCheckSucessActivity() {
         return "/main/CheckSucessActivity";
     }
 
     /**
      * 核销记录
      */
-    public static String getCheckRecordActivity(){
+    public static String getCheckRecordActivity() {
         return "/main/CheckRecordActivity";
     }
 
     /**
      * 添加卡卷现金券
      */
-    public static String getAddPacketMoneyActivity(){
+    public static String getAddPacketMoneyActivity() {
         return "/main/AddPacketMoneyActivity";
     }
 
     /**
      * 添加卡卷团购券
      */
-    public static String getAddPacketGroupActivity(){
+    public static String getAddPacketGroupActivity() {
         return "/main/AddPacketGroupActivity";
     }
 
     /**
      * 添加卡卷会员卡券
      */
-    public static String getAddPacketVipActivity(){
+    public static String getAddPacketVipActivity() {
         return "/main/AddPacketVipActivity";
     }
 
     /**
      * 添加卡卷体验券
      */
-    public static String getAddPacketExperienceActivity(){
+    public static String getAddPacketExperienceActivity() {
         return "/main/AddPacketExperienceActivity";
     }
 
     /**
      * 开始投放
      */
-    public static String getStartAdServingActivity(){
+    public static String getStartAdServingActivity() {
         return "/main/StartAdServingActivity";
     }
 
     /**
      * 卡劵投放
      */
-    public static String getPacketServingActivity(){
+    public static String getPacketServingActivity() {
         return "/main/PacketServingActivity";
     }
 
     /**
      * 卡劵投放充值
      */
-    public static String getPacketRechargeActivity(){
+    public static String getPacketRechargeActivity() {
         return "/main/PacketRechargeActivity";
     }
 
     /**
      * 充值成功
      */
-    public static String getRechargeSucessActivity(){
+    public static String getRechargeSucessActivity() {
         return "/main/RechargeSucessActivity";
     }
 
     /**
      * 帮助
      */
-    public static String getHelpActivity(){
+    public static String getHelpActivity() {
         return "/main/HelpActivity";
     }
+
+    /**
+     * 投放列表
+     */
+    public static String getThrowInListActivity() {
+        return "/main/ThrowInListActivity";
+    }
+
+    /**
+     * 现金投放记录
+     */
+    public static String getThrowInMoneyRecordActivity() {
+        return "/main/ThrowInMoneyRecordActivity";
+    }
+
+    /**
+     * 团购投放记录
+     */
+    public static String getThrowInGroupRecordActivity() {
+        return "/main/ThrowInGroupRecordActivity";
+    }
+
+    /**
+     * 免费体验投放记录
+     */
+    public static String getThrowInExperienceRecordActivity() {
+        return "/main/ThrowInExperienceRecordActivity";
+    }
+
+    /**
+     * 会员卡投放记录
+     */
+    public static String getThrowInVipRecordActivity() {
+        return "/main/ThrowInVipRecordActivity";
+    }
+
 
 }

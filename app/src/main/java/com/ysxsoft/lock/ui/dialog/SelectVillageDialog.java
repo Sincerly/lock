@@ -17,12 +17,14 @@ import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.VillageResponse;
 import com.ysxsoft.lock.net.Api;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +41,13 @@ public class SelectVillageDialog extends Dialog {
     private RecyclerView recyclerView;
     private int isClick = -1;
 
+
+    public void setDatas(List<VillageResponse.DataBean> datas) {
+        this.datas = datas;
+    }
+
+    private List<VillageResponse.DataBean> datas;
+
     public SelectVillageDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         this.mContext = context;
@@ -51,17 +60,14 @@ public class SelectVillageDialog extends Dialog {
         ImageView ivClose = view.findViewById(R.id.ivClose);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            strings.add(String.valueOf(i));
-        }
-        RBaseAdapter<String> adapter = new RBaseAdapter<String>(mContext, R.layout.item_dialog_village_layout, strings) {
+
+        RBaseAdapter<VillageResponse.DataBean> adapter = new RBaseAdapter<VillageResponse.DataBean>(mContext, R.layout.item_dialog_village_layout, datas) {
             @Override
-            protected void fillItem(RViewHolder holder, String item, int position) {
+            protected void fillItem(RViewHolder holder, VillageResponse.DataBean item, int position) {
                 RoundImageView riv = holder.getView(R.id.riv);
-//                Glide.with(mContext).load("").into(riv);
-//                holder.setText(R.id.tv1, "");
-//                holder.setText(R.id.tvAddress, "");
+//                Glide.with(mContext).load(AppConfig.BASE_URL).into(riv);
+                holder.setText(R.id.tv1, item.getQuarters_name());
+                holder.setText(R.id.tvAddress, item.getAddress());
                 ImageView iv = holder.getView(R.id.iv);
                 if (isClick == position) {
                     iv.setVisibility(View.VISIBLE);
@@ -71,15 +77,20 @@ public class SelectVillageDialog extends Dialog {
             }
 
             @Override
-            protected int getViewType(String item, int position) {
+            protected int getViewType(VillageResponse.DataBean item, int position) {
                 return 0;
             }
         };
         adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(RViewHolder holder, View view, int position) {
+                VillageResponse.DataBean dataBean = datas.get(position);
                 isClick = position;
                 adapter.notifyDataSetChanged();
+                if (listener!=null){
+                    listener.sure(dataBean.getQuarters_name(),dataBean.getId());
+                }
+                dismiss();
             }
         });
         recyclerView.setAdapter(adapter);
@@ -119,11 +130,11 @@ public class SelectVillageDialog extends Dialog {
         this.listener = listener;
     }
 
-    public static SelectVillageDialog show(Context context, OnDialogClickListener listener) {
+    public static SelectVillageDialog show(Context context, List<VillageResponse.DataBean> data, OnDialogClickListener listener) {
         SelectVillageDialog dialog = new SelectVillageDialog(context, R.style.BottomDialogStyle);
         dialog.setListener(listener);
         dialog.showDialog();
-
+        dialog.setDatas(data);
         return dialog;
     }
 

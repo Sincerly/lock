@@ -7,133 +7,146 @@
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingVertical="@dimen/dp_10">
-
-    <TextView
-        android:id="@+id/tv1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        android:text="¥"
-        android:textColor="@color/colorRed"
-        android:textSize="@dimen/sp_18"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tv2"/>
+        android:paddingVertical="@dimen/dp_10">
 
-    <TextView
-        android:id="@+id/tv2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="5000"
-        android:textColor="@color/colorRed"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toRightOf="@id/tv1"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:text="¥"
+            android:textColor="@color/colorRed"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tv2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvMj"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="满3000可用"
-        android:textColor="@color/color_999999"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintLeft_toLeftOf="@id/tv1"
-        app:layout_constraintRight_toRightOf="@id/tv2"
-        app:layout_constraintTop_toBottomOf="@id/tv2" />
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5000"
+            android:textColor="@color/colorRed"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toRightOf="@id/tv1"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvShopName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="肯德基天桥店"
-        android:textColor="@color/color_282828"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintLeft_toRightOf="@id/tv2"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tvMj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="满3000可用"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintLeft_toLeftOf="@id/tv1"
+            app:layout_constraintRight_toRightOf="@id/tv2"
+            app:layout_constraintTop_toBottomOf="@id/tv2" />
 
-
-    <TextView
-        android:id="@+id/tv3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="核销数"
-        android:textColor="@color/color_999999"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintLeft_toLeftOf="@id/tvShopName"
-        app:layout_constraintTop_toBottomOf="@id/tvShopName" />
-
-    <TextView
-        android:id="@+id/tvNum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_5"
-        android:text="100"
-        android:textColor="@color/color_282828"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintLeft_toRightOf="@id/tv3"
-        app:layout_constraintTop_toTopOf="@id/tv3" />
-
-    <TextView
-        android:id="@+id/tv4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:text="总投放"
-        android:textColor="@color/color_999999"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintLeft_toRightOf="@id/tvNum"
-        app:layout_constraintTop_toTopOf="@id/tv3" />
-
-    <TextView
-        android:id="@+id/tvSum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_5"
-        android:text="1000"
-        android:textColor="@color/color_282828"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintLeft_toRightOf="@id/tv4"
-        app:layout_constraintTop_toTopOf="@id/tv4" />
-
-    <TextView
-        android:id="@+id/tv5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="添加日期"
-        android:textColor="@color/color_999999"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintLeft_toLeftOf="@id/tv3"
-        app:layout_constraintTop_toBottomOf="@id/tv3"
-        app:layout_constraintBottom_toBottomOf="@id/tvMj"/>
-
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_5"
-        android:text="2019-12-18 10:00:00"
-        android:textColor="@color/color_282828"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintBottom_toBottomOf="@id/tv5"
-        app:layout_constraintLeft_toRightOf="@id/tv5" />
+        <TextView
+            android:id="@+id/tvShopName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:text="肯德基天桥店"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_14"
+            app:layout_constraintLeft_toRightOf="@id/tv2"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="15dp"
-        android:src="@mipmap/icon_right_arrow"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="核销数"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintLeft_toLeftOf="@id/tvShopName"
+            app:layout_constraintTop_toBottomOf="@id/tvShopName" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_5"
+            android:text="100"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintLeft_toRightOf="@id/tv3"
+            app:layout_constraintTop_toTopOf="@id/tv3" />
+
+        <TextView
+            android:id="@+id/tv4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:text="总投放"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintLeft_toRightOf="@id/tvNum"
+            app:layout_constraintTop_toTopOf="@id/tv3" />
+
+        <TextView
+            android:id="@+id/tvSum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_5"
+            android:text="1000"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintLeft_toRightOf="@id/tv4"
+            app:layout_constraintTop_toTopOf="@id/tv4" />
+
+        <TextView
+            android:id="@+id/tv5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加日期"
+            android:textColor="@color/color_999999"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintBottom_toBottomOf="@id/tvMj"
+            app:layout_constraintLeft_toLeftOf="@id/tv3"
+            app:layout_constraintTop_toBottomOf="@id/tv3" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_5"
+            android:text="2019-12-18 10:00:00"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintBottom_toBottomOf="@id/tv5"
+            app:layout_constraintLeft_toRightOf="@id/tv5" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/dp_5"
+            android:text="待投中"
+            android:textColor="@color/color_3BB0D2"
+            android:textSize="@dimen/sp_10"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:src="@mipmap/icon_right_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"

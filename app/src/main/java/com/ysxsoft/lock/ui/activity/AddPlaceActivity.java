@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.models.response.VillageResponse;
@@ -23,6 +25,8 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.AddPlaceResponse;
 import com.ysxsoft.lock.net.Api;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,6 +70,11 @@ public class AddPlaceActivity extends BaseActivity {
         ARouter.getInstance().build(ARouterPath.getAddPlaceActivity()).navigation();
     }
 
+
+    public static void start(Activity activity,int requestCode){
+        ARouter.getInstance().build(ARouterPath.getAddPlaceActivity()).navigation(activity,requestCode);
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_add_place;
@@ -74,6 +83,7 @@ public class AddPlaceActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
     }
 
@@ -119,11 +129,14 @@ public class AddPlaceActivity extends BaseActivity {
                     showToast("小区不能为空");
                     return;
                 }
+                ApplyKeyActivity.start(requid);
+                finish();
                 break;
 
 
         }
     }
+    private String requid;
 
     private void requestData(String cityCode1, String areaCode1) {
         OkHttpUtils.get()
@@ -143,12 +156,21 @@ public class AddPlaceActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         VillageResponse resp = JsonUtils.parseByGson(response, VillageResponse.class);
                         if (resp != null) {
-                            SelectVillageDialog.show(mContext, new SelectVillageDialog.OnDialogClickListener() {
-                                @Override
-                                public void sure(String villageName, String villageCode) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
 
-                                }
-                            });
+                                List<VillageResponse.DataBean> data = resp.getData();
+                                SelectVillageDialog dialog = new SelectVillageDialog(mContext, R.style.BottomDialogStyle);
+                                dialog.setDatas(data);
+                                dialog.setListener(new SelectVillageDialog.OnDialogClickListener() {
+                                    @Override
+                                    public void sure(String villageName, String villageCode) {
+                                        requid = villageCode;
+                                        tv2.setText(villageName);
+                                    }
+                                });
+                                dialog.showDialog();
+
+                            }
                         }
                     }
                 });

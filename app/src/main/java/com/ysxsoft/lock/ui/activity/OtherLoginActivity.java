@@ -139,7 +139,6 @@ public class OtherLoginActivity extends BaseActivity {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.GET_OTHER_LOGIN)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                 .addParams("username", inputLoginPhone.getText().toString().trim())
                 .addParams("password", inputLoginPwd.getText().toString().trim())
                 .tag(this)
@@ -147,6 +146,7 @@ public class OtherLoginActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        Log.e("tag","e====="+e.getMessage().toString());
                         hideLoadingDialog();
                     }
 

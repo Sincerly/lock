@@ -11,6 +11,7 @@ import com.squareup.haha.perflib.Main;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
+import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
 
@@ -65,6 +66,7 @@ public class MainActivity extends BaseActivity {
                         CouponDialog.show(MainActivity.this, new CouponDialog.OnDialogClickListener() {
                             @Override
                             public void sure() {
+                                PacketActivity.start();
                             }
                         });
                         Log.e("tag","向右");
