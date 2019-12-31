@@ -24,7 +24,6 @@ public class Utils {
         }
     }
 
-
     public static String hashKeyFormUrl(String url) {
         String cacheKey;
         try {

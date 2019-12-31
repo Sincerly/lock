@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ysxsoft.lock">
 
+
     <application
         android:name=".BApplication"
         android:allowBackup="true"
@@ -35,13 +36,15 @@
 
         <!--首页-->
         <activity android:name=".MainActivity">
+
+        </activity>
+        <!--登录-->
+        <activity android:name=".ui.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--登录-->
-        <activity android:name=".ui.activity.LoginActivity"></activity>
         <!--其他方式登录-->
         <activity android:name=".ui.activity.OtherLoginActivity"></activity>
         <!--注册-->
