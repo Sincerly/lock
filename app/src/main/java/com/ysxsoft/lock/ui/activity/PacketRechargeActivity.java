@@ -17,6 +17,7 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.models.response.CardBanlanceResponse;
 import com.ysxsoft.lock.models.response.PacketRechargeListResponse;
 import com.ysxsoft.lock.ui.dialog.SelectPayMethodDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -81,7 +82,7 @@ public class PacketRechargeActivity extends BaseActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private int Click=-1;
+    private int Click = -1;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getPacketRechargeActivity()).navigation();
@@ -97,12 +98,36 @@ public class PacketRechargeActivity extends BaseActivity {
         super.doWork();
         tvGrayMoney.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         initTitle();
-        initList();
         requestData();
+        recyclerViewBanlance();
+    }
+
+    private void recyclerViewBanlance() {
+        OkHttpUtils.get()
+                .url(Api.CARD_BANLANCE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CardBanlanceResponse resp = JsonUtils.parseByGson(response, CardBanlanceResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                tv2.setText(resp.getData());
+                            }
+                        }
+                    }
+                });
     }
 
     private void requestData() {
-        OkHttpUtils.post()
+        OkHttpUtils.get()
                 .url(Api.CARD_RECHARGE_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                 .tag(this)
@@ -116,48 +141,44 @@ public class PacketRechargeActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         PacketRechargeListResponse resp = JsonUtils.parseByGson(response, PacketRechargeListResponse.class);
-                        if (resp!=null){
-//                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
-//
-//                            }
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                ArrayList<PacketRechargeListResponse.DataBean> datas = resp.getData();
+                                recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                                RBaseAdapter<PacketRechargeListResponse.DataBean> adapter = new RBaseAdapter<PacketRechargeListResponse.DataBean>(mContext, R.layout.item_packet_recharge, datas) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, PacketRechargeListResponse.DataBean item, int position) {
+                                        holder.setText(R.id.tv, item.getNum()+"点券"+item.getPrice()+"元");
+                                        ImageView iv = holder.getView(R.id.iv);
+                                        if (Click == position) {
+                                            iv.setBackgroundResource(R.mipmap.icon_card_select);
+                                        } else {
+                                            iv.setBackgroundResource(R.mipmap.icon_card_normal);
+                                        }
+                                    }
+
+                                    @Override
+                                    protected int getViewType(PacketRechargeListResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(RViewHolder holder, View view, int position) {
+                                        PacketRechargeListResponse.DataBean itemData = adapter.getItemData(position);
+                                        tvMoney.setText("¥"+itemData.getPrice());
+                                        Click = position;
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                recyclerView.setAdapter(adapter);
+
+                            }
                         }
                     }
                 });
     }
 
-    private void initList() {
-        ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            strings.add(String.valueOf(i));
-        }
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        RBaseAdapter<String> adapter = new RBaseAdapter<String>(mContext, R.layout.item_packet_recharge, strings) {
-            @Override
-            protected void fillItem(RViewHolder holder, String item, int position) {
-//                holder.setText(R.id.tv,"");
-                ImageView iv = holder.getView(R.id.iv);
-                if (Click==position){
-                    iv.setBackgroundResource(R.mipmap.icon_card_select);
-                }else {
-                    iv.setBackgroundResource(R.mipmap.icon_card_normal);
-                }
-            }
-
-            @Override
-            protected int getViewType(String item, int position) {
-                return 0;
-            }
-        };
-        adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RViewHolder holder, View view, int position) {
-                Click=position;
-                adapter.notifyDataSetChanged();
-            }
-        });
-        recyclerView.setAdapter(adapter);
-
-    }
 
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
@@ -176,11 +197,11 @@ public class PacketRechargeActivity extends BaseActivity {
                 PacketServingActivity.start();
                 break;
             case R.id.tvOk:
-                if (Click==-1){
+                if (Click == -1) {
                     showToast("请选择充值点数");
                     return;
                 }
-                SelectPayMethodDialog.show(mContext, new SelectPayMethodDialog.OnDialogClickListener() {
+                SelectPayMethodDialog.show(mContext,tvMoney.getText().toString(), new SelectPayMethodDialog.OnDialogClickListener() {
                     @Override
                     public void sure(int type) {// type 1 微信  2 支付宝
                         switch (type) {
@@ -193,6 +214,7 @@ public class PacketRechargeActivity extends BaseActivity {
                         }
                     }
                 });
+                request();
                 break;
         }
     }
@@ -201,7 +223,7 @@ public class PacketRechargeActivity extends BaseActivity {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.GET_PACKET_RECHARGE)
-                .addParams("uid", SharedPreferencesUtils.getUid(PacketRechargeActivity.this))
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {

@@ -85,17 +85,15 @@ public class PacketActivity extends BaseActivity {
         super.doWork();
         CheckAddressDialog.show(mContext, new CheckAddressDialog.OnDialogClickListener() {
             @Override
-            public void sure() {
-//                UserInfoActivity.start();
+            public void sure(String requid) {
+            }
+
+            @Override
+            public void cancle() {//切换地址
                 ShopManagerActivity.start();
+//                AddPlaceActivity.start();
             }
         });
-//        CouponDialog.show(mContext, new CouponDialog.OnDialogClickListener() {
-//            @Override
-//            public void sure() {
-//
-//            }
-//        });
         initTitle();
         tabLayout.removeAllTabs();
         List<Fragment> fragmentList = new ArrayList<>();

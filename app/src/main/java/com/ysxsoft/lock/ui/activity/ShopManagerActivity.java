@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -22,6 +23,7 @@ import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
 import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
 import com.ysxsoft.common_base.zxing.ScanActivity;
@@ -33,6 +35,7 @@ import java.util.List;
 
 import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.ShopInfoResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.fragment.TabShopManager1Fragment;
 import com.ysxsoft.lock.ui.fragment.TabShopManager2Fragment;
@@ -40,6 +43,9 @@ import com.ysxsoft.lock.ui.fragment.TabShopManager3Fragment;
 import com.ysxsoft.lock.ui.fragment.TabShopManager4Fragment;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -195,9 +201,8 @@ public class ShopManagerActivity extends BaseActivity {
                 ShopInfoActivity.start();
                 break;
             case R.id.tv1:
-//                CheckSucessActivity.start();
                 Intent intent = new Intent(mContext, ScanActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,0x01);
                 break;
             case R.id.tv2:
                 CheckRecordActivity.start();
@@ -282,4 +287,56 @@ public class ShopManagerActivity extends BaseActivity {
         public void onTabReselected(TabLayout.Tab tab) {
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 0x01:
+                    String result = data.getStringExtra("result");
+                    try {
+                        JSONObject jsonObject=new JSONObject(result);
+                        if("".equals(jsonObject.optString("id"))){
+                            ToastUtils.shortToast(mContext,"获取失败");
+                            return;
+                        }
+                        String Id=jsonObject.getString("id");
+                        requestCheckData(Id);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void requestCheckData(String Id) {
+            OkHttpUtils.post()
+                    .url(Api.HX)
+                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                    .addParams("id",Id)
+                    .tag(this)
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                            if (resp!=null){
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                    CheckSucessActivity.start();
+                                }
+                            }
+                        }
+                    });
+
+
+    }
+
+
 }

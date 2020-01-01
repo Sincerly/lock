@@ -4,6 +4,7 @@ package com.ysxsoft.lock.ui.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -13,8 +14,10 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.CheckAddressResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -30,6 +33,7 @@ public class CheckAddressDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
     private TextView tvAddress;
+    private String requid;
 
     public CheckAddressDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -57,7 +61,8 @@ public class CheckAddressDialog extends Dialog {
                         CheckAddressResponse resp = JsonUtils.parseByGson(response, CheckAddressResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                tvAddress.setText(resp.getData().getAddress()+resp.getData().getQuarters_name());
+                                requid = resp.getData().getId();
+                                tvAddress.setText(resp.getData().getAddress() + resp.getData().getQuarters_name());
                             }
                         }
                     }
@@ -69,22 +74,55 @@ public class CheckAddressDialog extends Dialog {
         tvAddress = view.findViewById(R.id.tvAddress);
         TextView sure = view.findViewById(R.id.sure);
         TextView cancel = view.findViewById(R.id.cancel);
-        sure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.sure();
+                    listener.cancle();
                 }
                 dismiss();
             }
         });
+        sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.sure(requid);
+                }
+                submintData();
+            }
+        });
         return view;
+    }
+
+    private void submintData() {
+        if(TextUtils.isEmpty(requid)){
+            return;
+        }
+        OkHttpUtils.post()
+                .url(Api.BIND_PLACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("requid", requid)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            ToastUtils.show(mContext,resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                dismiss();
+                            }
+                        }
+                    }
+                });
+
     }
 
     public OnDialogClickListener getListener() {
@@ -122,6 +160,8 @@ public class CheckAddressDialog extends Dialog {
     }
 
     public interface OnDialogClickListener {
-        void sure();
+        void sure(String requid);
+
+        void cancle();
     }
 }

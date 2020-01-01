@@ -26,23 +26,47 @@
         android:layout_marginTop="@dimen/dp_5"
         android:text="券号：654545564465465"
         android:textColor="@color/color_666666"
+        android:layout_marginRight="15dp"
+        android:textSize="11sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv1"
+        app:layout_constraintBottom_toBottomOf="@id/tv1"
+        app:layout_constraintTop_toBottomOf="@id/tv1" />
+
+    <TextView
+        android:id="@+id/tvPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_666666"
         android:textSize="11sp"
         app:layout_constraintLeft_toLeftOf="@id/tv1"
-        app:layout_constraintTop_toBottomOf="@id/tv1" />
+        app:layout_constraintTop_toBottomOf="@id/tv1"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="手机号码：186***8686"/>
+
+    <TextView
+        android:id="@+id/tvNikeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="会员昵称：小小酥"
+        android:textSize="11sp"
+        app:layout_constraintTop_toBottomOf="@id/tvPhone"
+        app:layout_constraintLeft_toLeftOf="@id/tvPhone"
+        android:textColor="@color/color_666666"/>
 
 
     <TextView
         android:id="@+id/tv3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_5"
         android:layout_marginBottom="10dp"
         android:text="日期：2019-12-18  15:00:00"
         android:textColor="@color/color_666666"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/tv1"
-        app:layout_constraintTop_toBottomOf="@id/tv2" />
+        app:layout_constraintTop_toBottomOf="@id/tvNikeName" />
+
 
     <TextView
         android:id="@+id/tvMoney"
@@ -50,9 +74,9 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="15dp"
         android:text="¥5000"
-        android:textColor="@color/color_3BB0D2"
+        android:textColor="@color/colorRed"
         android:textSize="@dimen/sp_15"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/tv2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

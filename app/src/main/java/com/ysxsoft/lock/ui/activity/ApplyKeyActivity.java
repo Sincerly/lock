@@ -114,6 +114,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tv1:
+
+                if (listFloors.size()<=0){
+                    showToast("暂无数据");
+                    return;
+                }
+
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < listFloors.size(); i++) {
                     strings.add(listFloors.get(i).getFloor_name());
@@ -123,6 +129,7 @@ public class ApplyKeyActivity extends BaseActivity {
                 ridgepoleSelectDialog.setData(strings, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1) {
+
                         floor_id = listFloors.get(position1).getId();
                         String requ_id = listFloors.get(position1).getRequ_id();
                         tv1.setText(data1);
@@ -133,10 +140,17 @@ public class ApplyKeyActivity extends BaseActivity {
                 ridgepoleSelectDialog.showDialog();
                 break;
             case R.id.tv2:
+
                 if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
                     showToast("栋选择不能为空");
                     return;
                 }
+
+                if (unitDatas.size()<=0){
+                    showToast("暂无数据");
+                    return;
+                }
+
                 ArrayList<String> strings1 = new ArrayList<>();
 
                 for (int i = 0; i < unitDatas.size(); i++) {

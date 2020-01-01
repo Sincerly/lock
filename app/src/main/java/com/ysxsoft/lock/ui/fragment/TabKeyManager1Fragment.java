@@ -3,6 +3,7 @@ package com.ysxsoft.lock.ui.fragment;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener;
@@ -50,7 +51,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
     TextView tv1;
     @BindView(R.id.recyclerView)
     SwipeRecyclerView recyclerView;
-    List<Item> groups = new ArrayList<>();
+    private List<TabKeyManager1FragmentResponse.DataBean> groups;
 
     @Override
     public int getLayoutId() {
@@ -59,7 +60,6 @@ public class TabKeyManager1Fragment extends BaseFragment {
 
     @Override
     protected void doWork(View view) {
-        initParent();
     }
 
     @Override
@@ -68,123 +68,127 @@ public class TabKeyManager1Fragment extends BaseFragment {
         request();
     }
 
+
+    private void request() {
+        OkHttpUtils.get()
+                .url(Api.GET_BIND_PLACE_LIST)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        TabKeyManager1FragmentResponse gson = JsonUtils.parseByGson(response, TabKeyManager1FragmentResponse.class);
+                        if (gson != null) {
+                            if (HttpResponse.SUCCESS.equals(gson.getCode())) {
+                                groups = gson.getData();
+                                recyclerView.setAdapter(null);
+                                recyclerView.setNestedScrollingEnabled(false);
+                                recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
+                                    @Override
+                                    public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int position) {
+                                        SwipeMenuItem setNormalItem = new SwipeMenuItem(getActivity());
+                                        setNormalItem.setWidth(DisplayUtils.dp2px(getActivity(), 50));
+                                        setNormalItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+                                        setNormalItem.setBackgroundColor(Color.parseColor("#3BB0D2"));
+                                        setNormalItem.setTextSize(12);
+                                        setNormalItem.setText("设为\n" + "默认");
+                                        setNormalItem.setTextColor(Color.parseColor("#FFFFFF"));
+                                        rightMenu.addMenuItem(setNormalItem);
+
+                                        SwipeMenuItem deleteItem = new SwipeMenuItem(getActivity());
+                                        deleteItem.setWidth(DisplayUtils.dp2px(getActivity(), 50));
+                                        deleteItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+                                        deleteItem.setBackgroundColor(Color.parseColor("#F9596C"));
+                                        deleteItem.setTextSize(12);
+                                        deleteItem.setText("删除\n" + "小区");
+                                        deleteItem.setTextColor(Color.parseColor("#FFFFFF"));
+                                        rightMenu.addMenuItem(deleteItem);
+                                    }
+                                });
+                                recyclerView.setOnItemMenuClickListener(new OnItemMenuClickListener() {
+                                    @Override
+                                    public void onItemClick(SwipeMenuBridge menuBridge, int position) {
+                                        menuBridge.closeMenu();
+                                        int direction = menuBridge.getDirection();
+                                        int menuPosition = menuBridge.getPosition();
+                                        String requ_id = groups.get(position).getRequ_id();
+                                        switch (menuPosition) {
+                                            case 0://设为默认
+                                                settingNormal(requ_id);
+                                                break;
+                                            case 1://删除小区
+                                                DeleteData(requ_id);
+                                                break;
+                                        }
+                                    }
+                                });
+                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                RBaseAdapter<TabKeyManager1FragmentResponse.DataBean> adapter = new RBaseAdapter<TabKeyManager1FragmentResponse.DataBean>(getActivity(), R.layout.item_tab_key_manager_list, groups) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, TabKeyManager1FragmentResponse.DataBean item, int position) {
+                                        TextView tvNormal = holder.getView(R.id.tvNormal);
+                                        TextView tvAddress = holder.getView(R.id.tvAddress);
+                                        TextView tvName = holder.getView(R.id.tvName);
+                                        tvName.setText(item.getQuarters_name());
+                                        tvAddress.setText(item.getAddress());
+                                        RecyclerView itemRecyclerView = holder.getView(R.id.itemRecyclerView);
+                                        if (item.isExpanded()) {
+                                            itemRecyclerView.setVisibility(View.VISIBLE);
+                                            tvName.setSelected(true);
+                                        } else {
+                                            itemRecyclerView.setVisibility(View.GONE);
+                                            tvName.setSelected(false);
+                                        }
+                                        if (item.getIsdefault() == 1) {
+                                            tvNormal.setVisibility(View.VISIBLE);
+                                        } else {
+                                            tvNormal.setVisibility(View.GONE);
+                                        }
+                                        initRecyclerView(itemRecyclerView, item.getListkey(), position);
+                                    }
+
+                                    @Override
+                                    protected int getViewType(TabKeyManager1FragmentResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(RViewHolder holder, View view, int position) {
+                                        for (int i = 0; i < groups.size(); i++) {
+                                            if (i == position) {
+                                                if (groups.get(i).isExpanded()) {
+                                                    groups.get(i).setExpanded(false);
+                                                } else {
+                                                    groups.get(i).setExpanded(true);
+                                                }
+                                            } else {
+                                                groups.get(i).setExpanded(false);
+                                            }
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                recyclerView.setAdapter(adapter);
+                            }
+                        }
+                    }
+                });
+    }
+
     @OnClick({R.id.tv1})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv1:
                 AddPlaceActivity.start();
-//
                 break;
         }
-    }
-
-    private void initParent() {
-        for (int i = 0; i < 5; i++) {
-            Item item = new Item();
-            item.setGroupId(String.valueOf(i));
-            item.setGroupName("碧水蓝天小区");
-            item.setExpanded(false);
-            List<Item.Child> children = new ArrayList<>();
-            for (int j = 0; j < 10; j++) {
-                Item.Child child = new Item.Child();
-                child.setChildId(String.valueOf(j));
-                child.setChildUid(String.valueOf("uid" + j));
-                child.setChildName("好友" + i);
-                child.setChildIcon("http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJypovT9OQz6zzI2TGl4D5doFde5s4GubSZuOvS0hym35PvCuoXjCmhypAfy3VQzkYoNXPGgXM3NA/132");
-                children.add(child);
-            }
-            item.setChildList(children);
-            groups.add(item);
-        }
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
-            @Override
-            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int position) {
-
-                SwipeMenuItem setNormalItem = new SwipeMenuItem(getActivity());
-                setNormalItem.setWidth(DisplayUtils.dp2px(getActivity(), 50));
-                setNormalItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-//                setNormalItem.setHeight(DisplayUtils.dp2px(getActivity(), 52));
-                setNormalItem.setBackgroundColor(Color.parseColor("#3BB0D2"));
-                setNormalItem.setTextSize(12);
-                setNormalItem.setText("设为\n" + "默认");
-                setNormalItem.setTextColor(Color.parseColor("#FFFFFF"));
-                rightMenu.addMenuItem(setNormalItem);
-
-                SwipeMenuItem deleteItem = new SwipeMenuItem(getActivity());
-                deleteItem.setWidth(DisplayUtils.dp2px(getActivity(), 50));
-                deleteItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-//                deleteItem.setHeight(DisplayUtils.dp2px(getActivity(), 52));
-                deleteItem.setBackgroundColor(Color.parseColor("#F9596C"));
-                deleteItem.setTextSize(12);
-                deleteItem.setText("删除\n" + "小区");
-                deleteItem.setTextColor(Color.parseColor("#FFFFFF"));
-                rightMenu.addMenuItem(deleteItem);
-            }
-        });
-        recyclerView.setOnItemMenuClickListener(new OnItemMenuClickListener() {
-            @Override
-            public void onItemClick(SwipeMenuBridge menuBridge, int position) {
-                menuBridge.closeMenu();
-                int direction = menuBridge.getDirection();
-                int menuPosition = menuBridge.getPosition();
-                switch (menuPosition) {
-                    case 0://设为默认
-                        settingNormal("");
-                        break;
-                    case 1://删除小区
-                        DeleteData("");
-                        break;
-                }
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        RBaseAdapter<Item> adapter = new RBaseAdapter<Item>(getActivity(), R.layout.item_tab_key_manager_list, groups) {
-            @Override
-            protected void fillItem(RViewHolder holder, Item item, int position) {
-                TextView tvNormal = holder.getView(R.id.tvNormal);
-                TextView tvAddress = holder.getView(R.id.tvAddress);
-                TextView tvName = holder.getView(R.id.tvName);
-                tvName.setText(item.getGroupName());
-                RecyclerView itemRecyclerView = holder.getView(R.id.itemRecyclerView);
-                if (item.isExpanded()) {
-                    itemRecyclerView.setVisibility(View.VISIBLE);
-                    tvName.setSelected(true);
-                } else {
-                    itemRecyclerView.setVisibility(View.GONE);
-                    tvName.setSelected(false);
-                }
-                if (position == 0) {
-                    tvNormal.setVisibility(View.VISIBLE);
-                } else {
-                    tvNormal.setVisibility(View.GONE);
-                }
-                initRecyclerView(itemRecyclerView, item.getChildList());
-            }
-
-            @Override
-            protected int getViewType(Item item, int position) {
-                return 0;
-            }
-        };
-        adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RViewHolder holder, View view, int position) {
-                for (int i = 0; i < groups.size(); i++) {
-                    if (i == position) {
-                        if (groups.get(i).isExpanded()) {
-                            groups.get(i).setExpanded(false);
-                        } else {
-                            groups.get(i).setExpanded(true);
-                        }
-                    } else {
-                        groups.get(i).setExpanded(false);
-                    }
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
-        recyclerView.setAdapter(adapter);
     }
 
     /**
@@ -250,80 +254,77 @@ public class TabKeyManager1Fragment extends BaseFragment {
 
     }
 
-    private void initRecyclerView(RecyclerView itemRecyclerView, List<Item.Child> childList) {
+    private void initRecyclerView(RecyclerView itemRecyclerView, List<TabKeyManager1FragmentResponse.DataBean.ListkeyBean> listkey, int AreaPosition) {
         itemRecyclerView.setNestedScrollingEnabled(false);
         itemRecyclerView.setAdapter(null);
         itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            strings.add(String.valueOf(i));
-        }
-        RBaseAdapter<String> rBaseAdapter = new RBaseAdapter<String>(getActivity(), R.layout.item_item_tab_key_manager_list, strings) {
+
+        RBaseAdapter<TabKeyManager1FragmentResponse.DataBean.ListkeyBean> rBaseAdapter = new RBaseAdapter<TabKeyManager1FragmentResponse.DataBean.ListkeyBean>(getActivity(), R.layout.item_item_tab_key_manager_list, listkey) {
             @Override
-            protected void fillItem(RViewHolder holder, String item, int position) {
-                RoundImageView riv = holder.getView(R.id.riv);
+            protected void fillItem(RViewHolder holder, TabKeyManager1FragmentResponse.DataBean.ListkeyBean item, int position) {
+
                 TextView tvOpenMethod = holder.getView(R.id.tvOpenMethod);
-                if (holder.getAdapterPosition() % 2 == 0) {
-                    holder.setText(R.id.tvKey, "大门钥匙");
-                    tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_gray__radius_16);
-                    tvOpenMethod.setText("开锁方式");
-                    tvOpenMethod.setTextColor(getResources().getColor(R.color.color_999999));
-                    tvOpenMethod.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            UnlockingModeActivity.start();
-                        }
-                    });
-                } else {
-                    holder.setText(R.id.tvKey, "单元门钥匙");
+
+                if (AreaPosition == 0) {
                     tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_theme_radius_r16);
-                    tvOpenMethod.setText("立即开通");
+                    tvOpenMethod.setText("开锁方式");
                     tvOpenMethod.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                     tvOpenMethod.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            CertificationDialog.show(getActivity(), new CertificationDialog.OnDialogClickListener() {
-                                @Override
-                                public void sure() {
-                                    IdcardCertActivity.start();
-                                }
-                            });
+                            UnlockingModeActivity.start(item.getEqu_pass());
                         }
                     });
+                    switch (item.getEqu_type()) {
+                        case 1:
+                            break;
+                        case 2:
+                            tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_theme_radius_r16);
+                            tvOpenMethod.setText("立即开通");
+                            tvOpenMethod.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                            tvOpenMethod.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ApplyKeyActivity.start(item.getRequ_id());
+                                }
+                            });
+                            break;
+                        case 3:
+                            break;
+                    }
+                } else {
+                    switch (item.getEqu_status()) {////状态 1：通过审核 2=待审批 10=禁止开门
+                        case 1:
+                            tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_theme_radius_r16);
+                            tvOpenMethod.setText("开锁方式");
+                            tvOpenMethod.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                            tvOpenMethod.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    UnlockingModeActivity.start(item.getEqu_pass());
+                                }
+                            });
+                            break;
+                        case 2:
+                            tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_gray__radius_16);
+                            tvOpenMethod.setText("申请中...");
+                            tvOpenMethod.setTextColor(getResources().getColor(R.color.color_999999));
+                            break;
+                        case 10:
+                            break;
+                    }
                 }
-
+                holder.setText(R.id.tvKey, item.getEqu_name());
             }
 
             @Override
-            protected int getViewType(String item, int position) {
+            protected int getViewType(TabKeyManager1FragmentResponse.DataBean.ListkeyBean item, int position) {
                 return 0;
             }
         };
         itemRecyclerView.setAdapter(rBaseAdapter);
-
     }
 
-    private void request() {
-        OkHttpUtils.get()
-                .url(Api.GET_BIND_PLACE_LIST)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
-                .tag(this)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        TabKeyManager1FragmentResponse gson = JsonUtils.parseByGson(response, TabKeyManager1FragmentResponse.class);
-                        if (gson != null) {
-
-                        }
-                    }
-                });
-    }
 
 
     public static class Item {

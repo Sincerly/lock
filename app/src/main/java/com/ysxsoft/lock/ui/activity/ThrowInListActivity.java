@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +20,10 @@ import com.ysxsoft.lock.ui.fragment.Tab1ThrowInListFragment;
 import com.ysxsoft.lock.ui.fragment.Tab2ThrowInListFragment;
 import com.ysxsoft.lock.ui.fragment.Tab3ThrowInListFragment;
 import com.ysxsoft.lock.ui.fragment.Tab4ThrowInListFragment;
+import com.ysxsoft.lock.ui.fragment.TabShopManager1Fragment;
+import com.ysxsoft.lock.ui.fragment.TabShopManager2Fragment;
+import com.ysxsoft.lock.ui.fragment.TabShopManager3Fragment;
+import com.ysxsoft.lock.ui.fragment.TabShopManager4Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +64,12 @@ public class ThrowInListActivity extends BaseActivity {
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
     @Autowired
-    int isSelect=0;
+    int isSelect = 0;
+    @Autowired
+    String business_id;
 
-    public static void start(int isSelect) {
-        ARouter.getInstance().build(ARouterPath.getThrowInListActivity()).withInt("isSelect", isSelect).navigation();
+    public static void start(int isSelect, String business_id) {
+        ARouter.getInstance().build(ARouterPath.getThrowInListActivity()).withInt("isSelect", isSelect).withString("business_id", business_id).navigation();
     }
 
     @Override
@@ -122,10 +129,31 @@ public class ThrowInListActivity extends BaseActivity {
 
     private void initViewPager() {
         List<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(new Tab1ThrowInListFragment());
-        fragmentList.add(new Tab2ThrowInListFragment());
-        fragmentList.add(new Tab3ThrowInListFragment());
-        fragmentList.add(new Tab4ThrowInListFragment());
+
+        Tab1ThrowInListFragment tabShopManager1Fragment = new Tab1ThrowInListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("business_id", business_id);
+        tabShopManager1Fragment.setArguments(bundle);
+        fragmentList.add(tabShopManager1Fragment);
+
+        Tab2ThrowInListFragment tabShopManager2Fragment = new Tab2ThrowInListFragment();
+        Bundle bundle2 = new Bundle();
+        bundle2.putString("business_id", business_id);
+        tabShopManager2Fragment.setArguments(bundle2);
+        fragmentList.add(tabShopManager2Fragment);
+
+
+        Tab3ThrowInListFragment tabShopManager3Fragment = new Tab3ThrowInListFragment();
+        Bundle bundle3 = new Bundle();
+        bundle3.putString("business_id", business_id);
+        tabShopManager3Fragment.setArguments(bundle3);
+        fragmentList.add(tabShopManager3Fragment);
+
+        Tab4ThrowInListFragment tabShopManager4Fragment = new Tab4ThrowInListFragment();
+        Bundle bundle4 = new Bundle();
+        bundle4.putString("business_id", business_id);
+        tabShopManager4Fragment.setArguments(bundle4);
+        fragmentList.add(tabShopManager4Fragment);
 
         viewPager.setAdapter(new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, new ArrayList<String>()));
 

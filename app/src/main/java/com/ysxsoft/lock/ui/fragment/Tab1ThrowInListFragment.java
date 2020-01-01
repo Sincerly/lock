@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.CardListResponse;
 import com.ysxsoft.lock.models.response.ThrowInListResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.ThrowInMoneyRecordActivity;
@@ -34,7 +36,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * Create By 胡
  * on 2019/12/30 0030
  */
-public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapter<ThrowInListResponse.DataBean> {
+public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapter<CardListResponse.DataBean> {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.multipleStatusView)
@@ -42,7 +44,7 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
     @BindView(R.id.smartRefresh)
     SmartRefreshLayout smartRefresh;
     ListManager manager;
-
+    private String business_id;
     @Override
     public int getLayoutId() {
         return R.layout.fragment_tab_throw_in_list_layout;
@@ -50,6 +52,12 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
 
     @Override
     protected void doWork(View view) {
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            business_id = bundle.getString("business_id");
+        }
+
         initList(view);
     }
 
@@ -75,26 +83,28 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
         if (false) {
             debug(manager);
         } else {
-            OkHttpUtils.post()
-                    .url(Api.TOU_HISTORY)
+            OkHttpUtils.get()
+//                    .url(Api.TOU_HISTORY)
+                    .url(Api.CARD_LIST)
                     .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                    .addParams("business_id", business_id)
                     .addParams("type", "1")
-                    .addParams("pageNum", String.valueOf(page))
-                    .addParams("pageSize", "10")
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
-
+                            manager.releaseRefresh();
                         }
 
                         @Override
                         public void onResponse(String response, int id) {
-                            ThrowInListResponse resp = JsonUtils.parseByGson(response, ThrowInListResponse.class);
+                            manager.releaseRefresh();
+//                            ThrowInListResponse resp = JsonUtils.parseByGson(response, ThrowInListResponse.class);
+                            CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
                             if (resp != null) {
                                 if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                    List<ThrowInListResponse.DataBean> data = resp.getData();
+                                    List<CardListResponse.DataBean> data = resp.getData();
                                     manager.setData(data);
                                 } else {
                                     //请求失败
@@ -107,7 +117,7 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
+    public void fillView(BaseViewHolder helper, CardListResponse.DataBean o) {
         TextView tv1 = helper.getView(R.id.tv1);
         TextView tvMoney = helper.getView(R.id.tvMoney);
         TextView tvMj = helper.getView(R.id.tvMj);
@@ -117,11 +127,11 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
         TextView tvStatus = helper.getView(R.id.tvStatus);
 
         tvName.setText(o.getTitle());
-        tvCurrentNum.setText(o.getYs_num());
-        tvSumNum.setText(o.getTotal_num());
+        tvCurrentNum.setText(o.getYsnum());
+        tvSumNum.setText(o.getTotalnum());
 
 
-        if (helper.getAdapterPosition() % 2 == 0) {
+        if (o.getStatus() .equals("1")) {
             tv1.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
             tvMoney.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
             tvName.setTextColor(getActivity().getResources().getColor(R.color.color_282828));
@@ -141,7 +151,7 @@ public class Tab1ThrowInListFragment extends BaseFragment implements IListAdapte
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
+    public void fillMuteView(BaseViewHolder helper, CardListResponse.DataBean o) {
 
     }
 

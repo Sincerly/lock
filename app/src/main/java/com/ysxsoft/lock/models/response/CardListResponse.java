@@ -49,6 +49,36 @@ public class CardListResponse {
         String title;
         String remark;
         String status;
+        String snum;
+        String totalnum;
+        String ysnum;
+
+        public String getTotalnum() {
+            return totalnum;
+        }
+
+        public void setTotalnum(String totalnum) {
+            this.totalnum = totalnum;
+        }
+
+        public String getYsnum() {
+            return ysnum;
+        }
+
+        public void setYsnum(String ysnum) {
+            this.ysnum = ysnum;
+        }
+
+        public String getCostnum() {
+            return costnum;
+        }
+
+        public void setCostnum(String costnum) {
+            this.costnum = costnum;
+        }
+
+        String costnum
+                ;
 
         public String getId() {
             return id;
@@ -138,7 +168,6 @@ public class CardListResponse {
             this.snum = snum;
         }
 
-        String snum;
     }
 
 }

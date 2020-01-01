@@ -24,6 +24,7 @@ public class SelectPayMethodDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
     private int type=1;
+    private static TextView tvMoney;
 
     public SelectPayMethodDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -40,6 +41,7 @@ public class SelectPayMethodDialog extends Dialog {
         LinearLayout LL1 = view.findViewById(R.id.LL1);
         LinearLayout LL2 = view.findViewById(R.id.LL2);
         TextView tvOk = view.findViewById(R.id.tvOk);
+        tvMoney = view.findViewById(R.id.tvMoney);
         TextView tvWeChat = view.findViewById(R.id.tvWeChat);
         tvWeChat.setCompoundDrawables(null,null,ok,null);
         TextView tvAliPay = view.findViewById(R.id.tvAliPay);
@@ -106,11 +108,12 @@ public class SelectPayMethodDialog extends Dialog {
         }
     }
 
-    public static SelectPayMethodDialog show(Context context, OnDialogClickListener listener) {
+    public static SelectPayMethodDialog show(Context context,String str, OnDialogClickListener listener) {
 //        SelectPayMethodDialog dialog = new SelectPayMethodDialog(context, R.style.CenterDialogStyle);
         SelectPayMethodDialog dialog = new SelectPayMethodDialog(context, R.style.BottomDialogStyle);
         dialog.setListener(listener);
         dialog.showDialog();
+        tvMoney.setText(str);
         return dialog;
     }
 

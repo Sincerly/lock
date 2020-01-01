@@ -100,6 +100,7 @@ public class TabShopManager1Fragment extends BaseFragment {
                 .url(Api.CARD_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
                 .addParams("business_id", business_id)
+                .addParams("type", "1")
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -121,9 +122,9 @@ public class TabShopManager1Fragment extends BaseFragment {
                                     protected void fillItem(RViewHolder holder, CardListResponse.DataBean item, int position) {
                                         holder.setText(R.id.tv2, item.getPrice());
 //                holder.setText(R.id.tvMj,"");
-//                holder.setText(R.id.tvShopName,item.ge);
-//                holder.setText(R.id.tvNum,"");
-//                holder.setText(R.id.tvSum,"");
+                                        holder.setText(R.id.tvShopName, item.getTitle());
+                                        holder.setText(R.id.tvNum, item.getYsnum());
+                                        holder.setText(R.id.tvSum, item.getTotalnum());
 //                holder.setText(R.id.tvTime,"");
                                         TextView tvStatus = holder.getView(R.id.tvStatus);
                                         switch (holder.getAdapterPosition() % 4) {
@@ -196,7 +197,7 @@ public class TabShopManager1Fragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.FL1:
-                ThrowInListActivity.start(0);
+                ThrowInListActivity.start(0,business_id);
                 break;
             case R.id.FL2:
                 AddPacketMoneyActivity.start();
