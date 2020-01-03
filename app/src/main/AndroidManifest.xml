@@ -41,7 +41,8 @@
             </intent-filter>
         </activity>
         <!--登录-->
-        <activity android:name=".ui.activity.LoginActivity"></activity>
+        <activity android:name=".ui.activity.LoginActivity">
+        </activity>
         <!--其他方式登录-->
         <activity android:name=".ui.activity.OtherLoginActivity"></activity>
         <!--注册-->
@@ -143,5 +144,8 @@
         <activity android:name=".ui.activity.ThrowInExperienceRecordActivity" />
         <activity android:name=".ui.activity.ThrowInVipRecordActivity" />
         <activity android:name=".ui.activity.ThrowInGroupRecordActivity" />
+        <service
+            android:name="com.dh.bluelock.service.BluetoothBoardService"
+            android:enabled="true" />
     </application>
 </manifest>

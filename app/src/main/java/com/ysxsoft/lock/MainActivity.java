@@ -22,9 +22,11 @@ import androidx.core.view.ViewPropertyAnimatorUpdateListener;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.dh.bluelock.imp.BlueLockPubCallBackBase;
+import com.dh.bluelock.imp.OneKeyInterface;
 import com.dh.bluelock.object.LEDevice;
 import com.dh.bluelock.pub.BlueLockPub;
 import com.dh.bluelock.util.Constants;
+import com.google.gson.Gson;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -53,7 +55,7 @@ public class MainActivity extends BaseActivity {
     private boolean showHalf;
     private int maxOffsetY = 0;
     private int minOffset = 40;
-    private static final String TAG = "tag";
+    private static final String TAG = "MainActivity";
     private final String[] BASIC_PERMISSIONS = new String[]{
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -121,11 +123,11 @@ public class MainActivity extends BaseActivity {
                         //x轴移动距离大于y轴 (左右)
                         if (offsetX > 0) {
                             //右 个人中心
-                            Log.e("tag", "向右 个人中心");
+                            Log.e(TAG, "向右 个人中心");
                             UserInfoActivity.start();
                         } else {
                             //左 广告
-                            Log.e("tag", "向左 切换广告");
+                            Log.e(TAG, "向左 切换广告");
                             showNext();
                         }
                     } else {
@@ -133,9 +135,9 @@ public class MainActivity extends BaseActivity {
                         if (offsetY > 0) {
                             //下 开锁 下滑一半选择小区
                             if (offsetY > DisplayUtils.getDisplayHeight(MainActivity.this) / 3 && downY < DisplayUtils.getDisplayHeight(MainActivity.this) / 3) {
-                                Log.e("tag", "滑动距离超过1/3");
+                                Log.e(TAG, "滑动距离超过1/3");
                             } else {
-                                Log.e("tag", "向下");
+                                Log.e(TAG, "向下");
                                 Set<String> set=map.keySet();
                                 ToastUtils.show(MainActivity.this,"附近设备"+set.size());
 
@@ -146,14 +148,15 @@ public class MainActivity extends BaseActivity {
                                 }
                                 if(leDevice!=null){
                                     String devicePassword = "12345678";
-                                    String devicePasswrod=blueLockPub.generateVisitPassword(leDevice.getDeviceId(),devicePassword,30);
-                                    Log.e("tag","devicePasswrod "+devicePasswrod);
-                                    blueLockPub.oneKeyOpenDevice(leDevice,leDevice.getDeviceId(), devicePasswrod);
+//                                    String devicePasswrod=blueLockPub.generateVisitPassword(leDevice.getDeviceId(),devicePassword,30);
+//                                    Log.e(TAG,"devicePasswrod "+devicePassword);
+                                    Log.e(TAG,"device："+new Gson().toJson(leDevice)+"  deviceId:" +leDevice.getDeviceId());
+                                    blueLockPub.oneKeyOpenDevice(leDevice,leDevice.getDeviceId(), devicePassword);
                                 }
                             }
                         } else {
                             //上  获取优惠券
-                            Log.e("tag", "获取优惠券");
+                            Log.e(TAG, "获取优惠券");
                             CouponDialog.show(MainActivity.this, new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
@@ -169,7 +172,7 @@ public class MainActivity extends BaseActivity {
                         showHalf = false;
                     }
                 } else {
-                    Log.e("tag", "未超过移动的距离");
+                    Log.e(TAG, "未超过移动的距离");
                 }
                 break;
         }
@@ -200,11 +203,11 @@ public class MainActivity extends BaseActivity {
 
     private void initData() {
         initHandler();
-        blueLockPub = BlueLockPub.bleLockInit(this.getApplicationContext());
-        int result = blueLockPub.bleInit(this.getApplicationContext());
-
+        blueLockPub = BlueLockPub.bleLockInit(this);
+        int result = blueLockPub.bleInit(this);
         blueLockCallBack = new BlueLockPubCallBack();
         blueLockPub.setLockMode(Constants.LOCK_MODE_MANUL, null, false);
+
         if (result == 0) {
             //初始化成功
             //开始扫描设备
@@ -233,7 +236,7 @@ public class MainActivity extends BaseActivity {
                         String deviceId = ledevice.getDeviceId();
                         if (!map.containsKey(deviceId)) {
                             map.put(deviceId, ledevice);
-                            blueLockPub.connectDevice(ledevice);
+                            //blueLockPub.connectDevice(ledevice);
                         }
                     } catch (Exception e) {
                         Log.e(TAG, e.toString());
@@ -251,17 +254,19 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void connectDeviceCallBack(int result, int status) {
-            showToast("onConnectDevice "+result+" "+status);
+//            showToast("onConnectDevice "+result+" "+status);
+            Log.e(TAG,"connectDeviceCallBack "+result);
         }
 
         @Override
         public void disconnectDeviceCallBack(int result, int status) {
-            showToast("onDisconnectDevice"+result+" "+status);
+//            showToast("onDisconnectDevice"+result+" "+status);
+            Log.e(TAG,"disconnectDeviceCallBack "+result);
         }
 
         @Override
         public void connectingDeviceCallBack(int result) {
-            showToast("onConnectingDevice"+result);
+            Log.e(TAG,"onConnectingDevice"+result);
         }
 
         @Override
@@ -318,7 +323,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        blueLockPub.addResultCallBack(blueLockCallBack);
+        blueLockPub.setResultCallBack(blueLockCallBack);
         super.onResume();
     }
 

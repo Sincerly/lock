@@ -16,6 +16,7 @@ public class BApplication extends BaseApplication {
     protected void handle() {
         super.handle();
         JpushUtils.init(this);
+        BlueLockPub.bleLockInit(this);
         context = super.getApplicationContext();
     }
 
