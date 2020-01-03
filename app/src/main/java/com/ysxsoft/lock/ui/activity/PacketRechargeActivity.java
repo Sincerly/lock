@@ -3,6 +3,9 @@ package com.ysxsoft.lock.ui.activity;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +31,8 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.PacketRechargeResponse;
 import com.ysxsoft.lock.net.Api;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -148,7 +153,7 @@ public class PacketRechargeActivity extends BaseActivity {
                                 RBaseAdapter<PacketRechargeListResponse.DataBean> adapter = new RBaseAdapter<PacketRechargeListResponse.DataBean>(mContext, R.layout.item_packet_recharge, datas) {
                                     @Override
                                     protected void fillItem(RViewHolder holder, PacketRechargeListResponse.DataBean item, int position) {
-                                        holder.setText(R.id.tv, item.getNum()+"点券"+item.getPrice()+"元");
+                                        holder.setText(R.id.tv, item.getNum() + "点券" + item.getPrice() + "元");
                                         ImageView iv = holder.getView(R.id.iv);
                                         if (Click == position) {
                                             iv.setBackgroundResource(R.mipmap.icon_card_select);
@@ -166,7 +171,8 @@ public class PacketRechargeActivity extends BaseActivity {
                                     @Override
                                     public void onItemClick(RViewHolder holder, View view, int position) {
                                         PacketRechargeListResponse.DataBean itemData = adapter.getItemData(position);
-                                        tvMoney.setText("¥"+itemData.getPrice());
+                                        tvMoney.setText("¥" + itemData.getPrice());
+                                        tvGrayMoney.setText("¥" + itemData.getYprice());
                                         Click = position;
                                         adapter.notifyDataSetChanged();
                                     }
@@ -185,6 +191,33 @@ public class PacketRechargeActivity extends BaseActivity {
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("点券充值");
+        etInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!TextUtils.isEmpty(etInput.getText().toString().trim())) {
+//                    int i = Integer.parseInt(etInput.getText().toString().trim()) / 100;
+//                    DecimalFormat format = new DecimalFormat("0.00");
+                    BigDecimal content = new BigDecimal(etInput.getText().toString().trim());
+                    BigDecimal a1 = new BigDecimal("100");
+                    BigDecimal divide = content.divide(a1);
+//                    String format1 = format.format(divide);
+                    tvMoney.setText(String.valueOf(divide));
+                } else {
+                    tvMoney.setText("0");
+                }
+                tvGrayMoney.setText("0");
+            }
+        });
     }
 
     @OnClick({R.id.backLayout, R.id.tv3, R.id.tvOk})
@@ -197,11 +230,19 @@ public class PacketRechargeActivity extends BaseActivity {
                 PacketServingActivity.start();
                 break;
             case R.id.tvOk:
-                if (Click == -1) {
-                    showToast("请选择充值点数");
+                if (Click == -1 && TextUtils.isEmpty(etInput.getText().toString().trim())) {
+                    showToast("请选择充值点数或输入点券数");
                     return;
                 }
-                SelectPayMethodDialog.show(mContext,tvMoney.getText().toString(), new SelectPayMethodDialog.OnDialogClickListener() {
+
+                if (!TextUtils.isEmpty(etInput.getText().toString().trim())) {
+                    if (Integer.valueOf(etInput.getText().toString().trim()) < 100) {
+                        showToast("输入点券数不能小于100");
+                        return;
+                    }
+                }
+
+                SelectPayMethodDialog.show(mContext, tvMoney.getText().toString(), new SelectPayMethodDialog.OnDialogClickListener() {
                     @Override
                     public void sure(int type) {// type 1 微信  2 支付宝
                         switch (type) {

@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -64,6 +66,8 @@ public class AddPlaceActivity extends BaseActivity {
     TextView tv1;
     @BindView(R.id.tv2)
     TextView tv2;
+    @Autowired
+    String flag;
 
 
     public static void start() {
@@ -71,8 +75,8 @@ public class AddPlaceActivity extends BaseActivity {
     }
 
 
-    public static void start(Activity activity,int requestCode){
-        ARouter.getInstance().build(ARouterPath.getAddPlaceActivity()).navigation(activity,requestCode);
+    public static void start(Activity activity,int requestCode,String flag){
+        ARouter.getInstance().build(ARouterPath.getAddPlaceActivity()).withString("flag",flag).navigation(activity,requestCode);
     }
 
     @Override
@@ -129,8 +133,16 @@ public class AddPlaceActivity extends BaseActivity {
                     showToast("小区不能为空");
                     return;
                 }
-                ApplyKeyActivity.start(requid);
-                finish();
+
+                if ("1".equals(flag)){
+                    Intent intent = new Intent();
+                    intent.putExtra("requid",requid);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }else {
+                    ApplyKeyActivity.start(requid);
+                    finish();
+                }
                 break;
 
 

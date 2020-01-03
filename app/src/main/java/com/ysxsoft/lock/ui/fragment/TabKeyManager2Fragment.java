@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -48,6 +49,10 @@ public class TabKeyManager2Fragment extends BaseFragment {
     TextView tv2;
     @BindView(R.id.tv3)
     TextView tv3;
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
+    @BindView(R.id.LL2)
+    LinearLayout LL2;
 
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;

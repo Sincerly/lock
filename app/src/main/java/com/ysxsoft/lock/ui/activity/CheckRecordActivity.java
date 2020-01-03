@@ -280,9 +280,10 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter<Ch
     @Override
     public void fillView(BaseViewHolder helper, CheckRecordResponse.DataBean o) {
         helper.setText(R.id.tv1, o.getRemark());
+        TextView tv2 = helper.getView(R.id.tv2);
         helper.setText(R.id.tv2, "券号：" + o.getId());
-        helper.setText(R.id.tvPhone, "手机号码：" );
-        helper.setText(R.id.tvNikeName, "会员昵称：" );
+        helper.setText(R.id.tvPhone, "手机号码：" +o.getUser_name());
+        helper.setText(R.id.tvNikeName, "会员昵称：" +o.getName());
         helper.setText(R.id.tv3, "核销日期：" + o.getCost_time());
         helper.setText(R.id.tvMoney, "¥" + o.getPrice());
     }

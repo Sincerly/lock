@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.InputType;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -109,7 +111,7 @@ public class StartAdServingActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
-        //ARouter.getInstance().inject(this);
+        ARouter.getInstance().inject(this);
         initTitle();
         initList();
     }
@@ -154,7 +156,7 @@ public class StartAdServingActivity extends BaseActivity {
 
     private void initList() {
         ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             strings.add(String.valueOf(i));
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -279,7 +281,7 @@ public class StartAdServingActivity extends BaseActivity {
                 });
                 break;
             case R.id.tvAdd:
-                AddPlaceActivity.start();
+                AddPlaceActivity.start(this, 2020, "1");
                 break;
             case R.id.tvTime:
                 //时间选择器
@@ -365,5 +367,16 @@ public class StartAdServingActivity extends BaseActivity {
 
                     }
                 });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == 2020) {
+            String requid = data.getStringExtra("requid");
+
+        }
+
     }
 }

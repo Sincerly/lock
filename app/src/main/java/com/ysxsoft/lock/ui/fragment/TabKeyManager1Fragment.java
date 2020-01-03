@@ -124,6 +124,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
                                                 break;
                                             case 1://删除小区
                                                 DeleteData(requ_id);
+                                                groups.remove(position);
                                                 break;
                                         }
                                     }
@@ -293,25 +294,31 @@ public class TabKeyManager1Fragment extends BaseFragment {
                             break;
                     }
                 } else {
-                    switch (item.getEqu_status()) {////状态 1：通过审核 2=待审批 10=禁止开门
-                        case 1:
-                            tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_theme_radius_r16);
-                            tvOpenMethod.setText("开锁方式");
-                            tvOpenMethod.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                            tvOpenMethod.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    UnlockingModeActivity.start(item.getEqu_pass());
-                                }
-                            });
-                            break;
-                        case 2:
-                            tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_gray__radius_16);
-                            tvOpenMethod.setText("申请中...");
-                            tvOpenMethod.setTextColor(getResources().getColor(R.color.color_999999));
-                            break;
-                        case 10:
-                            break;
+                    if (item.getEqu_status() == 0) {
+                        tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_gray__radius_16);
+                        tvOpenMethod.setText("申请中...");
+                        tvOpenMethod.setTextColor(getResources().getColor(R.color.color_999999));
+                    } else {
+                        switch (item.getEqu_status()) {////状态 1：通过审核 2=待审批 10=禁止开门
+                            case 1:
+                                tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_theme_radius_r16);
+                                tvOpenMethod.setText("开锁方式");
+                                tvOpenMethod.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                                tvOpenMethod.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        UnlockingModeActivity.start(item.getEqu_pass());
+                                    }
+                                });
+                                break;
+                            case 2:
+                                tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_gray__radius_16);
+                                tvOpenMethod.setText("申请中...");
+                                tvOpenMethod.setTextColor(getResources().getColor(R.color.color_999999));
+                                break;
+                            case 10:
+                                break;
+                        }
                     }
                 }
                 holder.setText(R.id.tvKey, item.getEqu_name());
@@ -324,7 +331,6 @@ public class TabKeyManager1Fragment extends BaseFragment {
         };
         itemRecyclerView.setAdapter(rBaseAdapter);
     }
-
 
 
     public static class Item {

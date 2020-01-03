@@ -57,5 +57,15 @@ public class PacketRechargeListResponse {
         }
 
         String num;
+
+        public String getYprice() {
+            return yprice;
+        }
+
+        public void setYprice(String yprice) {
+            this.yprice = yprice;
+        }
+
+        String yprice;
     }
 }

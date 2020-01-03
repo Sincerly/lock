@@ -342,8 +342,6 @@ public class AddPacketMoneyActivity extends BaseActivity {
                                 //请求失败
                                 showToast(resp.getMsg());
                             }
-                        } else {
-                            showToast("获取意见反馈失败");
                         }
                     }
                 });

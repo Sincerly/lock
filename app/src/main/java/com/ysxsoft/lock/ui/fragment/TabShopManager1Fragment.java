@@ -131,6 +131,7 @@ public class TabShopManager1Fragment extends BaseFragment {
                                             case 0:
                                                 tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                                                 tvStatus.setText("待投中");
+                                                StartAdServingActivity.start();
                                                 break;
                                             case 1:
                                                 tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
@@ -143,6 +144,7 @@ public class TabShopManager1Fragment extends BaseFragment {
                                             case 3:
                                                 tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                                                 tvStatus.setText("继续投放");
+                                                StartAdServingActivity.start();
                                                 break;
                                         }
                                     }

@@ -26,6 +26,7 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.models.response.DeviceInfoResponse;
 import com.ysxsoft.lock.models.response.ListUnitResponse;
 import com.ysxsoft.lock.models.response.ListfloorDataResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
@@ -164,6 +165,7 @@ public class ApplyKeyActivity extends BaseActivity {
                     public void OnSelect(String data1, int position1) {
                         unit_id = unitDatas.get(position1).getId();
                         tv2.setText(data1);
+                        submitDeviceinfo();
                     }
                 });
                 ridgepoleSelectDialog1.showDialog();
@@ -184,6 +186,35 @@ public class ApplyKeyActivity extends BaseActivity {
                 submitData();
                 break;
         }
+    }
+
+    /**
+     *按单元选择后，获取该单元门禁设备信息
+     */
+    private void submitDeviceinfo() {
+        OkHttpUtils.get()
+                .url(Api.GET_DEVICE_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("floorid",floor_id)
+                .addParams("unitid",unit_id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        DeviceInfoResponse resp = JsonUtils.parseByGson(response, DeviceInfoResponse.class);
+                        if (resp!=null){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+
+                            }
+                        }
+                    }
+                });
     }
 
     private void submitData() {

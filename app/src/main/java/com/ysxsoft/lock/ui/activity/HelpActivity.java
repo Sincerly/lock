@@ -66,6 +66,7 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
     View bottomLineView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
     private ListManager<String> manager;
 
     public static void start(){
@@ -157,6 +158,7 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
     @Override
     public void fillView(BaseViewHolder helper, String s) {
 //        helper.setText(R.id.textView,"");
+        ImageView iv = helper.getView(R.id.iv);
         WebView webview = helper.getView(R.id.webview);
         TextView textView = helper.getView(R.id.textView);
         TextView tvDesc = helper.getView(R.id.tvDesc);
@@ -166,10 +168,12 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
                 isClick=!isClick;
                 if (isClick){
                     webview.setVisibility(View.VISIBLE);
+                    iv.setBackgroundResource(R.mipmap.icon_black_down_arrow);
                     tvDesc.setVisibility(View.VISIBLE);
                 }else {
                     webview.setVisibility(View.GONE);
                     tvDesc.setVisibility(View.GONE);
+                    iv.setBackgroundResource(R.mipmap.icon_right_arrow);
                 }
                 textView.setSelected(isClick);
             }

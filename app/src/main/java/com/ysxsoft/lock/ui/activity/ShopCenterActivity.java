@@ -114,10 +114,10 @@ public class ShopCenterActivity extends BaseActivity {
                                     finish();
                                     break;
                                 case "201":
-                                    showToast("实名认证审核中");
+                                    ShopEgisActivity.start("个人认证");
                                     break;
                                 case "202":
-                                    showToast("实名认证审核失败");
+                                    ShopAuditFailedActivity.start("个人认证");
                                     break;
                                 case "203":
                                     CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {

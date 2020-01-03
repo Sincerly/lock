@@ -139,4 +139,5 @@ public interface Api {
     public final String EDIT_SIGN=BASE_URL+"/api/members/setgrap";//修改签名
     public final String EDIT_NICKNAME=BASE_URL+"/api/members/setnickname";//修改昵称
     public final String EDIT_LOGO=BASE_URL+"/api/members/headimg";//上传用户头像
+    public final String IS_FACE=BASE_URL+"/api/members/isface";//人脸识别 认证状态
 }
