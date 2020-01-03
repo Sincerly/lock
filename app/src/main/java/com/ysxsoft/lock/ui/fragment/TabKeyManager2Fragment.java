@@ -53,6 +53,8 @@ public class TabKeyManager2Fragment extends BaseFragment {
     LinearLayout LL1;
     @BindView(R.id.LL2)
     LinearLayout LL2;
+    @BindView(R.id.LL3)
+    LinearLayout LL3;
 
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;
@@ -94,16 +96,24 @@ public class TabKeyManager2Fragment extends BaseFragment {
                         if (resp != null) {
                             switch (resp.getCode()) {
                                 case "200":// 返回人脸认证信息
-
+                                    LL1.setVisibility(View.GONE);
+                                    LL2.setVisibility(View.VISIBLE);
+                                    LL3.setVisibility(View.GONE);
                                     break;
-                                 case "201"://  审核中
-
+                                case "201"://  审核中
+                                    LL1.setVisibility(View.GONE);
+                                    LL2.setVisibility(View.GONE);
+                                    LL3.setVisibility(View.VISIBLE);
                                     break;
-                                 case "202"://审核失败
-
+                                case "202"://审核失败
+                                    LL1.setVisibility(View.VISIBLE);
+                                    LL2.setVisibility(View.GONE);
+                                    LL3.setVisibility(View.GONE);
                                     break;
-                                 case "203"://未申请认证
-
+                                case "203"://未申请认证
+                                    LL1.setVisibility(View.VISIBLE);
+                                    LL2.setVisibility(View.GONE);
+                                    LL3.setVisibility(View.GONE);
                                     break;
                             }
                         }
