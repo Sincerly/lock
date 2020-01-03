@@ -128,7 +128,10 @@ public class OtherLoginActivity extends BaseActivity {
                     showToast("密码不能为空");
                     return;
                 }
-                request();
+                MainActivity.start();
+                AppManager.getAppManager().finishAllActivity();
+                finish();
+//                request();
                 break;
 
 
