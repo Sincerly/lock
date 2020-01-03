@@ -140,4 +140,5 @@ public interface Api {
     public final String EDIT_NICKNAME=BASE_URL+"/api/members/setnickname";//修改昵称
     public final String EDIT_LOGO=BASE_URL+"/api/members/headimg";//上传用户头像
     public final String IS_FACE=BASE_URL+"/api/members/isface";//人脸识别 认证状态
+    public final String MEM_BERCARD=BASE_URL+"/api/members/listmembercard";//用户卡券列表
 }
