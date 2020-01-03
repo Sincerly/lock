@@ -34,6 +34,7 @@ import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
+import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
@@ -173,6 +174,7 @@ public class MainActivity extends BaseActivity {
                             CouponDialog.show(MainActivity.this, new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
+                                    PacketActivity.start();
                                 }
                             });
                         }
