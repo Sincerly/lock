@@ -2,6 +2,7 @@ package com.ysxsoft.lock;
 
 import android.content.Context;
 
+import com.dh.bluelock.pub.BlueLockPub;
 import com.ysxsoft.common_base.base.BaseApplication;
 import com.ysxsoft.common_base.jpush.JpushUtils;
 
@@ -15,6 +16,7 @@ public class BApplication extends BaseApplication {
     protected void handle() {
         super.handle();
         JpushUtils.init(this);
+        BlueLockPub.bleLockInit(this);
         context = super.getApplicationContext();
     }
 
