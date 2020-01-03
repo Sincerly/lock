@@ -11,12 +11,14 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 import com.mobile.auth.gatewayauth.AuthUIControlClickListener;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.PreLoginResultListener;
 import com.mobile.auth.gatewayauth.TokenResultListener;
+import com.mobile.auth.gatewayauth.model.TokenRet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -95,6 +97,10 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 获取手机号
+     * @param accessToken
+     */
     public void getMobile(String accessToken) {
         showLoadingDialog("请求中");
         OkHttpUtils.get()
@@ -123,6 +129,7 @@ public class LoginActivity extends BaseActivity {
 //                                    showToast(resp.getMsg());
 //                                }
                             Phone.setText(resp.getPhone());
+                            helper.quitAuthActivity();
                         } else {
                             showToast("获取登录失败");
                         }
@@ -132,42 +139,57 @@ public class LoginActivity extends BaseActivity {
 
     private TokenResultListener tokenResultListener = new TokenResultListener() {
         @Override
-        public void onTokenSuccess(String token) {
+        public void onTokenSuccess(final String token) {
             Log.e("tag", "onTokenSuccess" + token);
-            helper.setAuthUIConfig(new AuthUIConfig.Builder()
-                    .setLogBtnText("手机号码一键登录")
-                    .setNavHidden(true)
-                    .setLogoImgPath("ic_launcher")
-                    .setLogoWidth(DisplayUtils.dp2px(LoginActivity.this, 90))
-                    .setLogoHeight(DisplayUtils.dp2px(LoginActivity.this, 90))
-                    .setSloganText(" ")
-                    .setLogBtnBackgroundPath("shape_btn_bg")
-                    .setLogBtnWidth(DisplayUtils.dp2px(LoginActivity.this, 122))
-                    .setLogBtnHeight(DisplayUtils.dp2px(LoginActivity.this, 16))
-                    .setLogBtnTextSize(16)
+            helper.setUIClickListener(new AuthUIControlClickListener() {
+                @Override
+                public void onClick(String s, Context context, JSONObject jsonObject) {
+                    Log.e("tag",s+" "+jsonObject);
+                    switch (s){
+                        case "700000":
+                            //点击返回 用户取消免密登录
+                            break;
+                        case "700001":
+                            //点击切换 用户取消免密登录
+                            break;
+                        case "700002":
+                            //点击登录按钮事件
+                            break;
+                        case "700003":
+                            //点击check box事件
+                            break;
+                        case "700004":
+                            //点击协议富文本文字事件
+                            break;
+                    }
+                }
+            });
 
-                    .setSwitchAccText("其他方式登录")
-                    .setSwitchAccTextSize(12)
-                    .setSwitchAccTextColor(Color.parseColor("#666666"))
-
-                    .setPrivacyBefore("登录即同意我们的")
-                    .setCheckboxHidden(true)
-                    .setAppPrivacyOne("《服务协议》","11")
-                    .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
-                    .create());
-//
-//            helper.accelerateLoginPage(30000, new PreLoginResultListener() {
-//                @Override
-//                public void onTokenSuccess(String s) {
-//                    Log.e("tag", "login onTokenSuccess" + s);
-//                }
-//
-//                @Override
-//                public void onTokenFailed(String type, String s1) {
-//                    Log.e("tag", "login onTokenFailed" + type + " " + s1);
-//                }
-//            });
-//            getMobile(token);
+            if (token.contains("6000")) {
+                return;
+            }
+            TokenRet tokenRet = JSON.parseObject(token, TokenRet.class);
+            if (tokenRet != null) {
+                switch (tokenRet.getCode()){
+                    case "600000":
+                        //获取token成功
+                        String tok = tokenRet.getToken();
+                        getMobile(tok);
+                        break;
+                    case "600001":
+                        //唤起授权页成功
+                        break;
+                     case "600002":
+                        //唤起授权页失败
+                        break;
+                     case "600004":
+                        //获取运营商配置信息失败
+                        break;
+                     case "600005":
+                        //手机终端不安全
+                        break;
+                }
+            }
         }
 
         @Override
@@ -182,6 +204,28 @@ public class LoginActivity extends BaseActivity {
         helper.setLoggerEnable(true);
         if (helper.checkEnvAvailable()) {
             //检查终端是否支持号码认证
+            helper.setAuthUIConfig(new AuthUIConfig.Builder()
+                    .setLogBtnText("手机号码一键登录")
+                    .setNavHidden(true)
+                    .setNavColor(getResources().getColor(R.color.colorPrimary))
+                    .setLogoImgPath("ic_launcher")
+                    .setLogoWidth(DisplayUtils.dp2px(LoginActivity.this, 32))
+                    .setLogoHeight(DisplayUtils.dp2px(LoginActivity.this, 32))
+                    .setSloganText(" ")
+                    .setLogBtnBackgroundPath("shape_btn_bg")
+                    .setLogBtnWidth(DisplayUtils.dp2px(LoginActivity.this, 122))
+                    .setLogBtnHeight(DisplayUtils.dp2px(LoginActivity.this, 16))
+                    .setLogBtnTextSize(16)
+                    .setSwitchAccText("其他方式登录")
+                    .setSwitchAccTextSize(12)
+                    .setSwitchAccTextColor(Color.parseColor("#666666"))
+
+                    .setPrivacyBefore("登录即同意我们的")
+                    .setCheckboxHidden(true)
+                    .setAppPrivacyOne("《服务协议》","http://www.baidu.com")
+                    .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
+                    .create());
+
             helper.getLoginToken(LoginActivity.this, 30000);
         }
     }

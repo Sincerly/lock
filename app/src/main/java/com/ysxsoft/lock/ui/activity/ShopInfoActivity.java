@@ -363,7 +363,6 @@ public class ShopInfoActivity extends BaseActivity {
                 }
             }
         });
-
     }
 
     public void request() {
