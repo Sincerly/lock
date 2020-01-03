@@ -33,7 +33,9 @@ import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
+import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
+import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
 
 import java.util.HashMap;
@@ -136,6 +138,17 @@ public class MainActivity extends BaseActivity {
                             //下 开锁 下滑一半选择小区
                             if (offsetY > DisplayUtils.getDisplayHeight(MainActivity.this) / 3 && downY < DisplayUtils.getDisplayHeight(MainActivity.this) / 3) {
                                 Log.e(TAG, "滑动距离超过1/3");
+                                CheckAddressDialog.show(MainActivity.this, new CheckAddressDialog.OnDialogClickListener() {
+                                    @Override
+                                    public void sure(String requid) {
+
+                                    }
+
+                                    @Override
+                                    public void cancle() {
+                                        AddPlaceActivity.start();
+                                    }
+                                });
                             } else {
                                 Log.e(TAG, "向下");
                                 Set<String> set=map.keySet();
