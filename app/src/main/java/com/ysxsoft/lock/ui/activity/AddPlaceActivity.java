@@ -140,7 +140,8 @@ public class AddPlaceActivity extends BaseActivity {
                     setResult(RESULT_OK,intent);
                     finish();
                 }else {
-                    ApplyKeyActivity.start(requid);
+//                    ApplyKeyActivity.start(requid);
+
                     finish();
                 }
                 break;
@@ -181,7 +182,6 @@ public class AddPlaceActivity extends BaseActivity {
                                     }
                                 });
                                 dialog.showDialog();
-
                             }
                         }
                     }

@@ -165,7 +165,6 @@ public class ApplyKeyActivity extends BaseActivity {
                     public void OnSelect(String data1, int position1) {
                         unit_id = unitDatas.get(position1).getId();
                         tv2.setText(data1);
-                        submitDeviceinfo();
                     }
                 });
                 ridgepoleSelectDialog1.showDialog();
@@ -186,35 +185,6 @@ public class ApplyKeyActivity extends BaseActivity {
                 submitData();
                 break;
         }
-    }
-
-    /**
-     *按单元选择后，获取该单元门禁设备信息
-     */
-    private void submitDeviceinfo() {
-        OkHttpUtils.get()
-                .url(Api.GET_DEVICE_INFO)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("floorid",floor_id)
-                .addParams("unitid",unit_id)
-                .tag(this)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        DeviceInfoResponse resp = JsonUtils.parseByGson(response, DeviceInfoResponse.class);
-                        if (resp!=null){
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
-
-                            }
-                        }
-                    }
-                });
     }
 
     private void submitData() {
@@ -238,12 +208,67 @@ public class ApplyKeyActivity extends BaseActivity {
                         if (resp != null) {
                             showToast(resp.getMsg());
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                submitDeviceinfo();
+
+                            }
+                        }
+                    }
+                });
+    }
+    /**
+     *按单元选择后，获取该单元门禁设备信息
+     */
+    private void submitDeviceinfo() {
+        OkHttpUtils.get()
+                .url(Api.GET_DEVICE_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("floorid",floor_id)
+                .addParams("unitid",unit_id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        DeviceInfoResponse resp = JsonUtils.parseByGson(response, DeviceInfoResponse.class);
+                        if (resp!=null){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                KeyApplyData(resp.getData().getId());
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void KeyApplyData(String id) {
+        OkHttpUtils.post()
+                .url(Api.KEY_APPLY)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("equid",id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp!=null){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
                                 finish();
                             }
                         }
                     }
                 });
     }
+
 
     @Override
     public void doWork() {

@@ -70,6 +70,47 @@ public class TabKeyManager2Fragment extends BaseFragment {
         initPhotoHelper();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getIsface();
+    }
+
+    private void getIsface() {
+        OkHttpUtils.post()
+                .url(Api.IS_FACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            switch (resp.getCode()) {
+                                case "200":// 返回人脸认证信息
+
+                                    break;
+                                 case "201"://  审核中
+
+                                    break;
+                                 case "202"://审核失败
+
+                                    break;
+                                 case "203"://未申请认证
+
+                                    break;
+                            }
+                        }
+                    }
+                });
+    }
+
     @SuppressLint("CheckResult")
     private void initPhotoHelper() {
         r = new RxPermissions(this);
