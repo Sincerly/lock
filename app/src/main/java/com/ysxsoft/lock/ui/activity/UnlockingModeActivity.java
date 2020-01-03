@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -51,8 +52,11 @@ public class UnlockingModeActivity extends BaseActivity {
     @BindView(R.id.tv10)
     TextView tv10;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getUnlockingModeActivity()).navigation();
+    @Autowired
+    String pass;
+
+    public static void start(String pass) {
+        ARouter.getInstance().build(ARouterPath.getUnlockingModeActivity()).withString("pass",pass).navigation();
     }
 
     @Override
@@ -63,6 +67,7 @@ public class UnlockingModeActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
     }
 
@@ -84,14 +89,14 @@ public class UnlockingModeActivity extends BaseActivity {
                 break;
               case R.id.tv4:
                   OpenLockPwdDialog dialog = new OpenLockPwdDialog(mContext, R.style.CenterDialogStyle);
-                  dialog.setData("666666");
+                  dialog.setData(pass);
                   dialog.showDialog();
                 break;
               case R.id.tv6:
                   showToast("远程开门");
                 break;
               case R.id.tv8:
-                  showToast("人脸识别");
+                finish();
                 break;
               case R.id.tv10:
                 break;

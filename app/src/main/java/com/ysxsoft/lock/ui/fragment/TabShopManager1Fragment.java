@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.fragment;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -35,6 +36,7 @@ import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.models.response.CardListResponse;
 import com.ysxsoft.lock.ui.activity.AddPacketMoneyActivity;
 import com.ysxsoft.lock.ui.activity.CheckRecordActivity;
 import com.ysxsoft.lock.ui.activity.CheckSucessActivity;
@@ -70,7 +72,8 @@ public class TabShopManager1Fragment extends BaseFragment {
     @BindView(R.id.FL2)
     FrameLayout FL2;
 
-    List<String> groups = new ArrayList<>();
+    private String business_id;
+    private ArrayList<CardListResponse.DataBean> groups;
 
     @Override
     public int getLayoutId() {
@@ -79,13 +82,87 @@ public class TabShopManager1Fragment extends BaseFragment {
 
     @Override
     protected void doWork(View view) {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            business_id = bundle.getString("business_id");
+        }
         initList(view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestData();
+    }
+
+    private void requestData() {
+        OkHttpUtils.get()
+                .url(Api.CARD_LIST)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("business_id", business_id)
+                .addParams("type", "1")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+
+                        CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                groups = resp.getData();
+
+                                RBaseAdapter<CardListResponse.DataBean> adapter = new RBaseAdapter<CardListResponse.DataBean>(getActivity(), R.layout.item_tabshopmanager1_fragment_list, groups) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, CardListResponse.DataBean item, int position) {
+                                        holder.setText(R.id.tv2, item.getPrice());
+//                holder.setText(R.id.tvMj,"");
+                                        holder.setText(R.id.tvShopName, item.getTitle());
+                                        holder.setText(R.id.tvNum, item.getYsnum());
+                                        holder.setText(R.id.tvSum, item.getTotalnum());
+//                holder.setText(R.id.tvTime,"");
+                                        TextView tvStatus = holder.getView(R.id.tvStatus);
+                                        switch (holder.getAdapterPosition() % 4) {
+                                            case 0:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                                                tvStatus.setText("待投中");
+                                                StartAdServingActivity.start();
+                                                break;
+                                            case 1:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                                                tvStatus.setText("投放结束");
+                                                break;
+                                            case 2:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                                                tvStatus.setText("投放中");
+                                                break;
+                                            case 3:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                                                tvStatus.setText("继续投放");
+                                                StartAdServingActivity.start();
+                                                break;
+                                        }
+                                    }
+
+                                    @Override
+                                    protected int getViewType(CardListResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                recyclerView.setAdapter(adapter);
+
+                            }
+                        }
+                    }
+                });
+    }
+
     private void initList(View view) {
-        for (int i = 0; i < 5; i++) {
-            groups.add(String.valueOf(i));
-        }
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
             @Override
@@ -116,49 +193,13 @@ public class TabShopManager1Fragment extends BaseFragment {
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        RBaseAdapter<String> adapter = new RBaseAdapter<String>(getActivity(), R.layout.item_tabshopmanager1_fragment_list, groups) {
-            @Override
-            protected void fillItem(RViewHolder holder, String item, int position) {
-//                holder.setText(R.id.tv2,"");
-//                holder.setText(R.id.tvMj,"");
-//                holder.setText(R.id.tvShopName,"");
-//                holder.setText(R.id.tvNum,"");
-//                holder.setText(R.id.tvSum,"");
-//                holder.setText(R.id.tvTime,"");
-                TextView tvStatus = holder.getView(R.id.tvStatus);
-                switch (holder.getAdapterPosition() % 4) {
-                    case 0:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                        tvStatus.setText("待投中");
-                        break;
-                    case 1:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
-                        tvStatus.setText("投放结束");
-                        break;
-                    case 2:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
-                        tvStatus.setText("投放中");
-                        break;
-                    case 3:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                        tvStatus.setText("继续投放");
-                        break;
-                }
-            }
-
-            @Override
-            protected int getViewType(String item, int position) {
-                return 0;
-            }
-        };
-        recyclerView.setAdapter(adapter);
     }
 
     @OnClick({R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.FL1:
-                ThrowInListActivity.start(0);
+                ThrowInListActivity.start(0,business_id);
                 break;
             case R.id.FL2:
                 AddPacketMoneyActivity.start();
@@ -166,84 +207,4 @@ public class TabShopManager1Fragment extends BaseFragment {
         }
     }
 
-    public static class Item {
-        private String groupName;
-        private String groupId;
-        private boolean isExpanded;
-        private List<Child> childList;
-
-        public boolean isExpanded() {
-            return isExpanded;
-        }
-
-        public void setExpanded(boolean expanded) {
-            isExpanded = expanded;
-        }
-
-        public String getGroupName() {
-            return groupName == null ? "" : groupName;
-        }
-
-        public void setGroupName(String groupName) {
-            this.groupName = groupName;
-        }
-
-        public String getGroupId() {
-            return groupId == null ? "" : groupId;
-        }
-
-        public void setGroupId(String groupId) {
-            this.groupId = groupId;
-        }
-
-        public List<Item.Child> getChildList() {
-            if (childList == null) {
-                return new ArrayList<>();
-            }
-            return childList;
-        }
-
-        public void setChildList(List<Item.Child> childList) {
-            this.childList = childList;
-        }
-
-        public static class Child {
-            private String childName;
-            private String childId;
-            private String childUid;
-            private String childIcon;
-
-            public String getChildUid() {
-                return childUid == null ? "" : childUid;
-            }
-
-            public void setChildUid(String childUid) {
-                this.childUid = childUid;
-            }
-
-            public String getChildIcon() {
-                return childIcon == null ? "" : childIcon;
-            }
-
-            public void setChildIcon(String childIcon) {
-                this.childIcon = childIcon;
-            }
-
-            public String getChildName() {
-                return childName == null ? "" : childName;
-            }
-
-            public void setChildName(String childName) {
-                this.childName = childName;
-            }
-
-            public String getChildId() {
-                return childId == null ? "" : childId;
-            }
-
-            public void setChildId(String childId) {
-                this.childId = childId;
-            }
-        }
-    }
 }

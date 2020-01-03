@@ -28,6 +28,7 @@ import com.ysxsoft.lock.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ysxsoft.lock.models.response.DeviceInfoResponse;
 import com.ysxsoft.lock.models.response.ListUnitResponse;
 import com.ysxsoft.lock.models.response.ListfloorDataResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
@@ -86,6 +87,7 @@ public class ApplyKeyActivity extends BaseActivity {
     private List<ListfloorDataResponse.DataBean> listFloors;
     private String floor_id;
     private String unit_id;
+    private List<ListUnitResponse.DataBean> unitDatas;
 
     public static void start(String requid) {
         ARouter.getInstance().build(ARouterPath.getApplyKeyActivity()).withString("requid", requid).navigation();
@@ -115,6 +117,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tv1:
+
+                if (listFloors.size()<=0){
+                    showToast("暂无数据");
+                    return;
+                }
+
                 ArrayList<String> strings = new ArrayList<>();
                 for (int i = 0; i < listFloors.size(); i++) {
                     strings.add(listFloors.get(i).getFloor_name());
@@ -124,6 +132,7 @@ public class ApplyKeyActivity extends BaseActivity {
                 ridgepoleSelectDialog.setData(strings, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1) {
+
                         floor_id = listFloors.get(position1).getId();
                         String requ_id = listFloors.get(position1).getRequ_id();
                         tv1.setText(data1);
@@ -134,16 +143,29 @@ public class ApplyKeyActivity extends BaseActivity {
                 ridgepoleSelectDialog.showDialog();
                 break;
             case R.id.tv2:
+
                 if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
                     showToast("栋选择不能为空");
                     return;
                 }
+
+                if (unitDatas.size()<=0){
+                    showToast("暂无数据");
+                    return;
+                }
+
                 ArrayList<String> strings1 = new ArrayList<>();
+
+                for (int i = 0; i < unitDatas.size(); i++) {
+                    strings1.add(unitDatas.get(i).getFloor_name());
+                }
+
                 RidgepoleSelectDialog ridgepoleSelectDialog1 = new RidgepoleSelectDialog(mContext, R.style.CenterDialogStyle);
                 ridgepoleSelectDialog1.setTitle("单元选择");
                 ridgepoleSelectDialog1.setData(strings1, 0, new RidgepoleSelectDialog.OnDialogSelectListener() {
                     @Override
                     public void OnSelect(String data1, int position1) {
+                        unit_id = unitDatas.get(position1).getId();
                         tv2.setText(data1);
                     }
                 });
@@ -171,8 +193,8 @@ public class ApplyKeyActivity extends BaseActivity {
         OkHttpUtils.post()
                 .url(Api.SAVE_INFO)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("floor_id",floor_id)
-                .addParams("unit_id",unit_id)
+                .addParams("floor_id", floor_id)
+                .addParams("unit_id", unit_id)
                 .addParams("room", et1.getText().toString().trim())
                 .tag(this)
                 .build()
@@ -185,8 +207,62 @@ public class ApplyKeyActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                        if (resp!=null){
+                        if (resp != null) {
                             showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                submitDeviceinfo();
+
+                            }
+                        }
+                    }
+                });
+    }
+    /**
+     *按单元选择后，获取该单元门禁设备信息
+     */
+    private void submitDeviceinfo() {
+        OkHttpUtils.get()
+                .url(Api.GET_DEVICE_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("floorid",floor_id)
+                .addParams("unitid",unit_id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        DeviceInfoResponse resp = JsonUtils.parseByGson(response, DeviceInfoResponse.class);
+                        if (resp!=null){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                                KeyApplyData(resp.getData().getId());
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void KeyApplyData(String id) {
+        OkHttpUtils.post()
+                .url(Api.KEY_APPLY)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("equid",id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp!=null){
                             if (HttpResponse.SUCCESS.equals(resp.getCode())){
                                 finish();
                             }
@@ -194,6 +270,7 @@ public class ApplyKeyActivity extends BaseActivity {
                     }
                 });
     }
+
 
     @Override
     public void doWork() {
@@ -232,7 +309,9 @@ public class ApplyKeyActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         ListUnitResponse resp = JsonUtils.parseByGson(response, ListUnitResponse.class);
                         if (resp != null) {
-
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                unitDatas = resp.getData();
+                            }
                         }
                     }
                 });

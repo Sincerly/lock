@@ -26,6 +26,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
@@ -44,7 +45,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * create by Sincerly on 9999/9/9 0009
  **/
 @Route(path = "/main/PacketServingActivity")
-public class PacketServingActivity extends BaseActivity implements IListAdapter<String> {
+public class PacketServingActivity extends BaseActivity implements IListAdapter<PacketServingResponse.DataBean> {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -65,7 +66,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
     View bottomLineView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private ListManager<String> manager;
+    private ListManager<PacketServingResponse.DataBean> manager;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getPacketServingActivity()).navigation();
@@ -117,13 +118,12 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
+        if (false) {
             debug(manager);
         } else {
-            OkHttpUtils.post()
-                    .url(Api.GET_PACKET_SERVING_LIST)
-                    .addParams("uid", SharedPreferencesUtils.getUid(PacketServingActivity.this))
-                    .addParams("page", String.valueOf(page))
+            OkHttpUtils.get()
+                    .url(Api.CARD_INFO_LIST)
+                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
@@ -137,14 +137,14 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
                             manager.releaseRefresh();
                             PacketServingResponse resp = JsonUtils.parseByGson(response, PacketServingResponse.class);
                             if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<PacketServingResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                    //请求成功
+                                    List<PacketServingResponse.DataBean> data = resp.getData();
+                                    manager.setData(data);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
                             } else {
                                 showToast("获取失败");
                             }
@@ -154,8 +154,8 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, String s) {
-//        helper.setText(R.id.tvTime, "日期："+"");
+    public void fillView(BaseViewHolder helper, PacketServingResponse.DataBean s) {
+        helper.setText(R.id.tvTime, "日期："+s.getCreate_time());
         TextView tvMoney = helper.getView(R.id.tvMoney);
         if (helper.getAdapterPosition()%2==0){
             tvMoney.setText("500点");
@@ -170,7 +170,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, String s) {
+    public void fillMuteView(BaseViewHolder helper, PacketServingResponse.DataBean s) {
 
     }
 

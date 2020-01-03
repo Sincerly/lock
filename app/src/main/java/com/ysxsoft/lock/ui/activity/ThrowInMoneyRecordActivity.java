@@ -12,15 +12,19 @@ import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.CheckRecordResponse;
+import com.ysxsoft.lock.models.response.ThrowInListResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +40,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * on 2019/12/30 0030
  */
 @Route(path = "/main/ThrowInMoneyRecordActivity")
-public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAdapter {
+public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAdapter<ThrowInListResponse.DataBean> {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -58,7 +62,7 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private ListManager<String> manager;
+    private ListManager<ThrowInListResponse.DataBean> manager;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getThrowInMoneyRecordActivity()).navigation();
@@ -109,34 +113,39 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
+        if (false) {
             debug(manager);
         } else {
             showLoadingDialog("请求中");
             OkHttpUtils.post()
-//                    .url(Api.GET_CHECK_RECORD)
-                    .addParams("uid", SharedPreferencesUtils.getUid(mContext))
+                    .url(Api.TOU_HISTORY)
+                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                    .addParams("pageSize", "10")
+                    .addParams("type", "1")
+                    .addParams("pageNum", String.valueOf(page))
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
+                            manager.releaseRefresh();
                             hideLoadingDialog();
                         }
 
                         @Override
                         public void onResponse(String response, int id) {
+                            manager.releaseRefresh();
                             hideLoadingDialog();
-                            CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                            ThrowInListResponse resp = JsonUtils.parseByGson(response, ThrowInListResponse.class);
                             if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<CheckRecordResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                    //请求成功
+                                    List<ThrowInListResponse.DataBean> data = resp.getData();
+                                    manager.setData(data);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
                             }
                         }
                     });
@@ -144,8 +153,8 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, Object o) {
-//        helper.setText(R.id.tvName, "");
+    public void fillView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
+        helper.setText(R.id.tvName, o.getTitle());
 //        helper.setText(R.id.tvPhone, "手机号码：");
 //        helper.setText(R.id.tvNikeName, "会员昵称：");
         if (helper.getAdapterPosition() % 2 == 0) {
@@ -158,7 +167,7 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, Object o) {
+    public void fillMuteView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
 
     }
 

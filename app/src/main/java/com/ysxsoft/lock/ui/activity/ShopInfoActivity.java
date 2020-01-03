@@ -309,16 +309,16 @@ public class ShopInfoActivity extends BaseActivity {
         OkHttpUtils.post()
                 .url(Api.EDIT_INFO)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("name",tvShopName.getText().toString().trim())
-                .addParams("mainbusiness",tvSaleType.getText().toString().trim())
-                .addParams("week1",day1)
-                .addParams("week2",day2)
-                .addParams("time1",time1)
-                .addParams("time2",time2)
-                .addParams("address",tvShopAddress.getText().toString().trim())
-                .addParams("tel",etPhone.getText().toString().trim())
-                .addParams("lat","")
-                .addParams("lng","")
+                .addParams("name", tvShopName.getText().toString().trim())
+                .addParams("mainbusiness", tvSaleType.getText().toString().trim())
+                .addParams("week1", day1)
+                .addParams("week2", day2)
+                .addParams("time1", time1)
+                .addParams("time2", time2)
+                .addParams("address", tvShopAddress.getText().toString().trim())
+                .addParams("tel", etPhone.getText().toString().trim())
+                .addParams("lat", "")
+                .addParams("lng", "")
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -331,9 +331,9 @@ public class ShopInfoActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                        if (resp!=null){
+                        if (resp != null) {
                             showToast(resp.getMsg());
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 finish();
                             }
                         }
@@ -383,19 +383,21 @@ public class ShopInfoActivity extends BaseActivity {
                         hideLoadingDialog();
                         ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
                         if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                            Glide.with(mContext).load("").into(logo);
-//                            tvShopName.setText("");
-//                            tvSaleType.setText("");
-//                            tvday.setText("--");
-//                            tvWorkTime.setText("--");
-//                            tvShopAddress.setText("");
-//                            etPhone.setText("");
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                if(resp.getData()!=null) {
+                                    //请求成功
+                                    Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(logo);
+                                    tvShopName.setText(resp.getData().getName());
+                                    tvSaleType.setText(resp.getData().getMainbusiness());
+                                    tvday.setText(resp.getData().getWeek1() + "--" + resp.getData().getWeek2());
+                                    tvWorkTime.setText(resp.getData().getTime1() + "--" + resp.getData().getTime2());
+                                    tvShopAddress.setText(resp.getData().getAddress());
+                                    etPhone.setText(resp.getData().getTel());
+                                }
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
                         } else {
                             showToast("获取商户信息失败");
                         }

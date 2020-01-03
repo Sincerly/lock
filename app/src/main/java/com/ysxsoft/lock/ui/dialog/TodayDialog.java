@@ -44,7 +44,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("true");
+                        listener.select("true",0);
                     }
                     dismiss();
                 }
@@ -53,7 +53,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("1");
+                        listener.select("true",1);
                     }
                     dismiss();
                 }
@@ -62,7 +62,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("2");
+                        listener.select("true",2);
                     }
                     dismiss();
                 }
@@ -71,7 +71,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("3");
+                        listener.select("true",3);
                     }
                     dismiss();
                 }
@@ -80,7 +80,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("4");
+                        listener.select("true",4);
                     }
                     dismiss();
                 }
@@ -122,6 +122,6 @@ public class TodayDialog {
     }
 
     public interface OnPopupWindowListener {
-        void select(String  type);
+        void select(String  type,int today);
     }
 }

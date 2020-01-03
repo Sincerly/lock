@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.fragment;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener;
 import com.yanzhenjie.recyclerview.SwipeMenu;
@@ -33,6 +35,8 @@ import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.CardListResponse;
 import com.ysxsoft.lock.ui.activity.AddPacketExperienceActivity;
 import com.ysxsoft.lock.ui.activity.AddPacketGroupActivity;
 import com.ysxsoft.lock.ui.activity.ThrowInListActivity;
@@ -64,7 +68,8 @@ public class TabShopManager3Fragment extends BaseFragment {
     @BindView(R.id.FL2)
     FrameLayout FL2;
 
-    List<String> groups = new ArrayList<>();
+    private String business_id;
+    private ArrayList<CardListResponse.DataBean> groups;
 
     @Override
     public int getLayoutId() {
@@ -73,13 +78,89 @@ public class TabShopManager3Fragment extends BaseFragment {
 
     @Override
     protected void doWork(View view) {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            business_id = bundle.getString("business_id");
+        }
         initList(view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestData();
+    }
+
+    private void requestData() {
+        OkHttpUtils.get()
+                .url(Api.CARD_LIST)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("business_id", business_id)
+                .addParams("type", "3")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                groups = resp.getData();
+
+                                RBaseAdapter<CardListResponse.DataBean> adapter = new RBaseAdapter<CardListResponse.DataBean>(getActivity(), R.layout.item_tabshopmanager3_fragment_list, groups) {
+                                    @Override
+                                    protected void fillItem(RViewHolder holder, CardListResponse.DataBean item, int position) {
+                                        RoundImageView riv = holder.getView(R.id.riv);
+                                        Glide.with(getActivity()).load(AppConfig.BASE_URL + item.getImg()).into(riv);
+                                        holder.setText(R.id.tvShopName, item.getTitle());
+                                        holder.setText(R.id.tvMoney, item.getPrice());
+                                        TextView tvGrayMoney = holder.getView(R.id.tvGrayMoney);
+                                        tvGrayMoney.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
+                                        tvGrayMoney.setText(item.getOprice());
+                                        holder.setText(R.id.tvNum, item.getYsnum());
+                                        holder.setText(R.id.tvSum, item.getTotalnum());
+//                holder.setText(R.id.tvTime,"");
+                                        TextView tvStatus = holder.getView(R.id.tvStatus);
+                                        switch (holder.getAdapterPosition() % 4) {
+                                            case 0:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                                                tvStatus.setText("待投中");
+                                                break;
+                                            case 1:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                                                tvStatus.setText("投放结束");
+                                                break;
+                                            case 2:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
+                                                tvStatus.setText("投放中");
+                                                break;
+                                            case 3:
+                                                tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                                                tvStatus.setText("继续投放");
+                                                break;
+                                        }
+                                    }
+
+                                    @Override
+                                    protected int getViewType(CardListResponse.DataBean item, int position) {
+                                        return 0;
+                                    }
+                                };
+                                recyclerView.setAdapter(adapter);
+
+                            }
+                        }
+                    }
+                });
+    }
+
     private void initList(View view) {
-        for (int i = 0; i < 5; i++) {
-            groups.add(String.valueOf(i));
-        }
+
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
             @Override
@@ -110,53 +191,14 @@ public class TabShopManager3Fragment extends BaseFragment {
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        RBaseAdapter<String> adapter = new RBaseAdapter<String>(getActivity(), R.layout.item_tabshopmanager3_fragment_list, groups) {
-            @Override
-            protected void fillItem(RViewHolder holder, String item, int position) {
-                RoundImageView riv = holder.getView(R.id.riv);
-//                Glide.with(getActivity()).load("").into(riv);
-//                holder.setText(R.id.tvShopName,"");
-//                holder.setText(R.id.tvMoney,"");
-                TextView tvGrayMoney = holder.getView(R.id.tvGrayMoney);
-                tvGrayMoney.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
-//                tvGrayMoney.setText("");
-//                holder.setText(R.id.tvNum,"");
-//                holder.setText(R.id.tvSum,"");
-//                holder.setText(R.id.tvTime,"");
-                TextView tvStatus = holder.getView(R.id.tvStatus);
-                switch (holder.getAdapterPosition() % 4) {
-                    case 0:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                        tvStatus.setText("待投中");
-                        break;
-                    case 1:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
-                        tvStatus.setText("投放结束");
-                        break;
-                    case 2:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
-                        tvStatus.setText("投放中");
-                        break;
-                    case 3:
-                        tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                        tvStatus.setText("继续投放");
-                        break;
-                }
-            }
 
-            @Override
-            protected int getViewType(String item, int position) {
-                return 0;
-            }
-        };
-        recyclerView.setAdapter(adapter);
     }
 
     @OnClick({R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.FL1:
-                ThrowInListActivity.start(2);
+                ThrowInListActivity.start(2,business_id);
                 break;
             case R.id.FL2:
                 AddPacketExperienceActivity.start();

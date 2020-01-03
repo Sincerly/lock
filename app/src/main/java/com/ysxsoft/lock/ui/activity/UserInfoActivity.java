@@ -138,12 +138,13 @@ public class UserInfoActivity extends BaseActivity {
                         if (resp != null) {
                             switch (resp.getCode()) {
                                 case "200":
+                                    showToast("已实名认证");
                                     break;
                                 case "201":
-                                    showToast("审核中");
+                                    ShopEgisActivity.start("个人认证");
                                     break;
                                 case "202":
-                                    showToast("审核失败");
+                                    ShopAuditFailedActivity.start("个人认证");
                                     break;
                                 case "203":
                                     CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {
@@ -237,17 +238,17 @@ public class UserInfoActivity extends BaseActivity {
                                     ShopManagerActivity.start();
                                     break;
                                 case "201":
-                                    ShopEgisActivity.start();
+                                    ShopEgisActivity.start("商户认证");
                                     break;
                                 case "202":
-                                    ShopAuditFailedActivity.start();
+                                    ShopAuditFailedActivity.start("商户认证");
                                     break;
                                 case "203":
                                     ShopCenterActivity.start();
                                     break;
                             }
                         } else {
-                            showToast("获取意见反馈失败");
+                            showToast("获取商户认证失败");
                         }
                     }
                 });

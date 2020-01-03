@@ -65,7 +65,7 @@ public class SelectVillageDialog extends Dialog {
             @Override
             protected void fillItem(RViewHolder holder, VillageResponse.DataBean item, int position) {
                 RoundImageView riv = holder.getView(R.id.riv);
-//                Glide.with(mContext).load(AppConfig.BASE_URL).into(riv);
+                Glide.with(mContext).load(AppConfig.BASE_URL+item.getImg()).into(riv);
                 holder.setText(R.id.tv1, item.getQuarters_name());
                 holder.setText(R.id.tvAddress, item.getAddress());
                 ImageView iv = holder.getView(R.id.iv);

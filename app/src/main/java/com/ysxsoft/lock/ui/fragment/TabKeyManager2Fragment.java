@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -48,6 +49,10 @@ public class TabKeyManager2Fragment extends BaseFragment {
     TextView tv2;
     @BindView(R.id.tv3)
     TextView tv3;
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
+    @BindView(R.id.LL2)
+    LinearLayout LL2;
 
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;
@@ -63,6 +68,47 @@ public class TabKeyManager2Fragment extends BaseFragment {
     @Override
     protected void doWork(View view) {
         initPhotoHelper();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getIsface();
+    }
+
+    private void getIsface() {
+        OkHttpUtils.post()
+                .url(Api.IS_FACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            switch (resp.getCode()) {
+                                case "200":// 返回人脸认证信息
+
+                                    break;
+                                 case "201"://  审核中
+
+                                    break;
+                                 case "202"://审核失败
+
+                                    break;
+                                 case "203"://未申请认证
+
+                                    break;
+                            }
+                        }
+                    }
+                });
     }
 
     @SuppressLint("CheckResult")

@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -49,9 +50,11 @@ public class ShopEgisActivity extends BaseActivity {
     View bottomLineView;
     @BindView(R.id.parent)
     LinearLayout parent;
+    @Autowired
+    String titleText;
 
-    public static void start(){
-        ARouter.getInstance().build(ARouterPath.getShopEgisActivity()).navigation();
+    public static void start(String titleText){
+        ARouter.getInstance().build(ARouterPath.getShopEgisActivity()).withString("titleText",titleText).navigation();
     }
 
     @Override
@@ -62,6 +65,7 @@ public class ShopEgisActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
     }
 
@@ -69,7 +73,7 @@ public class ShopEgisActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("商户认证");
+        title.setText(titleText);
     }
 
     @OnClick(R.id.backLayout)

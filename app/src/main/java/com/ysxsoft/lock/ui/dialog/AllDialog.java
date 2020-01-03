@@ -44,7 +44,7 @@ public class AllDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("false");
+                        listener.select("false",0);
                     }
                     dismiss();
                 }
@@ -53,7 +53,7 @@ public class AllDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("1");
+                        listener.select("false",1);
                     }
                     dismiss();
                 }
@@ -62,7 +62,7 @@ public class AllDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("2");
+                        listener.select("false",2);
                     }
                     dismiss();
                 }
@@ -71,7 +71,7 @@ public class AllDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("3");
+                        listener.select("false",3);
                     }
                     dismiss();
                 }
@@ -80,7 +80,7 @@ public class AllDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("4");
+                        listener.select("false",4);
                     }
                     dismiss();
                 }
@@ -124,6 +124,6 @@ public class AllDialog {
     }
 
     public interface OnPopupWindowListener {
-        void select(String  type);
+        void select(String  type,int allDay);
     }
 }

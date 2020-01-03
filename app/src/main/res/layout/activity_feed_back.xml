@@ -27,6 +27,7 @@
             android:textColor="@color/color_282828"
             android:textColorHint="@color/color_cccccc"
             android:textSize="@dimen/sp_14"
+            android:maxLength="500"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

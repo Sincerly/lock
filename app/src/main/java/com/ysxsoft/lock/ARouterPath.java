@@ -271,7 +271,7 @@ public class ARouterPath {
     }
 
     /**
-     * 投放列表
+     *
      */
     public static String getThrowInListActivity() {
         return "/main/ThrowInListActivity";

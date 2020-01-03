@@ -134,7 +134,7 @@ public class ShopAuthenticationActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tv1:
-                ShopAuditFailedActivity.start();
+                ShopAuditFailedActivity.start("商户认证");
                 break;
             case R.id.tv2:
                 choicePhotoWrapper();
@@ -169,7 +169,7 @@ public class ShopAuthenticationActivity extends BaseActivity {
                         if (resp != null) {
                             showToast(resp.getMsg());
                             if (HttpResponse.SUCCESS.equals(resp.getCode())){
-                                ShopEgisActivity.start();
+                                ShopEgisActivity.start("商户认证");
                                 finish();
                             }
                         }

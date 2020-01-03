@@ -8,13 +8,13 @@
     android:orientation="horizontal">
 
 
-    <com.ysxsoft.common_base.view.custom.image.RoundImageView
+    <ImageView
         android:id="@+id/riv"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="@dimen/dp_10"
-        android:src="@mipmap/ic_launcher"
-        app:radius="@dimen/dp_10" />
+        android:src="@mipmap/icon_key"
+         />
 
     <TextView
         android:id="@+id/tvKey"

@@ -19,6 +19,7 @@ import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.ui.dialog.AllDialog;
@@ -32,6 +33,8 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.CheckRecordResponse;
 import com.ysxsoft.lock.net.Api;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,7 +50,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * create by Sincerly on 9999/9/9 0009
  **/
 @Route(path = "/main/CheckRecordActivity")
-public class CheckRecordActivity extends BaseActivity implements IListAdapter {
+public class CheckRecordActivity extends BaseActivity implements IListAdapter<CheckRecordResponse.DataBean> {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -83,12 +86,12 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private ListManager<String> manager;
+    private ListManager<CheckRecordResponse.DataBean> manager;
     private TodayDialog todayDialog;
     private AllDialog allDialog;
     private MyBroadCast myBroadCast;
 
-    private String todayType;
+    private String todayType="true";
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getCheckRecordActivity()).navigation();
@@ -158,6 +161,7 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
         title.setText("核销记录");
     }
 
+    private int intToday;
 
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
@@ -179,8 +183,10 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                 todayDialog = new TodayDialog();
                 todayDialog.init(CheckRecordActivity.this);
                 todayDialog.setOnPopupWindowListener(new TodayDialog.OnPopupWindowListener() {
+
                     @Override
-                    public void select(String type) {
+                    public void select(String type, int today) {
+                        intToday = today;
                         todayType = type;
                         request(1);
                     }
@@ -192,7 +198,6 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                 } else {
                     tvToday.setTextColor(getResources().getColor(R.color.color_282828));
                     tvToday.setCompoundDrawables(null, null, down, null);
-
                 }
                 tvAll.setCompoundDrawables(null, null, down, null);
                 tvAll.setTextColor(getResources().getColor(R.color.color_282828));
@@ -205,9 +210,9 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                 allDialog = new AllDialog();
                 allDialog.init(CheckRecordActivity.this);
                 allDialog.setOnPopupWindowListener(new AllDialog.OnPopupWindowListener() {
-
                     @Override
-                    public void select(String type) {
+                    public void select(String type,int allDay) {
+                        intToday = allDay;
                         todayType = type;
                         request(1);
                     }
@@ -233,17 +238,14 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
+        if (false) {
             debug(manager);
         } else {
             showLoadingDialog("请求中");
             GetBuilder getBuilder = OkHttpUtils.get().url(Api.HX_HISTORY);
             getBuilder.addHeader("Authorization", SharedPreferencesUtils.getToken(mContext));
-            if (TextUtils.equals("true",todayType)||TextUtils.equals("false",todayType)){
-                getBuilder.addParams("today", todayType);
-            }else {
-                getBuilder.addParams("type", todayType);
-            }
+            getBuilder.addParams("today", todayType);
+            getBuilder.addParams("type", String.valueOf(intToday));
             getBuilder.addParams("pageNum", String.valueOf(page))
                     .addParams("pageSize", "10")
                     .tag(this)
@@ -259,14 +261,14 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
                             hideLoadingDialog();
                             CheckRecordResponse resp = JsonUtils.parseByGson(response, CheckRecordResponse.class);
                             if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<CheckRecordResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                    //请求成功
+                                    List<CheckRecordResponse.DataBean> data = resp.getData();
+                                    manager.setData(data);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
                             } else {
                                 showToast("获取核销记录失败");
                             }
@@ -276,15 +278,18 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter {
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, Object o) {
-//        helper.setText(R.id.tv1,"");
-//        helper.setText(R.id.tv2,"券号："+"");
-//        helper.setText(R.id.tv3,"日期："+"");
-//        helper.setText(R.id.tvMoney,"¥");
+    public void fillView(BaseViewHolder helper, CheckRecordResponse.DataBean o) {
+        helper.setText(R.id.tv1, o.getRemark());
+        TextView tv2 = helper.getView(R.id.tv2);
+        helper.setText(R.id.tv2, "券号：" + o.getId());
+        helper.setText(R.id.tvPhone, "手机号码：" +o.getUser_name());
+        helper.setText(R.id.tvNikeName, "会员昵称：" +o.getName());
+        helper.setText(R.id.tv3, "核销日期：" + o.getCost_time());
+        helper.setText(R.id.tvMoney, "¥" + o.getPrice());
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, Object o) {
+    public void fillMuteView(BaseViewHolder helper, CheckRecordResponse.DataBean o) {
 
     }
 

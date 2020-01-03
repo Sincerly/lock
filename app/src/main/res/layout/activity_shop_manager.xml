@@ -76,7 +76,7 @@
             android:drawableTop="@mipmap/icon_manager1"
             android:drawablePadding="@dimen/dp_5"
             android:gravity="center"
-            android:text="核销"
+            android:text="扫码核销"
             android:textColor="@color/color_282828"
             android:textSize="11sp" />
 
@@ -88,7 +88,7 @@
             android:drawableTop="@mipmap/icon_manager2"
             android:drawablePadding="@dimen/dp_5"
             android:gravity="center"
-            android:text="记录"
+            android:text="核销记录"
             android:textColor="@color/color_282828"
             android:textSize="11sp" />
 
@@ -100,7 +100,7 @@
             android:drawableTop="@mipmap/icon_manager3"
             android:drawablePadding="@dimen/dp_5"
             android:gravity="center"
-            android:text="投放"
+            android:text="点券充值"
             android:textColor="@color/color_282828"
             android:textSize="11sp" />
 
@@ -112,7 +112,7 @@
             android:drawableTop="@mipmap/icon_manager4"
             android:drawablePadding="@dimen/dp_5"
             android:gravity="center"
-            android:text="帮助"
+            android:text="使用帮助"
             android:textColor="@color/color_282828"
             android:textSize="11sp" />
 
