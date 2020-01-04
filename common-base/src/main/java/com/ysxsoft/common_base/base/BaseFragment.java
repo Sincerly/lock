@@ -88,7 +88,7 @@ public abstract class BaseFragment extends Fragment {
     private void initStatusBar(View view) {
         View v=view.findViewById(R.id.statusBar);
         if(v!=null){
-            view.setLayoutParams(new LinearLayout.LayoutParams(DisplayUtils.getDisplayWidth(getActivity()), StatusBarUtils.getStatusBarHeight(getActivity())));
+            view.setLayoutParams(new LinearLayout.LayoutParams(DisplayUtils.getDisplayWidth(getActivity()), DisplayUtils.getStatusBarHeight(getActivity())));
         }
     }
 

@@ -41,7 +41,7 @@ public class SharedPreferencesUtils {
 
 	public static SharedPreferences get(Context context) {
 //		File file= new File("/data/data/"+getPackageName().toString()+"/shared_prefs","Activity.xml");
-		SharedPreferences share = context.getSharedPreferences("ysxsoft_abase", Context.MODE_PRIVATE);
+		SharedPreferences share = context.getSharedPreferences("ysxsoft_lock", Context.MODE_PRIVATE);
 		return share;
 	}
 
@@ -85,6 +85,19 @@ public class SharedPreferencesUtils {
 
 	public static String getNickname(Context context) {
 		return get(context).getString("nickname", "");
+	}
+
+	/**
+	 * 设置是否第一次登陆
+	 * @param context
+	 * @param value
+	 */
+	public static void saveGui(Context context, boolean value) {
+		save(context, "gui", value);
+	}
+
+	public static boolean hasShowGui(Context context) {
+		return get(context).getBoolean("gui", false);
 	}
 
 	/**

@@ -81,7 +81,6 @@ public class LoginActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         requestPermissions();
-        call();
     }
 
     @OnClick({R.id.login, R.id.otherLogin, R.id.LL})

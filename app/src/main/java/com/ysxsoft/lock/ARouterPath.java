@@ -12,6 +12,14 @@ public class ARouterPath {
     }
 
     /**
+     * 引导页
+     * @return
+     */
+    public static String getGuideActivity() {
+        return "/main/GuideActivity";
+    }
+
+    /**
      * 登录
      */
     public static String getLoginActivity() {
