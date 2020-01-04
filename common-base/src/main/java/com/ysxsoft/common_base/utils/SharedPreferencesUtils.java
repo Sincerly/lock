@@ -262,8 +262,8 @@ public class SharedPreferencesUtils {
 	}
 
 	public static String getToken(Context context) {
-	    return "";
-//		return get(context).getString("token", "");
+//	    return "";
+		return get(context).getString("token", "");
 	}
 
 	public static void saveBadge(Context context, int value) {
