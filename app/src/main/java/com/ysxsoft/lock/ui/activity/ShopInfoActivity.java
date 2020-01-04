@@ -393,8 +393,13 @@ public class ShopInfoActivity extends BaseActivity {
                                     Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(logo);
                                     tvShopName.setText(resp.getData().getName());
                                     tvSaleType.setText(resp.getData().getMainbusiness());
-                                    tvday.setText(resp.getData().getWeek1() + "--" + resp.getData().getWeek2());
-                                    tvWorkTime.setText(resp.getData().getTime1() + "--" + resp.getData().getTime2());
+                                    day1 = resp.getData().getWeek1();
+                                    day2 = resp.getData().getWeek2();
+                                    tvday.setText( day1+ "--" +day2);
+                                    time1 = resp.getData().getTime1();
+                                    time2 = resp.getData().getTime2();
+
+                                    tvWorkTime.setText( time1+ "--" + time2);
                                     tvShopAddress.setText(resp.getData().getAddress());
                                     etPhone.setText(resp.getData().getTel());
                                 }

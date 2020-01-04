@@ -10,6 +10,7 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.activity.ShopEgisActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -95,6 +96,10 @@ public class TabIdcardCert1Fragment extends BaseFragment {
                         hideLoadingDialog();
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
+                            if (resp.getCode().equals(HttpResponse.SUCCESS)){
+                                ShopEgisActivity.start("个人认证");
+                                getActivity().finish();
+                            }
                             showToast(resp.getMsg());
                         }
 

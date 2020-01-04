@@ -25,6 +25,7 @@ import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.models.response.PacketCardResponse;
 import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
 import com.ysxsoft.lock.ui.activity.UseCouponActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -45,7 +46,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
 /**
  * create by Sincerly on 9999/9/9 0009
  **/
-public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
+public class TabPacket1Fragment extends BaseFragment implements IListAdapter<PacketCardResponse.DataBean> {
     @BindView(R.id.tabRecyclerView)
     RecyclerView tabRecyclerView;
     @BindView(R.id.recyclerView)
@@ -71,9 +72,9 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
 
     private void initList(View view) {
 
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),4);
-//        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        //        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
+        //        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
         tabRecyclerView.setLayoutManager(layoutManager);
         ArrayList<String> list = new ArrayList<>();
         list.add("全部");
@@ -88,7 +89,7 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
                 if (isSelect == position) {
                     tv1.setTextColor(getResources().getColor(R.color.colorWhite));
                     tv1.setBackgroundResource(R.drawable.shape_btn_bg);
-                }else {
+                } else {
                     tv1.setTextColor(getResources().getColor(R.color.color_999999));
                     tv1.setBackgroundResource(R.drawable.bg_shape_bolder_cccccc_radius_20);
                 }
@@ -104,19 +105,20 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
             public void onItemClick(RViewHolder holder, View view, int position) {
                 isSelect = position;
                 adapter.notifyDataSetChanged();
+                manager.resetPage();
+                request(1);
             }
         });
         tabRecyclerView.setAdapter(adapter);
 
         manager = new ListManager(this);
         manager.init(view);
-        manager.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        /*manager.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //HomeArticleResponse.DataBean item = (HomeArticleResponse.DataBean) adapter.getItem(position);
-
             }
-        });
+        });*/
         request(1);
     }
 
@@ -127,49 +129,48 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
-            debug(manager);
-        } else {
-            OkHttpUtils.post()
-//                    .url(Api.GET_CODE)
-                    .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
-                    .tag(this)
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-                            manager.releaseRefresh();
-                        }
+        OkHttpUtils.post()
+                .url(Api.MEM_BERCARD)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("type", "1")
+                .addParams("status", isSelect + "")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        manager.releaseRefresh();
+                    }
 
-                        @Override
-                        public void onResponse(String response, int id) {
-                            manager.releaseRefresh();
-//                        HomeArticleResponse resp = JsonUtils.parseByGson(response, HomeArticleResponse.class);
-//                        if (resp != null) {
-//                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                //请求成功
-//                                List<HomeArticleResponse.DataBean> data = resp.getData();
-//                                manager.setData(data);
-//                            } else {
-//                                //请求失败
-//                                showToast(resp.getMsg());
-//                            }
-//                        } else {
-//                            showToast("获取失败");
-//                        }
+                    @Override
+                    public void onResponse(String response, int id) {
+                        manager.releaseRefresh();
+                        PacketCardResponse resp = JsonUtils.parseByGson(response, PacketCardResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                List<PacketCardResponse.DataBean> data = resp.getData();
+                                manager.resetPage();
+                                manager.setData(data);
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("获取失败");
                         }
-                    });
-        }
+                    }
+                });
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, Object o) {
-//        helper.setText(R.id.tv2, "");
-//        helper.setText(R.id.tvmj, "");
-//        helper.setText(R.id.tv3, "");
-//        helper.setText(R.id.tv4, "");
-//        helper.setText(R.id.tv5, "");
-//        helper.setText(R.id.tv6, "");
+    public void fillView(BaseViewHolder helper, PacketCardResponse.DataBean item) {
+        helper.setText(R.id.tv2, item.getPrice());
+        helper.setText(R.id.tvmj, "满" + item.getOprice() + "可用");
+        helper.setText(R.id.tv3, item.getTitle());
+        helper.setText(R.id.tv4, item.getStart_time_str() + "-" + item.getEnd_time_str());
+        //        helper.setText(R.id.tv5, "");
+        //        helper.setText(R.id.tv6, "");
         TextView tv1 = helper.getView(R.id.tv1);
         TextView tv2 = helper.getView(R.id.tv2);
         TextView tv3 = helper.getView(R.id.tv3);
@@ -177,8 +178,8 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
         TextView tv6 = helper.getView(R.id.tv6);
         ImageView iv1 = helper.getView(R.id.iv1);
         CardView cv1 = helper.getView(R.id.cv1);
-//        helper.setText(R.id.tv7, "");
-        if (helper.getAdapterPosition() % 2 == 0) {
+        helper.setText(R.id.tv7, item.getRemark());
+        if (item.getStatus().equals("1")) {
             tv1.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
             tv2.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
             tv3.setTextColor(getActivity().getResources().getColor(R.color.color_282828));
@@ -194,7 +195,6 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
             });
 
         } else {
-
             tv1.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
             tv2.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
             tv3.setTextColor(getActivity().getResources().getColor(R.color.color_999999));
@@ -202,6 +202,8 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
 
             tv6.setVisibility(View.GONE);
             iv1.setVisibility(View.VISIBLE);
+            iv1.setImageResource(item.getStatus().equals("3") ? R.mipmap.icon_expire : R.mipmap.icon_used);
+
             iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -229,7 +231,7 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, Object o) {
+    public void fillMuteView(BaseViewHolder helper, PacketCardResponse.DataBean o) {
 
     }
 
