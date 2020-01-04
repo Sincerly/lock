@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.tabs.TabLayout;
@@ -58,9 +59,11 @@ public class PacketActivity extends BaseActivity {
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+    @Autowired
+    int type;
 
-    public static void start(){
-        ARouter.getInstance().build(ARouterPath.getPacketActivity()).navigation();
+    public static void start(int type){
+        ARouter.getInstance().build(ARouterPath.getPacketActivity()).withInt("type",type).navigation();
     }
 
     @Override
@@ -83,17 +86,7 @@ public class PacketActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
-        CheckAddressDialog.show(mContext, new CheckAddressDialog.OnDialogClickListener() {
-            @Override
-            public void sure(String requid) {
-            }
-
-            @Override
-            public void cancle() {//切换地址
-                ShopManagerActivity.start();
-//                AddPlaceActivity.start();
-            }
-        });
+        ARouter.getInstance().inject(this);
         initTitle();
         tabLayout.removeAllTabs();
         List<Fragment> fragmentList = new ArrayList<>();
@@ -119,7 +112,9 @@ public class PacketActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+                type=position;
                 viewPager.setCurrentItem(position);
+//                viewPager.setCurrentItem(type);
             }
 
             @Override

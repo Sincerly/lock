@@ -10,7 +10,7 @@ android {
         versionName rootProject.ext.android["versionName"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-
+        vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [AROUTER_MODULE_NAME: project.getName()]
@@ -96,4 +96,5 @@ dependencies {
     implementation(name: 'phoneNumber-AuthSDK-2.7.0.2-20191204', ext: 'aar')
     implementation 'androidx.viewpager2:viewpager2:1.0.0-beta04'
     implementation files('libs/dhlib_20191012.jar')
+    implementation files('libs/BaiduLBS_Android.jar')
 }

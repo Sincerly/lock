@@ -111,6 +111,8 @@ public class ShopInfoActivity extends BaseActivity {
     private String p;
     private String c;
     private String d;
+    private String latitude;
+    private String longitude;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopInfoActivity()).navigation();
@@ -283,19 +285,21 @@ public class ShopInfoActivity extends BaseActivity {
 
                 break;
             case R.id.tvShopAddress:
-                KeyBoardUtils.hideInputMethod(this);
-                CitySelectPicker cityPicker = new CitySelectPicker();
-                cityPicker.initData(this);
-                cityPicker.setListener(new CitySelectPicker.OnCityPickerClickListener() {
-                    @Override
-                    public void onSelect(String province, String city, String district) {
-                        p = province;
-                        c = city;
-                        d = district;
-                        tvShopAddress.setText(p + c + d);
-                    }
-                });
-                cityPicker.show();
+//                KeyBoardUtils.hideInputMethod(this);
+//                CitySelectPicker cityPicker = new CitySelectPicker();
+//                cityPicker.initData(this);
+//                cityPicker.setListener(new CitySelectPicker.OnCityPickerClickListener() {
+//                    @Override
+//                    public void onSelect(String province, String city, String district) {
+//                        p = province;
+//                        c = city;
+//                        d = district;
+//                        tvShopAddress.setText(p + c + d);
+//                    }
+//                });
+//                cityPicker.show();
+                ShopAddressSelectActivity.start(ShopInfoActivity.this,202014);
+
                 break;
             case R.id.tvOk:
                 submintData();
@@ -317,8 +321,8 @@ public class ShopInfoActivity extends BaseActivity {
                 .addParams("time2", time2)
                 .addParams("address", tvShopAddress.getText().toString().trim())
                 .addParams("tel", etPhone.getText().toString().trim())
-                .addParams("lat", "")
-                .addParams("lng", "")
+                .addParams("lat", latitude)
+                .addParams("lng", longitude)
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -431,6 +435,10 @@ public class ShopInfoActivity extends BaseActivity {
                     String path = ImageUtils.compress(mContext, System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
                     //裁剪后的
                     EditShopLogo(path);
+                    break;
+                case 202014:
+                    latitude = data.getStringExtra("latitude");
+                    longitude = data.getStringExtra("longitude");
                     break;
                 default:
                     break;

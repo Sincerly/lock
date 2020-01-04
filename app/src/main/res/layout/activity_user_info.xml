@@ -68,6 +68,7 @@
             app:layout_constraintTop_toBottomOf="@id/civ">
 
             <LinearLayout
+                android:id="@+id/LL1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -93,6 +94,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LL2"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -118,6 +120,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LL3"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -143,6 +146,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LL4"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

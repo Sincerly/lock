@@ -305,5 +305,12 @@ public class ARouterPath {
         return "/main/ThrowInVipRecordActivity";
     }
 
+    /**
+     * 地址选择界面
+     */
+    public static String getShopAddressSelectActivity() {
+        return "/main/ShopAddressSelectActivity";
+    }
+
 
 }

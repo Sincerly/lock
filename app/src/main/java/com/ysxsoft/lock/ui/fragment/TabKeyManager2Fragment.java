@@ -179,7 +179,7 @@ public class TabKeyManager2Fragment extends BaseFragment {
                         if (resp != null) {
                             showToast(resp.getMsg());
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-
+                                getIsface();
                             }
                         }
                     }

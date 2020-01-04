@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
 import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
@@ -19,6 +21,7 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.CheckAddressResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
+import com.ysxsoft.lock.utils.BaiduLocationUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -39,15 +42,23 @@ public class CheckAddressDialog extends Dialog {
         super(context, themeResId);
         this.mContext = context;
         init();
-        requestData();
+        BaiduLocationUtils.initBdMapLocaton(mContext, new BDAbstractLocationListener() {
+            @Override
+            public void onReceiveLocation(BDLocation bdLocation) {
+                //获取纬度信息
+                double latitude = bdLocation.getLatitude();
+                //获取经度信息
+                double longitude = bdLocation.getLongitude();
+                requestData(latitude, longitude);
+            }
+        });
     }
-
-    private void requestData() {
+    private void requestData(double latitude, double longitude) {
         OkHttpUtils.get()
                 .url(Api.GET_NEAR_FLOOR_INFO)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("lat", "")
-                .addParams("lng", "")
+                .addParams("lat", String.valueOf(latitude))
+                .addParams("lng", String.valueOf(longitude))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -96,7 +107,7 @@ public class CheckAddressDialog extends Dialog {
     }
 
     private void submintData() {
-        if(TextUtils.isEmpty(requid)){
+        if (TextUtils.isEmpty(requid)) {
             return;
         }
         OkHttpUtils.post()
@@ -115,7 +126,7 @@ public class CheckAddressDialog extends Dialog {
                     public void onResponse(String response, int id) {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
-                            ToastUtils.show(mContext,resp.getMsg());
+                            ToastUtils.show(mContext, resp.getMsg());
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 dismiss();
                             }

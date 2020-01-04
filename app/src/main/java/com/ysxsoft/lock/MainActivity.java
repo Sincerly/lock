@@ -4,9 +4,11 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
+import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -152,20 +155,20 @@ public class MainActivity extends BaseActivity {
                                 });
                             } else {
                                 Log.e(TAG, "向下");
-                                Set<String> set=map.keySet();
-                                ToastUtils.show(MainActivity.this,"附近设备"+set.size());
+                                Set<String> set = map.keySet();
+                                ToastUtils.show(MainActivity.this, "附近设备" + set.size());
 
-                                LEDevice leDevice=null;
-                                for(Map.Entry<String,LEDevice> entry:map.entrySet()){
-                                    String key=entry.getKey();
-                                    leDevice=entry.getValue();
+                                LEDevice leDevice = null;
+                                for (Map.Entry<String, LEDevice> entry : map.entrySet()) {
+                                    String key = entry.getKey();
+                                    leDevice = entry.getValue();
                                 }
-                                if(leDevice!=null){
+                                if (leDevice != null) {
                                     String devicePassword = "12345678";
 //                                    String devicePasswrod=blueLockPub.generateVisitPassword(leDevice.getDeviceId(),devicePassword,30);
 //                                    Log.e(TAG,"devicePasswrod "+devicePassword);
-                                    Log.e(TAG,"device："+new Gson().toJson(leDevice)+"  deviceId:" +leDevice.getDeviceId());
-                                    blueLockPub.oneKeyOpenDevice(leDevice,leDevice.getDeviceId(), devicePassword);
+                                    Log.e(TAG, "device：" + new Gson().toJson(leDevice) + "  deviceId:" + leDevice.getDeviceId());
+                                    blueLockPub.oneKeyOpenDevice(leDevice, leDevice.getDeviceId(), devicePassword);
                                 }
                             }
                         } else {
@@ -174,7 +177,7 @@ public class MainActivity extends BaseActivity {
                             CouponDialog.show(MainActivity.this, new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
-                                    PacketActivity.start();
+                                    PacketActivity.start(0);
                                 }
                             });
                         }
@@ -229,20 +232,33 @@ public class MainActivity extends BaseActivity {
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         } else if (result == -4) {
             //不支持蓝牙
-            ToastUtils.show(MainActivity.this,"暂不支持蓝牙");
+            ToastUtils.show(MainActivity.this, "暂不支持蓝牙");
         } else if (result == -5) {
             //请开启蓝牙
-            ToastUtils.show(MainActivity.this,"请开启蓝牙");
+            ToastUtils.show(MainActivity.this, "请开启蓝牙");
+
+            OpenBluthDialog.show(mContext, new OpenBluthDialog.OnDialogClickListener() {
+                @Override
+                public void sure() {
+                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                }
+
+                @Override
+                public void setting() {
+                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                }
+            });
         }
     }
 
     private Map<String, LEDevice> map = new HashMap<>();
+
     public class BlueLockPubCallBack extends BlueLockPubCallBackBase {
         @Override
         public void scanDeviceCallBack(final LEDevice ledevice,
                                        final int result, final int rssi) {
-            hasScannedDaHaoLock=true;
-            Log.e(TAG, "scanDeviceCallBack "+rssi);
+            hasScannedDaHaoLock = true;
+            Log.e(TAG, "scanDeviceCallBack " + rssi);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -262,7 +278,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void scanDeviceEndCallBack(final int result) {
-            showToast("scanDeviceEndCallBack "+result);
+            showToast("scanDeviceEndCallBack " + result);
             mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         }
@@ -270,18 +286,18 @@ public class MainActivity extends BaseActivity {
         @Override
         public void connectDeviceCallBack(int result, int status) {
 //            showToast("onConnectDevice "+result+" "+status);
-            Log.e(TAG,"connectDeviceCallBack "+result);
+            Log.e(TAG, "connectDeviceCallBack " + result);
         }
 
         @Override
         public void disconnectDeviceCallBack(int result, int status) {
 //            showToast("onDisconnectDevice"+result+" "+status);
-            Log.e(TAG,"disconnectDeviceCallBack "+result);
+            Log.e(TAG, "disconnectDeviceCallBack " + result);
         }
 
         @Override
         public void connectingDeviceCallBack(int result) {
-            Log.e(TAG,"onConnectingDevice"+result);
+            Log.e(TAG, "onConnectingDevice" + result);
         }
 
         @Override
@@ -343,21 +359,21 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showNext() {
-        View view=View.inflate(MainActivity.this,R.layout.view_img,null);
+        View view = View.inflate(MainActivity.this, R.layout.view_img, null);
         adLayout.addView(view);
 
-        int height=DisplayUtils.getDisplayHeight(MainActivity.this)+ StatusBarUtils.getStatusBarHeight(MainActivity.this);
+        int height = DisplayUtils.getDisplayHeight(MainActivity.this) + StatusBarUtils.getStatusBarHeight(MainActivity.this);
 
-        ValueAnimator valueAnimator=ValueAnimator.ofFloat(0f,1f);
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0f, 1f);
         valueAnimator.setDuration(300);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float f= (float) animation.getAnimatedValue();
-                float offset=f*height;
-                View v=adLayout.getChildAt(0);
-                v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,(int) (height-offset)));
-                view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,(int)offset));
+                float f = (float) animation.getAnimatedValue();
+                float offset = f * height;
+                View v = adLayout.getChildAt(0);
+                v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (height - offset)));
+                view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) offset));
             }
         });
         valueAnimator.addListener(new Animator.AnimatorListener() {
