@@ -1,7 +1,5 @@
 package com.ysxsoft.lock.ui.activity;
 
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -10,13 +8,13 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
-import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
 import com.ysxsoft.lock.models.response.IsAuthResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.models.response.ShopCertResponse;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -31,7 +29,6 @@ import java.util.List;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 
@@ -253,7 +250,7 @@ public class UserInfoActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        ShopCertResponse resp = JsonUtils.parseByGson(response, ShopCertResponse.class);
                         if (resp != null) {
                             switch (resp.getCode()) {
                                 case "200":

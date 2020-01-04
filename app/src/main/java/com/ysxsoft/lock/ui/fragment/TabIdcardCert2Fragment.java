@@ -6,9 +6,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.activity.ShopEgisActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -20,9 +22,8 @@ import butterknife.OnClick;
 import okhttp3.Call;
 
 /**
-* 
-* create by Sincerly on 9999/9/9 0009
-**/
+ * create by Sincerly on 9999/9/9 0009
+ **/
 public class TabIdcardCert2Fragment extends BaseFragment {
 
     @BindView(R.id.name)
@@ -43,6 +44,7 @@ public class TabIdcardCert2Fragment extends BaseFragment {
     protected void doWork(View view) {
 
     }
+
     @OnClick(R.id.tvOk)
     public void onViewClick(View view) {
         switch (view.getId()) {
@@ -65,6 +67,7 @@ public class TabIdcardCert2Fragment extends BaseFragment {
         }
 
     }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -92,6 +95,10 @@ public class TabIdcardCert2Fragment extends BaseFragment {
                         hideLoadingDialog();
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
+                            if (resp.getCode().equals(HttpResponse.SUCCESS)) {
+                                ShopEgisActivity.start("个人认证");
+                                getActivity().finish();
+                            }
                             showToast(resp.getMsg());
                         }
 
