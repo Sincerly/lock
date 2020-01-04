@@ -19,7 +19,7 @@ public interface BaseConfig {
     ///////////////////////////////////////////////////////////////////////////
     static String UMENG_APP_KEY="5c6cc1a3f1f5561f68000b5b";
     static String UMENG_SECRET_KEY="5bc6fbd5f1f55698170000c5";
-    static String WX_APP_ID="wx297392ff114ab087";
+    static String WX_APP_ID="wx18a70f18e03ce4f2";
     static String WX_APP_KEY="209ecd8c47631f80d3455d4e26040d1b";
     static String QQ_APP_ID="1109513443";//tips: 请修改xml配置
     static String QQ_APP_KEY="KRGbTmpCJ9dzo3al";

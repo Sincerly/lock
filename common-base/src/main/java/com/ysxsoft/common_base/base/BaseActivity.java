@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -58,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.e("activity", getLocalClassName());
         preCreate();
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawable(null);

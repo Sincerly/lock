@@ -11,21 +11,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
+import com.ysxsoft.common_base.zxing.util.ZxingUtils;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.common_base.utils.DisplayUtils;
+import com.ysxsoft.lock.config.AppConfig;
 
 /**
  * 券码弹窗
  * create by Sincerly on 9999/9/9 0009
  **/
 public class CodeDialog extends Dialog {
+    private  String card_id,logo;
     private Context mContext;
     private OnDialogClickListener listener;
 
-    public CodeDialog(@NonNull Context context, int themeResId) {
+    public CodeDialog(@NonNull Context context, int themeResId,String card_id,String logo) {
         super(context, themeResId);
         this.mContext = context;
+        this.card_id = card_id;
+        this.logo = logo;
         init();
     }
 
@@ -36,17 +42,24 @@ public class CodeDialog extends Dialog {
         ImageView ivQRCode = view.findViewById(R.id.ivQRCode);
         ImageView ivClose = view.findViewById(R.id.ivClose);
         TextView tvCode = view.findViewById(R.id.tvCode);
-//        TextView sure = view.findViewById(R.id.sure);
-//        TextView cancel = view.findViewById(R.id.cancel);
-//        sure.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (listener != null) {
-//                    listener.sure();
-//                }
-//                dismiss();
-//            }
-//        });
+
+        Glide.with(mContext).load(AppConfig.BASE_URL + logo).into(civ);
+        tvCode.setText(card_id);
+        iv2Code.setImageBitmap(ZxingUtils.createBarcode(mContext, card_id, DisplayUtils.dp2px(mContext, 160), DisplayUtils.dp2px(mContext, 54), false));
+        ivQRCode.setImageBitmap(ZxingUtils.createQRImage(card_id, DisplayUtils.dp2px(mContext, 135), DisplayUtils.dp2px(mContext, 135), null, "url"));
+
+
+        //        TextView sure = view.findViewById(R.id.sure);
+        //        TextView cancel = view.findViewById(R.id.cancel);
+        //        sure.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                if (listener != null) {
+        //                    listener.sure();
+        //                }
+        //                dismiss();
+        //            }
+        //        });
         ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,17 +88,17 @@ public class CodeDialog extends Dialog {
         if (!isShowing()) {
             show();
             WindowManager.LayoutParams lp = getWindow().getAttributes();
-          lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
-//            lp.width = DisplayUtils.getDisplayWidth(mContext);
+            lp.width = DisplayUtils.getDisplayWidth(mContext) * 4 / 5;
+            //            lp.width = DisplayUtils.getDisplayWidth(mContext);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
             getWindow().setAttributes(lp);
             getWindow().setGravity(Gravity.CENTER);
         }
     }
 
-    public static CodeDialog show(Context context, OnDialogClickListener listener) {
-        CodeDialog dialog = new CodeDialog(context, R.style.CenterDialogStyle);
-        dialog.setListener(listener);
+    public static CodeDialog show(Context context, String cardId,String logo/*, OnDialogClickListener listener*/) {
+        CodeDialog dialog = new CodeDialog(context, R.style.CenterDialogStyle,cardId,logo);
+        /*dialog.setListener(listener);*/
         dialog.showDialog();
         return dialog;
     }

@@ -250,8 +250,8 @@ public class RegActivity extends BaseActivity {
                         if (resp != null) {
                             showToast(resp.getMsg());
                             if (HttpResponse.SUCCESS.equals(String.valueOf(resp.getCode()))) {
-                                SharedPreferencesUtils.saveToken(mContext, resp.getToken());
-                                MainActivity.start();
+//                                SharedPreferencesUtils.saveToken(mContext, resp.getToken());
+//                                MainActivity.start();
                                 finish();
                             }
                         } else {

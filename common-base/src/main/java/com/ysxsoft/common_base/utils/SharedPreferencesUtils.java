@@ -275,6 +275,7 @@ public class SharedPreferencesUtils {
 	}
 
 	public static String getToken(Context context) {
+//	    return "";
 		return get(context).getString("token", "");
 	}
 

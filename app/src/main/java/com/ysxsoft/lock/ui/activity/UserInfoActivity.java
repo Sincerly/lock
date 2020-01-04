@@ -1,7 +1,5 @@
 package com.ysxsoft.lock.ui.activity;
 
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -10,12 +8,13 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
-import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
+import com.ysxsoft.lock.models.response.IsAuthResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.models.response.ShopCertResponse;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -30,7 +29,6 @@ import java.util.List;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 
@@ -100,6 +98,14 @@ public class UserInfoActivity extends BaseActivity {
     TextView tv9;
     @BindView(R.id.tv10)
     TextView tv10;
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
+    @BindView(R.id.LL2)
+    LinearLayout LL2;
+    @BindView(R.id.LL3)
+    LinearLayout LL3;
+    @BindView(R.id.LL4)
+    LinearLayout LL4;
 
 
     private List<String> approveList;
@@ -134,7 +140,8 @@ public class UserInfoActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+//                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
                         if (resp != null) {
                             switch (resp.getCode()) {
                                 case "200":
@@ -178,11 +185,23 @@ public class UserInfoActivity extends BaseActivity {
         title.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 
-    @OnClick({R.id.backLayout, R.id.tv10, R.id.tv9, R.id.tv8, R.id.tv7, R.id.tv6, R.id.tv5, R.id.tv1, R.id.tv2, R.id.iv1, R.id.cL1})
+    @OnClick({R.id.backLayout, R.id.tv10, R.id.tv9, R.id.tv8, R.id.tv7, R.id.tv6, R.id.tv5, R.id.tv1, R.id.tv2, R.id.iv1, R.id.LL1, R.id.LL2, R.id.LL3, R.id.LL4, R.id.cL1})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
+                break;
+            case R.id.LL1:
+                PacketActivity.start(0);
+                break;
+            case R.id.LL2:
+                PacketActivity.start(1);
+                break;
+            case R.id.LL3:
+                PacketActivity.start(2);
+                break;
+            case R.id.LL4:
+                PacketActivity.start(3);
                 break;
             case R.id.tv5:
                 KeyManagerActivity.start();
@@ -231,7 +250,7 @@ public class UserInfoActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        ShopCertResponse resp = JsonUtils.parseByGson(response, ShopCertResponse.class);
                         if (resp != null) {
                             switch (resp.getCode()) {
                                 case "200":
