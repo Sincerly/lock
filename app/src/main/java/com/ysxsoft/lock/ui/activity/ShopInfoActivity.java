@@ -113,6 +113,7 @@ public class ShopInfoActivity extends BaseActivity {
     private String d;
     private String latitude;
     private String longitude;
+    private String detailAddress;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopInfoActivity()).navigation();
@@ -298,12 +299,31 @@ public class ShopInfoActivity extends BaseActivity {
 //                    }
 //                });
 //                cityPicker.show();
-                ShopAddressSelectActivity.start(ShopInfoActivity.this,202014);
-
+                ShopAddressSelectActivity.start(ShopInfoActivity.this,0x03);
                 break;
             case R.id.tvOk:
+                if (TextUtils.isEmpty(tvShopName.getText().toString().trim())){
+                    showToast("店铺名称不能为空");
+                    return;
+                }
+                 if (TextUtils.isEmpty(tvSaleType.getText().toString().trim())){
+                    showToast("主营类目不能为空");
+                    return;
+                }
+                 if (TextUtils.isEmpty(day2)){
+                    showToast("营业时间星期不能为空");
+                    return;
+                }
+                 if (TextUtils.isEmpty(time2)){
+                    showToast("营业时间不能为空");
+                    return;
+                }
+                 if (TextUtils.isEmpty(latitude)){
+                    showToast("地址选择不能为空");
+                    return;
+                }
+
                 submintData();
-                CheckSucessActivity.start();
                 break;
         }
     }
@@ -441,9 +461,11 @@ public class ShopInfoActivity extends BaseActivity {
                     //裁剪后的
                     EditShopLogo(path);
                     break;
-                case 202014:
+                case 0x03:
                     latitude = data.getStringExtra("latitude");
                     longitude = data.getStringExtra("longitude");
+                    detailAddress = data.getStringExtra("detailAddress");
+                    tvShopAddress.setText(detailAddress);
                     break;
                 default:
                     break;

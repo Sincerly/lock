@@ -21,11 +21,12 @@
             android:background="@mipmap/icon_dui" />
 
         <TextView
+            android:id="@+id/tvTips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_10"
             android:gravity="center_horizontal"
-            android:text="门已开启！欢迎回家"
+            android:text=""
             android:textColor="@color/color_282828"
             android:textSize="17sp" />
 

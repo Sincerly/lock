@@ -188,6 +188,13 @@ public class ARouterPath {
     }
 
     /**
+     * 实名认证审核失败
+     */
+    public static String getIdcardCertFailedActivity() {
+        return "/main/IdcardCertFailedActivity";
+    }
+
+    /**
      * 商户信息
      */
     public static String getShopInfoActivity() {

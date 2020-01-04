@@ -21,6 +21,7 @@ import com.ysxsoft.common_base.utils.DisplayUtils;
 public class CouponDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
+    private static TextView tvTips;
 
     public CouponDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -31,6 +32,7 @@ public class CouponDialog extends Dialog {
     private View init() {
         View view = View.inflate(mContext, R.layout.dialog_coupon, null);
         TextView tvYHQ = view.findViewById(R.id.tvYHQ);
+        tvTips = view.findViewById(R.id.tvTips);
         TextView tvMoney = view.findViewById(R.id.tvMoney);
         TextView tvmj = view.findViewById(R.id.tvmj);
         TextView tv3 = view.findViewById(R.id.tv3);
@@ -83,10 +85,11 @@ public class CouponDialog extends Dialog {
         }
     }
 
-    public static CouponDialog show(Context context, OnDialogClickListener listener) {
+    public static CouponDialog show(Context context,String tips, OnDialogClickListener listener) {
         CouponDialog dialog = new CouponDialog(context, R.style.CenterDialogStyle);
         dialog.setListener(listener);
         dialog.showDialog();
+        tvTips.setText(tips);
         return dialog;
     }
 

@@ -20,6 +20,7 @@ import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.FeedBackActivity;
 import com.ysxsoft.lock.ui.activity.IdcardCertActivity;
+import com.ysxsoft.lock.ui.activity.IdcardCertFailedActivity;
 import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
 import com.ysxsoft.lock.ui.activity.PropertyCertActivity;
 import com.ysxsoft.lock.ui.activity.SettingActivity;
@@ -145,7 +146,7 @@ public class MainFragment1 extends BaseFragment {
                                     ShopEgisActivity.start("个人认证");
                                     break;
                                 case "202":
-                                    ShopAuditFailedActivity.start("个人认证");
+                                    IdcardCertFailedActivity.start();
                                     break;
                                 case "203":
                                     CertificationDialog.show(getActivity(), new CertificationDialog.OnDialogClickListener() {
