@@ -6,31 +6,55 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.bumptech.glide.Glide;
 import com.dh.bluelock.imp.BlueLockPubCallBackBase;
 import com.dh.bluelock.object.LEDevice;
 import com.dh.bluelock.pub.BlueLockPub;
 import com.dh.bluelock.util.Constants;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
+import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.umeng.share.ShareUtil;
 import com.ysxsoft.common_base.utils.DisplayUtils;
+import com.ysxsoft.common_base.utils.IntentUtils;
+import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
+import com.ysxsoft.common_base.view.custom.image.CircleImageView;
+import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
+import com.ysxsoft.lock.ui.dialog.CityTopDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
 import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +73,8 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     private int minOffset = 40;
     @BindView(R.id.touchView)
     ImageView touchView;
+    @BindView(R.id.viewPager2)
+    ViewPager2 viewPager2;
 
     private static final String TAG = "MainFragment2";
 
@@ -62,6 +88,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         maxOffsetY = DisplayUtils.getDisplayHeight(getActivity()) / 3;
         initData();
         touchView.setOnTouchListener(this);
+        initViewPager2();
     }
 
     @Override
@@ -86,29 +113,27 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                     if (Math.abs(offsetX) > Math.abs(offsetY)) {
                         //x轴移动距离大于y轴 (左右)
                         if (offsetX > 0) {
-                            //右 个人中心
-                            Log.e(TAG, "向右 个人中心");
-                            //UserInfoActivity.start();
+                            //页面向右 获取优惠券
+                            Log.e(TAG, "页面向右 获取优惠券");
+                            CouponDialog.show(getActivity(), new CouponDialog.OnDialogClickListener() {
+                                @Override
+                                public void sure() {
+                                    PacketActivity.start(0);
+                                }
+                            });
                         } else {
-                            //左 广告
-                            Log.e(TAG, "向左 切换广告");
-                            //showNext();
+                            //页面向左 获取优惠券
+                            Log.e(TAG, "页面向左 个人中心");
                         }
                     } else {
                         //y轴移动距离大于x轴 (上下)
                         if (offsetY > 0) {
                             //下 开锁 下滑一半选择小区
-                            if (offsetY > DisplayUtils.getDisplayHeight(getActivity()) / 3 && downY < DisplayUtils.getDisplayHeight(getActivity()) / 3) {
-                                Log.e(TAG, "滑动距离超过1/3");
-                                CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
+                            if (DisplayUtils.getDisplayHeight(getActivity()) / 3 > offsetY && downY < DisplayUtils.getDisplayHeight(getActivity()) / 3) {
+                                Log.e(TAG, "滑动距离未超过1/3");
+                                CityTopDialog.show(getActivity(), new CityTopDialog.OnDialogClickListener() {
                                     @Override
-                                    public void sure(String requid) {
-
-                                    }
-
-                                    @Override
-                                    public void cancle() {
-                                        AddPlaceActivity.start();
+                                    public void sure() {
                                     }
                                 });
                             } else {
@@ -130,14 +155,14 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                                 }
                             }
                         } else {
-                            //上  获取优惠券
-                            Log.e(TAG, "获取优惠券");
-                            CouponDialog.show(getActivity(), new CouponDialog.OnDialogClickListener() {
-                                @Override
-                                public void sure() {
-                                    PacketActivity.start(0);
-                                }
-                            });
+                            //上  广告
+                            Log.e(TAG, "切换广告");
+                            int currentItem=viewPager2.getCurrentItem();
+                            if(currentItem!=(viewPager2.getAdapter().getItemCount()-1)){
+                                viewPager2.setCurrentItem((currentItem+1));
+                            }else{
+                                ToastUtils.shortToast(getActivity(),"暂无广告");
+                            }
                         }
                     }
                     x = 0;
@@ -153,6 +178,36 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                 break;
         }
         return true;
+    }
+
+    BaseQuickAdapter<String, BaseViewHolder> adapter;
+    private void initViewPager2(){
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewPager2.getLayoutParams();
+        params.width = FrameLayout.LayoutParams.MATCH_PARENT;
+        params.height = FrameLayout.LayoutParams.MATCH_PARENT;
+        viewPager2.setLayoutParams(params);
+        viewPager2.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+            }
+        });
+
+        List<String> datas=new ArrayList<>();
+        for (int i = 0; i <3; i++) {
+            datas.add(""+i);
+        }
+        if (adapter == null) {
+            adapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.view_img, datas) {
+                @Override
+                protected void convert(BaseViewHolder helper, String item) {
+                }
+            };
+            viewPager2.setAdapter(adapter);
+        } else {
+            viewPager2.getAdapter().notifyDataSetChanged();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -187,7 +242,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         if (result == 0) {
             //初始化成功
             //开始扫描设备
-            mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
+            mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 1000);
         } else if (result == -4) {
             //不支持蓝牙
             ToastUtils.show(getActivity(),"暂不支持蓝牙");
@@ -216,7 +271,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         public void scanDeviceCallBack(final LEDevice ledevice,
                                        final int result, final int rssi) {
             hasScannedDaHaoLock=true;
-            Log.e(TAG, "scanDeviceCallBack "+rssi);
+           // Log.e(TAG, "scanDeviceCallBack "+rssi);
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -237,15 +292,15 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         @Override
         public void scanDeviceEndCallBack(final int result) {
             //showToast("scanDeviceEndCallBack "+result);
-            Log.e(TAG,"scanDeviceEndCallBack "+result);
+            //Log.e(TAG,"scanDeviceEndCallBack "+result);
             mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
-            mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
+            mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 1000);
         }
 
         @Override
         public void connectDeviceCallBack(int result, int status) {
 //            showToast("onConnectDevice "+result+" "+status);
-            Log.e(TAG,"connectDeviceCallBack "+result);
+            //Log.e(TAG,"connectDeviceCallBack "+result);
         }
 
         @Override
@@ -313,43 +368,14 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         super.onResume();
     }
 
-//    private void showNext() {
-//        View view=View.inflate(getActivity(),R.layout.view_img,null);
-//        adLayout.addView(view);
-//
-//        int height=DisplayUtils.getDisplayHeight(getActivity())+ StatusBarUtils.getStatusBarHeight(getActivity());
-//
-//        ValueAnimator valueAnimator=ValueAnimator.ofFloat(0f,1f);
-//        valueAnimator.setDuration(300);
-//        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                float f= (float) animation.getAnimatedValue();
-//                float offset=f*height;
-//                View v=adLayout.getChildAt(0);
-//                v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,(int) (height-offset)));
-//                view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,(int)offset));
-//            }
-//        });
-//        valueAnimator.addListener(new Animator.AnimatorListener() {
-//            @Override
-//            public void onAnimationStart(Animator animation) {
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                adLayout.removeViewAt(0);
-//            }
-//
-//            @Override
-//            public void onAnimationCancel(Animator animation) {
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animator animation) {
-//            }
-//        });
-//        valueAnimator.setRepeatCount(0);
-//        valueAnimator.start();
-//    }
+    /*CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
+        @Override
+        public void sure(String requid) {
+        }
+
+        @Override
+        public void cancle() {
+            AddPlaceActivity.start();
+        }
+    });*/
 }

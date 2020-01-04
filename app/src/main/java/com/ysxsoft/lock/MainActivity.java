@@ -92,12 +92,12 @@ public class MainActivity extends BaseActivity {
         super.doWork();
         requestPermissions();
         List<Fragment> fragmentList=new ArrayList<>();
-        fragmentList.add(new MainFragment1());
+//        fragmentList.add(new MainFragment3());
         fragmentList.add(new MainFragment2());
-        fragmentList.add(new MainFragment3());
+        fragmentList.add(new MainFragment1());
         FragmentPagerAdapter pagerAdapter=new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragmentList,new ArrayList<>());
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
     }
 
     private void requestPermissions() {

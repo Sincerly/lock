@@ -184,7 +184,7 @@ public class MainFragment1 extends BaseFragment {
         switch (view.getId()) {
             case R.id.backLayout:
                 MainActivity activity= (MainActivity) getActivity();
-                activity.toTab(1);
+                activity.toTab(0);
                 break;
             case R.id.tv5:
                 KeyManagerActivity.start();
