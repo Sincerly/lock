@@ -12,6 +12,14 @@ public class ARouterPath {
     }
 
     /**
+     * 引导页
+     * @return
+     */
+    public static String getGuideActivity() {
+        return "/main/GuideActivity";
+    }
+
+    /**
      * 登录
      */
     public static String getLoginActivity() {
@@ -177,6 +185,13 @@ public class ARouterPath {
      */
     public static String getShopAuditFailedActivity() {
         return "/main/ShopAuditFailedActivity";
+    }
+
+    /**
+     * 实名认证审核失败
+     */
+    public static String getIdcardCertFailedActivity() {
+        return "/main/IdcardCertFailedActivity";
     }
 
     /**

@@ -436,7 +436,7 @@ public class FileUtils {
                     {".ndwn", "application/ndwn"},
                     {".nif", "application/x-nif"},
                     {".nmz", "application/x-scream"},
-                    {".nokia-op-logo", "image/vnd.nok-oplogo-color"},
+                    {".nokia-op-ic_launcher", "image/vnd.nok-oplogo-color"},
                     {".npx", "application/x-netfpx"},
                     {".nsnd", "audio/nsnd"},
                     {".nva", "application/x-neva1"},

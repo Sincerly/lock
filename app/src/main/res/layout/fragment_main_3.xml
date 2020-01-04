@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/adLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#5454"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ad" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:drawableLeft="@mipmap/icon_location"
+        android:text="碧水蓝天小区"
+        android:layout_marginTop="50dp"
+        android:paddingLeft="@dimen/dp_8"
+        android:paddingRight="@dimen/dp_8"
+        android:drawablePadding="@dimen/dp_8"
+        android:paddingTop="@dimen/dp_4"
+        android:background="@drawable/bg_shape_round_60000000"
+        android:paddingBottom="@dimen/dp_4"
+        android:layout_marginLeft="@dimen/dp_16"
+        android:textColor="@color/colorWhite"
+        android:drawableRight="@mipmap/icon_down_arrow"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/down"
+        android:layout_width="44dp"
+        android:text="关闭"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/dp_24"
+        android:layout_marginTop="@dimen/dp_40"
+        android:background="@drawable/bg_shape_circle_color"
+        android:textColor="@color/colorWhite"
+        android:layout_height="44dp"/>
+</RelativeLayout>

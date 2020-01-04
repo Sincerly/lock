@@ -1,45 +1,53 @@
-package com.ysxsoft.lock.ui.activity;
+package com.ysxsoft.lock.ui.fragment.main;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alibaba.android.arouter.facade.annotation.Route;
-import com.alibaba.android.arouter.launcher.ARouter;
-import com.ysxsoft.common_base.base.BaseActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
-import com.ysxsoft.lock.models.response.IsAuthResponse;
+import com.ysxsoft.lock.MainActivity;
+import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.UserInfoResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
-import com.ysxsoft.lock.models.response.ShopCertResponse;
+import com.ysxsoft.lock.net.Api;
+import com.ysxsoft.lock.ui.activity.FeedBackActivity;
+import com.ysxsoft.lock.ui.activity.IdcardCertActivity;
+import com.ysxsoft.lock.ui.activity.IdcardCertFailedActivity;
+import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
+import com.ysxsoft.lock.ui.activity.PropertyCertActivity;
+import com.ysxsoft.lock.ui.activity.SettingActivity;
+import com.ysxsoft.lock.ui.activity.ShopAuditFailedActivity;
+import com.ysxsoft.lock.ui.activity.ShopCenterActivity;
+import com.ysxsoft.lock.ui.activity.ShopEgisActivity;
+import com.ysxsoft.lock.ui.activity.ShopInfoActivity;
+import com.ysxsoft.lock.ui.activity.ShopListActivity;
+import com.ysxsoft.lock.ui.activity.ShopManagerActivity;
+import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import com.ysxsoft.lock.ARouterPath;
-import com.ysxsoft.lock.R;
-import com.ysxsoft.lock.models.response.UserInfoResponse;
-import com.ysxsoft.lock.net.Api;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 
 /**
- * 我的
- * create by Sincerly on 9999/9/9 0009
- **/
-@Route(path = "/main/UserInfoActivity")
-public class UserInfoActivity extends BaseActivity {
-    @BindView(R.id.statusBar)
-    View statusBar;
+ * 个人中心fragment
+ */
+public class MainFragment1 extends BaseFragment {
+    @BindView(R.id.statusBar2)
+    View statusBar2;
     @BindView(R.id.backWithText)
     TextView backWithText;
     @BindView(R.id.back)
@@ -56,21 +64,14 @@ public class UserInfoActivity extends BaseActivity {
     LinearLayout bg;
     @BindView(R.id.bottomLineView)
     View bottomLineView;
-    @BindView(R.id.parent)
-    LinearLayout parent;
-
-    @BindView(R.id.pie)
-    PieLayout pie;
-
     @BindView(R.id.civ)
     CircleImageView civ;
-    @BindView(R.id.iv1)
-    ImageView iv1;
     @BindView(R.id.tv1)
     TextView tv1;
-
     @BindView(R.id.tv2)
     TextView tv2;
+    @BindView(R.id.iv1)
+    ImageView iv1;
     @BindView(R.id.tvL1)
     TextView tvL1;
     @BindView(R.id.tvL2)
@@ -81,9 +82,12 @@ public class UserInfoActivity extends BaseActivity {
     TextView tvL4;
     @BindView(R.id.tv3)
     TextView tv3;
-
     @BindView(R.id.tv4)
     TextView tv4;
+    @BindView(R.id.pie)
+    PieLayout pie;
+    @BindView(R.id.iv2)
+    ImageView iv2;
     @BindView(R.id.cL1)
     ConstraintLayout cL1;
     @BindView(R.id.tv5)
@@ -98,38 +102,30 @@ public class UserInfoActivity extends BaseActivity {
     TextView tv9;
     @BindView(R.id.tv10)
     TextView tv10;
-    @BindView(R.id.LL1)
-    LinearLayout LL1;
-    @BindView(R.id.LL2)
-    LinearLayout LL2;
-    @BindView(R.id.LL3)
-    LinearLayout LL3;
-    @BindView(R.id.LL4)
-    LinearLayout LL4;
-
-
+    @BindView(R.id.parent)
+    LinearLayout parent;
     private List<String> approveList;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getUserInfoActivity()).navigation();
+    @Override
+    public int getLayoutId() {
+        return R.layout.fragment_main_1;
     }
 
     @Override
-    protected int getLayoutId() {
-        return R.layout.activity_user_info;
-    }
-
-    @Override
-    public void doWork() {
-        super.doWork();
-        initTitle();
-        initData();
+    protected void doWork(View view) {
+        bg.setBackgroundColor(getResources().getColor(R.color.transparent));
+        backLayout.setVisibility(View.VISIBLE);
+        bottomLineView.setVisibility(View.GONE);
+        back.setImageResource(R.mipmap.icon_white_back);
+        title.setText("个人中心");
+        title.setTextColor(getResources().getColor(R.color.colorWhite));
+        statusBar2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DisplayUtils.getStatusBarHeight(getActivity())));
     }
 
     private void IsAuth() {
         OkHttpUtils.post()
                 .url(Api.IS_AUTH)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -140,10 +136,8 @@ public class UserInfoActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-//                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                        IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
-                            showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     showToast("已实名认证");
@@ -155,7 +149,7 @@ public class UserInfoActivity extends BaseActivity {
                                     IdcardCertFailedActivity.start();
                                     break;
                                 case "203":
-                                    CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {
+                                    CertificationDialog.show(getActivity(), new CertificationDialog.OnDialogClickListener() {
                                         @Override
                                         public void sure() {
                                             IdcardCertActivity.start();
@@ -186,23 +180,12 @@ public class UserInfoActivity extends BaseActivity {
         title.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 
-    @OnClick({R.id.backLayout, R.id.tv10, R.id.tv9, R.id.tv8, R.id.tv7, R.id.tv6, R.id.tv5, R.id.tv1, R.id.tv2, R.id.iv1, R.id.LL1, R.id.LL2, R.id.LL3, R.id.LL4, R.id.cL1})
+    @OnClick({R.id.backLayout, R.id.tv10, R.id.tv9, R.id.tv8, R.id.tv7, R.id.tv6, R.id.tv5, R.id.tv1, R.id.tv2, R.id.iv1, R.id.cL1})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
-                backToActivity();
-                break;
-            case R.id.LL1:
-                PacketActivity.start(0);
-                break;
-            case R.id.LL2:
-                PacketActivity.start(1);
-                break;
-            case R.id.LL3:
-                PacketActivity.start(2);
-                break;
-            case R.id.LL4:
-                PacketActivity.start(3);
+                MainActivity activity= (MainActivity) getActivity();
+                activity.toTab(1);
                 break;
             case R.id.tv5:
                 KeyManagerActivity.start();
@@ -217,8 +200,8 @@ public class UserInfoActivity extends BaseActivity {
                 IsShopCert();
                 break;
             case R.id.tv9://广告中心
-//                showToast("广告中心");
-//                ShopInfoActivity.start();
+                showToast("广告中心");
+                ShopInfoActivity.start();
                 break;
             case R.id.tv10:
                 FeedBackActivity.start();
@@ -240,7 +223,7 @@ public class UserInfoActivity extends BaseActivity {
     private void IsShopCert() {
         OkHttpUtils.post()
                 .url(Api.IS_SHOP_CERT)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -251,9 +234,8 @@ public class UserInfoActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        ShopCertResponse resp = JsonUtils.parseByGson(response, ShopCertResponse.class);
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
-                            showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     ShopManagerActivity.start();
@@ -279,7 +261,7 @@ public class UserInfoActivity extends BaseActivity {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.GET_USER_INFO)
-                .addParams("uid", SharedPreferencesUtils.getUid(UserInfoActivity.this))
+                .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -308,3 +290,4 @@ public class UserInfoActivity extends BaseActivity {
                 });
     }
 }
+
