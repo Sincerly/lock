@@ -18,6 +18,7 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.models.response.VillageResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.ui.dialog.CitySelectDialog;
 import com.ysxsoft.lock.ui.dialog.SelectVillageDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -75,8 +76,8 @@ public class AddPlaceActivity extends BaseActivity {
     }
 
 
-    public static void start(Activity activity,int requestCode,String flag){
-        ARouter.getInstance().build(ARouterPath.getAddPlaceActivity()).withString("flag",flag).navigation(activity,requestCode);
+    public static void start(Activity activity, int requestCode, String flag) {
+        ARouter.getInstance().build(ARouterPath.getAddPlaceActivity()).withString("flag", flag).navigation(activity, requestCode);
     }
 
     @Override
@@ -134,21 +135,49 @@ public class AddPlaceActivity extends BaseActivity {
                     return;
                 }
 
-                if ("1".equals(flag)){
+                if ("1".equals(flag)) {
                     Intent intent = new Intent();
-                    intent.putExtra("requid",requid);
-                    setResult(RESULT_OK,intent);
+                    intent.putExtra("requid", requid);
+                    setResult(RESULT_OK, intent);
                     finish();
-                }else {
+                } else {
 //                    ApplyKeyActivity.start(requid);
-
-                    finish();
+                    addPlaceData();
                 }
                 break;
 
 
         }
     }
+
+    /**
+     * 添加小区
+     */
+    private void addPlaceData() {
+        OkHttpUtils.post()
+                .url(Api.BIND_PLACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("requid", requid)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                finish();
+                            }
+                        }
+                    }
+                });
+    }
+
     private String requid;
 
     private void requestData(String cityCode1, String areaCode1) {
@@ -169,7 +198,7 @@ public class AddPlaceActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         VillageResponse resp = JsonUtils.parseByGson(response, VillageResponse.class);
                         if (resp != null) {
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())){
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 
                                 List<VillageResponse.DataBean> data = resp.getData();
                                 SelectVillageDialog dialog = new SelectVillageDialog(mContext, R.style.BottomDialogStyle);
