@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -295,6 +296,7 @@ public class AddPacketExperienceActivity extends BaseActivity {
                 formBuilder.addParams("title", etName.getText().toString().trim());//卡券、套餐名称
                 formBuilder.addParams("remark", etInputRules.getText().toString().trim());//详情（或规则 ）或 会员卡有效期
                 formBuilder.addFile("cardimg", file.getName(), file);
+                formBuilder.addParams("collar", "1");//每人限领数量，暂时固定为1
                 break;
             case 3://会员卡
                 formBuilder.addParams("price", etYj.getText().toString().trim());//现金券 券面额 、套餐价格、体验套餐价格、会员卡折扣
@@ -312,6 +314,8 @@ public class AddPacketExperienceActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "json====" + response);
+
                         hideLoadingDialog();
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {

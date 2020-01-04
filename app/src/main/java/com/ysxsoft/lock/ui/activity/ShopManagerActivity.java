@@ -3,6 +3,7 @@ package com.ysxsoft.lock.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -163,11 +164,12 @@ public class ShopManagerActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "json====" + response);
                         hideLoadingDialog();
                         ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                if (resp.getData()!=null) {
+                                if (resp.getData() != null) {
                                     business_id = resp.getData().getId();
                                     //请求成功
                                     Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(civ);
@@ -202,7 +204,7 @@ public class ShopManagerActivity extends BaseActivity {
                 break;
             case R.id.tv1:
                 Intent intent = new Intent(mContext, ScanActivity.class);
-                startActivityForResult(intent,0x01);
+                startActivityForResult(intent, 0x01);
                 break;
             case R.id.tv2:
                 CheckRecordActivity.start();
@@ -295,12 +297,12 @@ public class ShopManagerActivity extends BaseActivity {
                 case 0x01:
                     String result = data.getStringExtra("result");
                     try {
-                        JSONObject jsonObject=new JSONObject(result);
-                        if("".equals(jsonObject.optString("id"))){
-                            ToastUtils.shortToast(mContext,"获取失败");
+                        JSONObject jsonObject = new JSONObject(result);
+                        if ("".equals(jsonObject.optString("id"))) {
+                            ToastUtils.shortToast(mContext, "获取失败");
                             return;
                         }
-                        String Id=jsonObject.getString("id");
+                        String Id = jsonObject.getString("id");
                         requestCheckData(Id);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -311,28 +313,28 @@ public class ShopManagerActivity extends BaseActivity {
     }
 
     private void requestCheckData(String Id) {
-            OkHttpUtils.post()
-                    .url(Api.HX)
-                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                    .addParams("id",Id)
-                    .tag(this)
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
+        OkHttpUtils.post()
+                .url(Api.HX)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("id", Id)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onResponse(String response, int id) {
-                            CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                            if (resp!=null){
-                                if (HttpResponse.SUCCESS.equals(resp.getCode())){
-                                    CheckSucessActivity.start();
-                                }
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                CheckSucessActivity.start();
                             }
                         }
-                    });
+                    }
+                });
 
 
     }

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -109,6 +110,8 @@ public class AddPacketVipActivity extends BaseActivity {
     ConstraintLayout cl1;
     @BindView(R.id.iv)
     RoundImageView iv;
+    @BindView(R.id.ivAdd)
+    ImageView ivAdd;
 
     private int typeClick = 3;
 
@@ -134,7 +137,8 @@ public class AddPacketVipActivity extends BaseActivity {
         LL1.setVisibility(View.GONE);
         LL2.setVisibility(View.GONE);
         tv4Name.setVisibility(View.GONE);
-        cl1.setVisibility(View.GONE);
+        ivAdd.setVisibility(View.GONE);
+//        cl1.setVisibility(View.GONE);
         initPhotoHelper();
         initTitle();
     }
@@ -301,6 +305,7 @@ public class AddPacketVipActivity extends BaseActivity {
             case 3://会员卡
                 formBuilder.addParams("price", etYj.getText().toString().trim());//现金券 券面额 、套餐价格、体验套餐价格、会员卡折扣
                 formBuilder.addParams("title", etYh.getText().toString().trim());
+                formBuilder.addParams("remark", etInputRules.getText().toString().trim());//详情（或规则 ）或 会员卡有效期
                 break;
         }
         formBuilder.tag(this)
@@ -313,6 +318,8 @@ public class AddPacketVipActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "json====" + response);
+
                         hideLoadingDialog();
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {

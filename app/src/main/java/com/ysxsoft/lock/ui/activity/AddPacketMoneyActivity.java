@@ -299,10 +299,17 @@ public class AddPacketMoneyActivity extends BaseActivity {
 
         switch (typeClick) {
             case 0://现金券
+                File file1 = new File(path);
+                if (TextUtils.isEmpty(path)){
+                    showToast("主图不能为空");
+                    return;
+                }
+                formBuilder.addFile("cardimg",file1.getName(),file1);
                 formBuilder.addParams("price", etYhq.getText().toString().trim());//现金券 券面额 、套餐价格、体验套餐价格、会员卡折扣
                 formBuilder.addParams("oprice", etUseTJ.getText().toString().trim());//	现金券 使用条件、套餐原价、体验套餐原价 type=1,2,3必填
                 formBuilder.addParams("title", etName.getText().toString().trim());//卡券、套餐名称
                 formBuilder.addParams("remark", etInputRules.getText().toString().trim());//详情（或规则 ）或 会员卡有效期
+                formBuilder.addParams("collar", "1");//每人限领数量，暂时固定为1
                 break;
             case 1://团购套餐
             case 2://体验套餐
@@ -332,6 +339,8 @@ public class AddPacketMoneyActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "json====" + response);
+
                         hideLoadingDialog();
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
@@ -362,6 +371,7 @@ public class AddPacketMoneyActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+
                         hideLoadingDialog();
                         AddPacketMoneyResponse resp = JsonUtils.parseByGson(response, AddPacketMoneyResponse.class);
                         if (resp != null) {

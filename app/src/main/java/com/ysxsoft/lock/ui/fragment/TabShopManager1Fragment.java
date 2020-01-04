@@ -3,6 +3,7 @@ package com.ysxsoft.lock.ui.fragment;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -111,6 +112,7 @@ public class TabShopManager1Fragment extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "json====" + response);
 
                         CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
                         if (resp != null) {

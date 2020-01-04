@@ -25,6 +25,9 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.UserInfoResponse;
 import com.ysxsoft.lock.net.Api;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,9 +234,17 @@ public class UserInfoActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
-                        if (resp != null) {
-                            switch (resp.getCode()) {
+//                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        JSONObject result = null;
+                        String resultCode = "";
+                        try {
+                            result = new JSONObject(response);
+                            resultCode = result.getString("code");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (result != null) {
+                            switch (resultCode) {
                                 case "200":
                                     ShopManagerActivity.start();
                                     break;
