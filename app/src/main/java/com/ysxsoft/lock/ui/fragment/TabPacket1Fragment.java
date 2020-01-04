@@ -205,7 +205,7 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter {
             iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    KeyManagerActivity.start();
+//                    KeyManagerActivity.start();
                 }
             });
         }

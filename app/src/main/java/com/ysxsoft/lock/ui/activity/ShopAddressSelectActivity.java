@@ -322,6 +322,7 @@ public class ShopAddressSelectActivity extends BaseActivity {
                 intent.putExtra("latitude",String.valueOf(latitude));
                 intent.putExtra("longitude",String.valueOf(longitude));
                 setResult(RESULT_OK,intent);
+                finish();
                 break;
         }
     }
