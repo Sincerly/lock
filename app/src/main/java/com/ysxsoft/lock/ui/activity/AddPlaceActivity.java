@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -181,6 +182,7 @@ public class AddPlaceActivity extends BaseActivity {
     private String requid;
 
     private void requestData(String cityCode1, String areaCode1) {
+        showLoadingDialog("请求中...");
         OkHttpUtils.get()
                 .url(Api.GET_ADDRESS_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
@@ -191,11 +193,14 @@ public class AddPlaceActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                        Log.e("onError", e.getMessage());
 
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        hideLoadingDialog();
                         VillageResponse resp = JsonUtils.parseByGson(response, VillageResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {

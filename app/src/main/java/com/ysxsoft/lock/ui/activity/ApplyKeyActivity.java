@@ -1,6 +1,7 @@
 package com.ysxsoft.lock.ui.activity;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -118,7 +119,7 @@ public class ApplyKeyActivity extends BaseActivity {
                 break;
             case R.id.tv1:
 
-                if (listFloors.size()<=0){
+                if (listFloors == null || listFloors.size()<=0){
                     showToast("暂无数据");
                     return;
                 }
@@ -201,11 +202,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("onError", e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("onResponse", response);
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
                             showToast(resp.getMsg());
@@ -231,11 +233,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("onError", e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("onResponse", response);
                         DeviceInfoResponse resp = JsonUtils.parseByGson(response, DeviceInfoResponse.class);
                         if (resp!=null){
                             if (HttpResponse.SUCCESS.equals(resp.getCode())){
@@ -256,11 +259,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("onError", e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("onResponse", response);
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp!=null){
                             if (HttpResponse.SUCCESS.equals(resp.getCode())){
@@ -286,6 +290,7 @@ public class ApplyKeyActivity extends BaseActivity {
 //        fragmentList.add(new TabApplyKey2Fragment());
 //        initViewPage(fragmentList, titles);
 //        initTabLayout(titles);
+        requid = getIntent().getExtras().getString("requid");
         requestListfloorData();
     }
 
@@ -302,11 +307,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("onError", e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("onResponse", response);
                         ListUnitResponse resp = JsonUtils.parseByGson(response, ListUnitResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
@@ -330,11 +336,12 @@ public class ApplyKeyActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("onError", e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("onResponse", response);
                         ListfloorDataResponse resp = JsonUtils.parseByGson(response, ListfloorDataResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
