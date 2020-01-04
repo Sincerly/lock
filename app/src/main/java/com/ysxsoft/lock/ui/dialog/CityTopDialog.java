@@ -88,62 +88,62 @@ public class CityTopDialog extends Dialog {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        TabKeyManager1FragmentResponse gson = JsonUtils.parseByGson(response, TabKeyManager1FragmentResponse.class);
-                        if (gson != null) {
-                            if (HttpResponse.SUCCESS.equals(gson.getCode())) {
-
-                                recyclerView.setAdapter(null);
-                                recyclerView.setNestedScrollingEnabled(false);
-                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                RBaseAdapter<TabKeyManager1FragmentResponse.DataBean> adapter = new RBaseAdapter<TabKeyManager1FragmentResponse.DataBean>(getActivity(), R.layout.item_tab_key_manager_list, groups) {
-                                    @Override
-                                    protected void fillItem(RViewHolder holder, TabKeyManager1FragmentResponse.DataBean item, int position) {
-                                        TextView tvNormal = holder.getView(R.id.tvNormal);
-                                        TextView tvAddress = holder.getView(R.id.tvAddress);
-                                        TextView tvName = holder.getView(R.id.tvName);
-                                        tvName.setText(item.getQuarters_name());
-                                        tvAddress.setText(item.getAddress());
-                                        RecyclerView itemRecyclerView = holder.getView(R.id.itemRecyclerView);
-                                        if (item.isExpanded()) {
-                                            itemRecyclerView.setVisibility(View.VISIBLE);
-                                            tvName.setSelected(true);
-                                        } else {
-                                            itemRecyclerView.setVisibility(View.GONE);
-                                            tvName.setSelected(false);
-                                        }
-                                        if (item.getIsdefault() == 1) {
-                                            tvNormal.setVisibility(View.VISIBLE);
-                                        } else {
-                                            tvNormal.setVisibility(View.GONE);
-                                        }
-                                        initRecyclerView(itemRecyclerView, item.getListkey(), position);
-                                    }
-
-                                    @Override
-                                    protected int getViewType(TabKeyManager1FragmentResponse.DataBean item, int position) {
-                                        return 0;
-                                    }
-                                };
-                                adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(RViewHolder holder, View view, int position) {
-                                        for (int i = 0; i < groups.size(); i++) {
-                                            if (i == position) {
-                                                if (groups.get(i).isExpanded()) {
-                                                    groups.get(i).setExpanded(false);
-                                                } else {
-                                                    groups.get(i).setExpanded(true);
-                                                }
-                                            } else {
-                                                groups.get(i).setExpanded(false);
-                                            }
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                });
-                                recyclerView.setAdapter(adapter);
-                            }
-                        }
+//                        TabKeyManager1FragmentResponse gson = JsonUtils.parseByGson(response, TabKeyManager1FragmentResponse.class);
+//                        if (gson != null) {
+//                            if (HttpResponse.SUCCESS.equals(gson.getCode())) {
+//
+//                                recyclerView.setAdapter(null);
+//                                recyclerView.setNestedScrollingEnabled(false);
+//                                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//                                RBaseAdapter<TabKeyManager1FragmentResponse.DataBean> adapter = new RBaseAdapter<TabKeyManager1FragmentResponse.DataBean>(getActivity(), R.layout.item_tab_key_manager_list, groups) {
+//                                    @Override
+//                                    protected void fillItem(RViewHolder holder, TabKeyManager1FragmentResponse.DataBean item, int position) {
+//                                        TextView tvNormal = holder.getView(R.id.tvNormal);
+//                                        TextView tvAddress = holder.getView(R.id.tvAddress);
+//                                        TextView tvName = holder.getView(R.id.tvName);
+//                                        tvName.setText(item.getQuarters_name());
+//                                        tvAddress.setText(item.getAddress());
+//                                        RecyclerView itemRecyclerView = holder.getView(R.id.itemRecyclerView);
+//                                        if (item.isExpanded()) {
+//                                            itemRecyclerView.setVisibility(View.VISIBLE);
+//                                            tvName.setSelected(true);
+//                                        } else {
+//                                            itemRecyclerView.setVisibility(View.GONE);
+//                                            tvName.setSelected(false);
+//                                        }
+//                                        if (item.getIsdefault() == 1) {
+//                                            tvNormal.setVisibility(View.VISIBLE);
+//                                        } else {
+//                                            tvNormal.setVisibility(View.GONE);
+//                                        }
+//                                        initRecyclerView(itemRecyclerView, item.getListkey(), position);
+//                                    }
+//
+//                                    @Override
+//                                    protected int getViewType(TabKeyManager1FragmentResponse.DataBean item, int position) {
+//                                        return 0;
+//                                    }
+//                                };
+//                                adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
+//                                    @Override
+//                                    public void onItemClick(RViewHolder holder, View view, int position) {
+//                                        for (int i = 0; i < groups.size(); i++) {
+//                                            if (i == position) {
+//                                                if (groups.get(i).isExpanded()) {
+//                                                    groups.get(i).setExpanded(false);
+//                                                } else {
+//                                                    groups.get(i).setExpanded(true);
+//                                                }
+//                                            } else {
+//                                                groups.get(i).setExpanded(false);
+//                                            }
+//                                        }
+//                                        adapter.notifyDataSetChanged();
+//                                    }
+//                                });
+//                                recyclerView.setAdapter(adapter);
+//                            }
+//                        }
                     }
                 });
     }

@@ -2,8 +2,10 @@ package com.ysxsoft.lock.ui.fragment.main;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,9 +24,11 @@ import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
+import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
+import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -131,6 +135,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                             CouponDialog.show(getActivity(), new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
+                                    PacketActivity.start(0);
                                 }
                             });
                         }
@@ -189,6 +194,18 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         } else if (result == -5) {
             //请开启蓝牙
             ToastUtils.show(getActivity(),"请开启蓝牙");
+
+            OpenBluthDialog.show(getActivity(), new OpenBluthDialog.OnDialogClickListener() {
+                @Override
+                public void sure() {
+                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                }
+
+                @Override
+                public void setting() {
+                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                }
+            });
         }
     }
 

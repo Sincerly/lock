@@ -20,6 +20,9 @@ import android.widget.RelativeLayout;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorListener;
 import androidx.core.view.ViewPropertyAnimatorUpdateListener;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
@@ -32,6 +35,7 @@ import com.google.gson.Gson;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
@@ -41,8 +45,13 @@ import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
 import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
+import com.ysxsoft.lock.ui.fragment.main.MainFragment1;
+import com.ysxsoft.lock.ui.fragment.main.MainFragment2;
+import com.ysxsoft.lock.ui.fragment.main.MainFragment3;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,8 +61,8 @@ import io.reactivex.functions.Consumer;
 
 @Route(path = "/main/MainActivity")
 public class MainActivity extends BaseActivity {
-    @BindView(R.id.adLayout)
-    LinearLayout adLayout;
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
     private float x;
     private float y;
     private float downX;
