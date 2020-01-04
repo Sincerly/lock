@@ -143,6 +143,7 @@ public class UserInfoActivity extends BaseActivity {
 //                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
                         if (resp != null) {
+                            showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     showToast("已实名认证");
@@ -216,8 +217,8 @@ public class UserInfoActivity extends BaseActivity {
                 IsShopCert();
                 break;
             case R.id.tv9://广告中心
-                showToast("广告中心");
-                ShopInfoActivity.start();
+//                showToast("广告中心");
+//                ShopInfoActivity.start();
                 break;
             case R.id.tv10:
                 FeedBackActivity.start();
@@ -252,6 +253,7 @@ public class UserInfoActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         ShopCertResponse resp = JsonUtils.parseByGson(response, ShopCertResponse.class);
                         if (resp != null) {
+                            showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     ShopManagerActivity.start();

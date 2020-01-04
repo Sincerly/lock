@@ -112,6 +112,7 @@ public class ShopAddressSelectActivity extends BaseActivity {
     private boolean isClick = false;
     private double latitude;
     private double longitude;
+    private String detailAddress;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopAddressSelectActivity()).navigation();
@@ -239,7 +240,11 @@ public class ShopAddressSelectActivity extends BaseActivity {
                             LatLng location = poiInfo.location;
                             latitude = location.latitude;
                             longitude = location.longitude;
-
+                            String address = poiInfo.address;
+                            String province = poiInfo.getProvince();
+                            String city = poiInfo.getCity();
+                            String area = poiInfo.getArea();
+                            detailAddress = province + city + area + address;
 
                             LatLng point = new LatLng(latitude, longitude);
                             //构建Marker图标
@@ -318,9 +323,19 @@ public class ShopAddressSelectActivity extends BaseActivity {
                 });
                 break;
             case R.id.tvOk:
+                if (TextUtils.isEmpty(tv1.getText().toString().trim())){
+                    showToast("所在地区不能为空");
+                    return;
+                }
+                 if (TextUtils.isEmpty(detailAddress)){
+                    showToast("详细地址不能为空");
+                    return;
+                }
+
                 Intent intent = new Intent();
                 intent.putExtra("latitude",String.valueOf(latitude));
                 intent.putExtra("longitude",String.valueOf(longitude));
+                intent.putExtra("detailAddress",detailAddress);
                 setResult(RESULT_OK,intent);
                 finish();
                 break;

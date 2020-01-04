@@ -158,6 +158,13 @@ public class MainActivity extends BaseActivity {
                                 Set<String> set = map.keySet();
                                 ToastUtils.show(MainActivity.this, "附近设备" + set.size());
 
+                                CouponDialog.show(MainActivity.this,"门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
+                                    @Override
+                                    public void sure() {
+                                        PacketActivity.start(0);
+                                    }
+                                });
+
                                 LEDevice leDevice = null;
                                 for (Map.Entry<String, LEDevice> entry : map.entrySet()) {
                                     String key = entry.getKey();
@@ -173,8 +180,9 @@ public class MainActivity extends BaseActivity {
                             }
                         } else {
                             //上  获取优惠券
+//
                             Log.e(TAG, "获取优惠券");
-                            CouponDialog.show(MainActivity.this, new CouponDialog.OnDialogClickListener() {
+                            CouponDialog.show(MainActivity.this,"恭喜!,送你一张优惠券", new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
                                     PacketActivity.start(0);
