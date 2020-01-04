@@ -151,7 +151,7 @@ public class UserInfoActivity extends BaseActivity {
                                     ShopEgisActivity.start("个人认证");
                                     break;
                                 case "202":
-                                    ShopAuditFailedActivity.start("个人认证");
+                                    IdcardCertFailedActivity.start();
                                     break;
                                 case "203":
                                     CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {

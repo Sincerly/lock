@@ -89,6 +89,7 @@ public class ShopAuditFailedActivity extends BaseActivity {
                 break;
             case R.id.tvAgain:
                 ShopAuthenticationActivity.start();
+                finish();
                 break;
         }
     }

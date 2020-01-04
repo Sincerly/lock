@@ -98,6 +98,8 @@
         <activity android:name=".ui.activity.KeyManagerActivity"></activity>
         <!--实名认证-->
         <activity android:name=".ui.activity.IdcardCertActivity"></activity>
+        <!--实名认证审核失败-->
+        <activity android:name=".ui.activity.IdcardCertFailedActivity"></activity>
         <!--物业认证-->
         <activity android:name=".ui.activity.PropertyCertActivity"></activity>
         <!--意见反馈-->

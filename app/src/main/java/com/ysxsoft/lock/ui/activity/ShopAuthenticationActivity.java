@@ -134,9 +134,9 @@ public class ShopAuthenticationActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tv1:
-                ShopAuditFailedActivity.start("商户认证");
+//                ShopAuditFailedActivity.start("商户认证");
                 break;
-            case R.id.tv2:
+            case R.id.tv2://拍照
                 choicePhotoWrapper();
                 break;
             case R.id.tv3:

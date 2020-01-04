@@ -1,41 +1,33 @@
 package com.ysxsoft.lock.ui.activity;
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
-import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
-import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ARouterPath;
+import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.ShopAuditFailedResponse;
+import com.ysxsoft.lock.net.Api;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import com.ysxsoft.lock.ARouterPath;
-import com.ysxsoft.lock.R;
-import com.ysxsoft.lock.models.response.FeedBackResponse;
-import com.ysxsoft.lock.net.Api;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 
 /**
- * 意见反馈
+ * 商户认证审核失败
  * create by Sincerly on 9999/9/9 0009
  **/
-@Route(path = "/main/FeedBackActivity")
-public class FeedBackActivity extends BaseActivity {
+@Route(path = "/main/IdcardCertFailedActivity")
+public class IdcardCertFailedActivity extends BaseActivity {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -56,30 +48,24 @@ public class FeedBackActivity extends BaseActivity {
     View bottomLineView;
     @BindView(R.id.parent)
     LinearLayout parent;
-
-    @BindView(R.id.etContent)
-    EditText etContent;
-
-    @BindView(R.id.tv1)
-    TextView tv1;
-    @BindView(R.id.tv3)
-    TextView tv3;
-    @BindView(R.id.tvOk)
-    TextView tvOk;
-
+    @BindView(R.id.tvTip)
+    TextView tvTip;
+    @BindView(R.id.tvAgain)
+    TextView tvAgain;
 
     public static void start() {
-        ARouter.getInstance().build(ARouterPath.getFeedBackActivity()).navigation();
+        ARouter.getInstance().build(ARouterPath.getIdcardCertFailedActivity()).navigation();
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_feed_back;
+        return R.layout.activity_idcard_cert_failed;
     }
 
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
     }
 
@@ -87,49 +73,27 @@ public class FeedBackActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("意见反馈");
-        etContent.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                tv1.setText(String.valueOf(s.length()));
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
+        title.setText("个人认证");
     }
 
-    @OnClick({R.id.backLayout, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.tvAgain})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
-            case R.id.tvOk:
-                if (TextUtils.isEmpty(etContent.getText().toString().trim())) {
-                    showToast("反馈内容不能为空");
-                    return;
-                }
-                request();
+            case R.id.tvAgain:
+                IdcardCertActivity.start();
+                finish();
                 break;
-
         }
     }
 
     public void request() {
         showLoadingDialog("请求中");
         OkHttpUtils.post()
-                .url(Api.FEED_BACK)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .addParams("msg", etContent.getText().toString().trim())
+                .url(Api.GET_SHOP_AUDIT_FAILED)
+                .addParams("uid", SharedPreferencesUtils.getUid(IdcardCertFailedActivity.this))
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -141,16 +105,18 @@ public class FeedBackActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         hideLoadingDialog();
-                        //                        FeedBackResponse resp = JsonUtils.parseByGson(response, FeedBackResponse.class);
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        ShopAuditFailedResponse resp = JsonUtils.parseByGson(response, ShopAuditFailedResponse.class);
                         if (resp != null) {
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                //请求成功
-                                finish();
-                            }
-                            showToast(resp.getMsg());
+//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+//                                    //请求成功
+//                                    List<ShopAuditFailedResponse.DataBean> data = resp.getData();
+//                                    manager.setData(data);
+//                                } else {
+//                                    //请求失败
+//                                    showToast(resp.getMsg());
+//                                }
                         } else {
-                            showToast("反馈失败");
+                            showToast("获取商户认证审核失败失败");
                         }
                     }
                 });
