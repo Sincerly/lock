@@ -93,6 +93,7 @@ public class UnlockingModeActivity extends BaseActivity {
                   dialog.showDialog();
                 break;
               case R.id.tv6:
+
                   showToast("远程开门");
                 break;
               case R.id.tv8:

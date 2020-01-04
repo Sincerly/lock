@@ -262,7 +262,7 @@ public class SharedPreferencesUtils {
 	}
 
 	public static String getToken(Context context) {
-	    return "";
+		return "eyJhbGciOiJIUzUxMiJ9.eyJhcGlfbG9naW5fdXNlcl9rZXkiOiIwNTRhN2FjZi1mMTg5LTQxMmQtYTQ3Zi1iOTBkZmM1ODg2NDcifQ.4UI0urjIimUxMGCDKhskuOdl0xA2ikVMIAjSUbbkIhgrZixbqlzLGznLmH0b9UV1pPinbMX0_AjKL7aPGXCX4Q";
 //		return get(context).getString("token", "");
 	}
 

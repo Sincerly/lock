@@ -91,13 +91,13 @@ public class MainActivity extends BaseActivity {
                     public void accept(Permission permission) throws Exception {
                         if (permission.granted) {
                             // 用户已经同意该权限
-                            Log.e(TAG, permission.name + " is granted.");
+//                            Log.e(TAG, permission.name + " is granted.");
                         } else if (permission.shouldShowRequestPermissionRationale) {
                             // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            Log.e(TAG, permission.name + " is denied. More info should be provided.");
+//                            Log.e(TAG, permission.name + " is denied. More info should be provided.");
                         } else {
                             // 用户拒绝了该权限，并且选中『不再询问』
-                            Log.e(TAG, permission.name + " is denied.");
+//                            Log.e(TAG, permission.name + " is denied.");
                         }
                     }
                 });
@@ -242,7 +242,6 @@ public class MainActivity extends BaseActivity {
         public void scanDeviceCallBack(final LEDevice ledevice,
                                        final int result, final int rssi) {
             hasScannedDaHaoLock=true;
-            Log.e(TAG, "scanDeviceCallBack "+rssi);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -254,7 +253,7 @@ public class MainActivity extends BaseActivity {
                             //blueLockPub.connectDevice(ledevice);
                         }
                     } catch (Exception e) {
-                        Log.e(TAG, e.toString());
+//                        Log.e(TAG, e.toString());
                     }
                 }
             });
@@ -262,7 +261,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void scanDeviceEndCallBack(final int result) {
-            showToast("scanDeviceEndCallBack "+result);
+//            showToast("scanDeviceEndCallBack "+result);
             mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         }
@@ -270,18 +269,18 @@ public class MainActivity extends BaseActivity {
         @Override
         public void connectDeviceCallBack(int result, int status) {
 //            showToast("onConnectDevice "+result+" "+status);
-            Log.e(TAG,"connectDeviceCallBack "+result);
+//            Log.e(TAG,"connectDeviceCallBack "+result);
         }
 
         @Override
         public void disconnectDeviceCallBack(int result, int status) {
 //            showToast("onDisconnectDevice"+result+" "+status);
-            Log.e(TAG,"disconnectDeviceCallBack "+result);
+//            Log.e(TAG,"disconnectDeviceCallBack "+result);
         }
 
         @Override
         public void connectingDeviceCallBack(int result) {
-            Log.e(TAG,"onConnectingDevice"+result);
+//            Log.e(TAG,"onConnectingDevice"+result);
         }
 
         @Override
@@ -289,12 +288,12 @@ public class MainActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(TAG, " =============openCloseDeviceCallBack result: "
-                            + result);
+//                    Log.e(TAG, " =============openCloseDeviceCallBack result: "
+//                            + result);
 
                     if (null != params && params.length > 0) {
 
-                        Log.e(TAG, " ============device Id: " + params[0]);
+//                        Log.e(TAG, " ============device Id: " + params[0]);
                     }
                     if (0 == result) {
 //                        showToast(" openCloseDevice ok battery:" + battery
@@ -306,8 +305,8 @@ public class MainActivity extends BaseActivity {
                         showToast("未注");
                     } else {
                         //enabledBtn(true);
-                        showToast(" openCloseDeviceCallBack err code: "
-                                + result);
+//                        showToast(" openCloseDeviceCallBack err code: "
+//                                + result);
                         if (-9 == result) {
                             if (hasScannedDaHaoLock) {
                                 showToast("您走错门了！");

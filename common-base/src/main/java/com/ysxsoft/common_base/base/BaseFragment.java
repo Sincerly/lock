@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,14 @@ public abstract class BaseFragment extends Fragment {
         }
         mFragment.setArguments(args);
         return mFragment;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            Log.e("fragment", getClass().getSimpleName());
+        }
     }
 
     @Override

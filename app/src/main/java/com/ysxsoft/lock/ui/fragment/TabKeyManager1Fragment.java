@@ -1,6 +1,7 @@
 package com.ysxsoft.lock.ui.fragment;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -70,6 +71,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
 
 
     private void request() {
+        showLoadingDialog("请求中...");
         OkHttpUtils.get()
                 .url(Api.GET_BIND_PLACE_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
@@ -78,11 +80,13 @@ public class TabKeyManager1Fragment extends BaseFragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("onError", e.getMessage());
+                        hideLoadingDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        hideLoadingDialog();
                         TabKeyManager1FragmentResponse gson = JsonUtils.parseByGson(response, TabKeyManager1FragmentResponse.class);
                         if (gson != null) {
                             if (HttpResponse.SUCCESS.equals(gson.getCode())) {
