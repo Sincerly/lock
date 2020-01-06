@@ -60,9 +60,9 @@ public class SplashActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 //未登录 跳转到登录页面  Tips:宿主工程必须依赖 annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
-//                                ARouter.getInstance().build("/main/LoginActivity").navigation();
-//                                finish();
-                                call();
+                                ARouter.getInstance().build("/main/LoginActivity").navigation();
+                                finish();
+//                                call();
                             }
                         }, 500);
                     }

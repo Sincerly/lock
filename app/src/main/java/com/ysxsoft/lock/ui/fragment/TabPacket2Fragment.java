@@ -176,8 +176,7 @@ public class TabPacket2Fragment extends BaseFragment implements IListAdapter<Pac
         tv4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("点击了使用");
-                UseCouponActivity.start();
+                UseCouponActivity.start(item.getId());
             }
         });
     }

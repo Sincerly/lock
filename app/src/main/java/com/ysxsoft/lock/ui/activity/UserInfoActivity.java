@@ -7,12 +7,16 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.ysxsoft.common_base.base.BaseActivity;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
+import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.IsAuthResponse;
+import com.ysxsoft.lock.models.response.PersonCenterResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.models.response.ShopCertResponse;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
@@ -124,6 +128,42 @@ public class UserInfoActivity extends BaseActivity {
         super.doWork();
         initTitle();
         initData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestPersonData();
+    }
+
+    private void requestPersonData() {
+        OkHttpUtils.post()
+                .url(Api.PERSON_DATA)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        PersonCenterResponse resp = JsonUtils.parseByGson(response, PersonCenterResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                tvL1.setText(resp.getData().getCard1());
+                                tvL2.setText(resp.getData().getCard2());
+                                tvL3.setText(resp.getData().getCard3());
+                                tvL4.setText(resp.getData().getCard4());
+                                Glide.with(mContext).load(AppConfig.BASE_URL+resp.getData().getIcon()).into(civ);
+                                tv1.setText(resp.getData().getNickname());
+                                tv2.setText(resp.getData().getAutograph());
+                            }
+                        }
+                    }
+                });
     }
 
     private void IsAuth() {

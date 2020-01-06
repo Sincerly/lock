@@ -11,6 +11,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.lock.models.response.IsAuthResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -56,6 +57,14 @@ public class ShopCenterActivity extends BaseActivity {
 
     @BindView(R.id.tvApplyShop)
     TextView tvApplyShop;
+    @BindView(R.id.tv6)
+    TextView tv6;
+    @BindView(R.id.tv7)
+    TextView tv7;
+    @BindView(R.id.tv8)
+    TextView tv8;
+    @BindView(R.id.tv9)
+    TextView tv9;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopCenterActivity()).navigation();
@@ -80,7 +89,7 @@ public class ShopCenterActivity extends BaseActivity {
         title.setText("");
     }
 
-    @OnClick({R.id.backLayout, R.id.tvApplyShop})
+    @OnClick({R.id.backLayout, R.id.tvApplyShop, R.id.tv6, R.id.tv7, R.id.tv8, R.id.tv9})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
@@ -89,6 +98,18 @@ public class ShopCenterActivity extends BaseActivity {
             case R.id.tvApplyShop:
                 IsAuth();
                 break;
+//            case R.id.tv6:
+//                PacketActivity.start(0);
+//                break;
+//            case R.id.tv7:
+//                PacketActivity.start(1);
+//                break;
+//            case R.id.tv8:
+//                PacketActivity.start(2);
+//                break;
+//            case R.id.tv9:
+//                PacketActivity.start(3);
+//                break;
         }
     }
 
@@ -106,7 +127,8 @@ public class ShopCenterActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+//                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
                         if (resp != null) {
                             switch (resp.getCode()) {
                                 case "200":

@@ -1,5 +1,6 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,7 +57,7 @@ public class UnlockingModeActivity extends BaseActivity {
     String pass;
 
     public static void start(String pass) {
-        ARouter.getInstance().build(ARouterPath.getUnlockingModeActivity()).withString("pass",pass).navigation();
+        ARouter.getInstance().build(ARouterPath.getUnlockingModeActivity()).withString("pass", pass).navigation();
     }
 
     @Override
@@ -87,19 +88,22 @@ public class UnlockingModeActivity extends BaseActivity {
             case R.id.tv2:
                 showToast("蓝牙开门");
                 break;
-              case R.id.tv4:
-                  OpenLockPwdDialog dialog = new OpenLockPwdDialog(mContext, R.style.CenterDialogStyle);
-                  dialog.setData(pass);
-                  dialog.showDialog();
+            case R.id.tv4:
+                OpenLockPwdDialog dialog = new OpenLockPwdDialog(mContext, R.style.CenterDialogStyle);
+                dialog.setData(pass);
+                dialog.showDialog();
                 break;
-              case R.id.tv6:
+            case R.id.tv6:
 
-                  showToast("远程开门");
+                showToast("远程开门");
                 break;
-              case R.id.tv8:
+            case R.id.tv8:
+                Intent intent = new Intent("SELECT");
+                intent.putExtra("type", 1);
+                sendBroadcast(intent);
                 finish();
                 break;
-              case R.id.tv10:
+            case R.id.tv10:
                 break;
         }
     }

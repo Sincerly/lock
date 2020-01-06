@@ -129,6 +129,7 @@ public interface Api {
     public final String CARD_LIST=BASE_URL+"/api/business/listcard";//获取卡券列表
     public final String CARD_BANLANCE=BASE_URL+"/api/business/getticket";//获取店点券余额
     public final String SHOP_INFO=BASE_URL+"/api/business/getbusiness";//获取店铺信息
+    public final String ID_SHOP_INFO=BASE_URL+"/api/business/getbusinessid";//按店铺id号获取店铺信息
 
     public final String IS_AUTH=BASE_URL+"/api/members/isauth";//用户是否已通过实名认证
     public final String FEED_BACK=BASE_URL+"/api/members/feedback";//意见反馈
@@ -141,4 +142,7 @@ public interface Api {
     public final String EDIT_LOGO=BASE_URL+"/api/members/headimg";//上传用户头像
     public final String IS_FACE=BASE_URL+"/api/members/isface";//人脸识别 认证状态
     public final String MEM_BERCARD=BASE_URL+"/api/members/listmembercard";//用户卡券列表
+    public final String PERSON_DATA=BASE_URL+"/api/members/getmemberinfo";//个人中心
+    public final String CARD_DETAIL_DATA=BASE_URL+"/api/members/getmembercard";//获取用户卡券详细信息
+    public final String OPEN_JUR=BASE_URL+"/api/members/openjur";//是否有开门权限，返回 权限标记和优惠券信息
 }

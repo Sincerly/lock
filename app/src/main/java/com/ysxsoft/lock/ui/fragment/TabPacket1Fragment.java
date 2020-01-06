@@ -190,7 +190,7 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter<Pac
             tv6.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UseCouponActivity.start();
+                    UseCouponActivity.start(item.getId());
                 }
             });
 
@@ -219,10 +219,12 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter<Pac
             @Override
             public void onClick(View v) {
                 isClick = !isClick;
-                if (isClick) {
+                if (item.isClick()) {
+                    item.setClick(false);
                     cv1.setVisibility(View.GONE);
                     tv5.setCompoundDrawables(null, null, down, null);
                 } else {
+                    item.setClick(true);
                     cv1.setVisibility(View.VISIBLE);
                     tv5.setCompoundDrawables(null, null, up, null);
                 }

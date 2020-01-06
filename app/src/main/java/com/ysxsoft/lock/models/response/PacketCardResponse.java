@@ -76,6 +76,16 @@ public class PacketCardResponse {
         private String logo;
         private String tel;
 
+        public boolean isClick() {
+            return isClick;
+        }
+
+        public void setClick(boolean click) {
+            isClick = click;
+        }
+
+        private boolean isClick;
+
         public String getName() {
             return name == null ? "" : name;
         }

@@ -1,5 +1,9 @@
 package com.ysxsoft.lock.ui.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -79,6 +83,8 @@ public class KeyManagerActivity extends BaseActivity {
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+    private MyBroadCast myBroadCast;
+    private int type=0;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getKeyManagerActivity()).navigation();
@@ -93,6 +99,12 @@ public class KeyManagerActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+
+        myBroadCast = new MyBroadCast();
+        IntentFilter filter = new IntentFilter("SELECT");
+        registerReceiver(myBroadCast,filter);
+
+
         tabLayout.removeAllTabs();
         List<Fragment> fragmentList = new ArrayList<>();
         List<String> titles = new ArrayList<>();
@@ -102,7 +114,33 @@ public class KeyManagerActivity extends BaseActivity {
         fragmentList.add(new TabKeyManager2Fragment());
         initViewPage(fragmentList, titles);
         initTabLayout(titles);
+
     }
+
+    public class MyBroadCast extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("SELECT")){
+                type = intent.getIntExtra("type", 0);
+                tabLayout.removeAllTabs();
+                List<Fragment> fragmentList = new ArrayList<>();
+                List<String> titles = new ArrayList<>();
+                titles.add("手机钥匙");
+                titles.add("人脸识别");
+                fragmentList.add(new TabKeyManager1Fragment());
+                fragmentList.add(new TabKeyManager2Fragment());
+                initViewPage(fragmentList, titles);
+                initTabLayout(titles);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myBroadCast);
+    }
+
     private void initViewPage(List<Fragment> fragmentList, List<String> titles) {
         viewPager.setAdapter(new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, titles));
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -112,7 +150,9 @@ public class KeyManagerActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-                viewPager.setCurrentItem(position);
+                type=position;
+//                viewPager.setCurrentItem(position);
+                viewPager.setCurrentItem(type);
             }
 
             @Override
@@ -121,6 +161,7 @@ public class KeyManagerActivity extends BaseActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(fragmentList.size());
+        viewPager.setCurrentItem(type);
     }
 
     private void initTabLayout(List<String> titles) {
@@ -130,7 +171,7 @@ public class KeyManagerActivity extends BaseActivity {
             TextView textView = tab.getCustomView().findViewById(R.id.tab);
             textView.setWidth(DisplayUtils.getDisplayWidth(mContext) * 1 / 3);
             textView.setText(titles.get(i));
-            if (i == 0) {
+            if (i == type) {
                 textView.setTextColor(getResources().getColor(R.color.colorTabSelectedIndictor));
                 textView.setTextSize(17);
             } else {

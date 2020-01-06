@@ -2,17 +2,20 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
@@ -98,10 +101,11 @@ public class ShopDetailActivity extends BaseActivity {
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
     MyViewPager viewPager;
+    @Autowired
+    String business_id;
 
-
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getShopDetailActivity()).navigation();
+    public static void start(String business_id) {
+        ARouter.getInstance().build(ARouterPath.getShopDetailActivity()).withString("business_id",business_id).navigation();
     }
 
     @Override
@@ -112,6 +116,7 @@ public class ShopDetailActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
         tabLayout.removeAllTabs();
         List<Fragment> fragmentList = new ArrayList<>();
@@ -123,6 +128,12 @@ public class ShopDetailActivity extends BaseActivity {
         initViewPage(fragmentList, titles);
         initTabLayout(titles);
         initList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        request();
     }
 
     private void initList() {
@@ -171,27 +182,27 @@ public class ShopDetailActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("xxx店铺");
+
 
         //1,获取图片的高度
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.icon_ratingbar_ok);
         int starsImgHeight = bmp.getHeight();
 
         //2,将获取的图片高度设置给RatingBar
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)rbar.getLayoutParams();
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) rbar.getLayoutParams();
         lp.width = (LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.height =starsImgHeight;
+        lp.height = starsImgHeight;
         rbar.setLayoutParams(lp);
         rbar.setRating(4.0f);
     }
 
-    @OnClick({R.id.backLayout,R.id.tvMore,})
+    @OnClick({R.id.backLayout, R.id.tvMore,})
     public void onViewClicked(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.backLayout:
                 backToActivity();
                 break;
-                case R.id.tvMore:
+            case R.id.tvMore:
                 ShopListActivity.start();
                 break;
         }
@@ -199,10 +210,15 @@ public class ShopDetailActivity extends BaseActivity {
     }
 
     public void request() {
+        if (TextUtils.isEmpty(business_id)){
+            return;
+        }
+
         showLoadingDialog("请求中");
         OkHttpUtils.post()
-                .url(Api.GET_SHOP_DETAIL)
-                .addParams("uid", SharedPreferencesUtils.getUid(ShopDetailActivity.this))
+                .url(Api.ID_SHOP_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("id", business_id)
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -216,14 +232,25 @@ public class ShopDetailActivity extends BaseActivity {
                         hideLoadingDialog();
                         ShopDetailResponse resp = JsonUtils.parseByGson(response, ShopDetailResponse.class);
                         if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<ShopDetailResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                title.setText(resp.getData().getName());
+                                tvName.setText(resp.getData().getName());
+                                switch (resp.getData().getStatus()){
+                                    case "1":
+                                        tvWorkTime.setText("营业中|"+resp.getData().getWeek1()+" -- "+resp.getData().getWeek2()+"  "+resp.getData().getTime1()+" -- "+resp.getData().getTime2());
+                                        break;
+                                    case "2":
+                                        tvWorkTime.setText("停止营业|"+resp.getData().getWeek1()+" -- "+resp.getData().getWeek2()+"  "+resp.getData().getTime1()+" -- "+resp.getData().getTime2());
+                                        break;
+                                }
+                                tvSales.setText("月售300单");
+                                tv4.setText(resp.getData().getAddress());
+                                tv7.setText(resp.getData().getTel());
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
                         } else {
                             showToast("获取商铺详情失败");
                         }

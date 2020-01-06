@@ -176,7 +176,7 @@ public class ForgetPwdActivity extends BaseActivity {
                     return;
                 }
 
-                if (TextUtils.equals(inputLoginPwd.getText().toString().trim(), inputSecondLoginPwd.getText().toString().trim())) {
+                if (!TextUtils.equals(inputLoginPwd.getText().toString().trim(), inputSecondLoginPwd.getText().toString().trim())) {
                     showToast("两次输入密码不一致");
                     return;
                 }

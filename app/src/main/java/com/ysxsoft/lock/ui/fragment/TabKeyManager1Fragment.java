@@ -302,6 +302,24 @@ public class TabKeyManager1Fragment extends BaseFragment {
                         tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_gray__radius_16);
                         tvOpenMethod.setText("申请中...");
                         tvOpenMethod.setTextColor(getResources().getColor(R.color.color_999999));
+                        switch (item.getEqu_type()) {
+                            case 1:
+                                break;
+                            case 2:
+                                tvOpenMethod.setBackgroundResource(R.drawable.bg_white_border_theme_radius_r16);
+                                tvOpenMethod.setText("立即开通");
+                                tvOpenMethod.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+                                tvOpenMethod.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        ApplyKeyActivity.start(item.getRequ_id());
+                                    }
+                                });
+                                break;
+                            case 3:
+                                break;
+
+                        }
                     } else {
                         switch (item.getEqu_status()) {////状态 1：通过审核 2=待审批 10=禁止开门
                             case 1:

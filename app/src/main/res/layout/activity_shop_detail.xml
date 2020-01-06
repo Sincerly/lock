@@ -58,6 +58,7 @@
                         android:layout_height="wrap_content"
                         android:isIndicator="true"
                         android:numStars="5"
+                        android:visibility="gone"
                         android:progressBackgroundTint="@color/color_2AA9E0"
                         android:progressTint="@color/color_2AA9E0"
                         android:secondaryProgressTint="@color/color_2AA9E0"
@@ -69,6 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_5"
                         android:text="5.0"
+                        android:visibility="gone"
                         android:textColor="#34AEAF"
                         android:textSize="@dimen/sp_14" />
 
@@ -155,10 +157,10 @@
                     android:minHeight="150dp"
                     app:cardCornerRadius="@dimen/dp_10">
 
-                    <com.amap.api.maps2d.MapView
+                    <com.baidu.mapapi.map.MapView
                         android:id="@+id/mapView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="150dp" />
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout

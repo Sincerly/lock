@@ -113,8 +113,8 @@ public class PacketActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
                 type=position;
-                viewPager.setCurrentItem(position);
-//                viewPager.setCurrentItem(type);
+//                viewPager.setCurrentItem(position);
+                viewPager.setCurrentItem(type);
             }
 
             @Override
@@ -123,6 +123,8 @@ public class PacketActivity extends BaseActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(fragmentList.size());
+        viewPager.setCurrentItem(type);
+
     }
 
     private void initTabLayout(List<String> titles) {
@@ -131,7 +133,7 @@ public class PacketActivity extends BaseActivity {
             tab.setCustomView(R.layout.view_tab);
             TextView textView = tab.getCustomView().findViewById(R.id.tab);
             textView.setText(titles.get(i));
-            if (i == 0) {
+            if (i == type) {
                 textView.setTextColor(getResources().getColor(R.color.colorTabSelectedIndictor));
                 textView.setTextSize(17);
             } else {

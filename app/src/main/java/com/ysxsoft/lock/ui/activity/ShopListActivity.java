@@ -131,6 +131,8 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //setResult(RESULT_OK, intent);
                 //finish();
+                Object o = adapter.getData().get(position);
+//                ShopDetailActivity.start();
             }
         });
         manager.getAdapter().setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -165,10 +167,10 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("社区商圈");
     }
-    public boolean isClick1 = false;
-    public boolean isClick2 = false;
-    public boolean isClick3 = false;
-    public boolean isClick4 = false;
+    public boolean isClick1 = true;
+    public boolean isClick2 = true;
+    public boolean isClick3 = true;
+    public boolean isClick4 = true;
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2, R.id.FL3, R.id.FL4,})
     public void onViewClicked(View view) {
         Drawable down = getResources().getDrawable(R.mipmap.icon_black_down_arrow);
@@ -183,33 +185,67 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 isClick1=!isClick1;
                 if (isClick1){
                     tvShopList.setCompoundDrawables(null, null, down, null);
+                    tvShopList.setTextColor(getResources().getColor(R.color.color_282828));
                 }else {
                     tvShopList.setCompoundDrawables(null, null, up, null);
+                    tvShopList.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
+                tvShopType.setCompoundDrawables(null, null, down, null);
+                tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
+                tvAiSort.setCompoundDrawables(null, null, down, null);
+                tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
+                tvSelect.setCompoundDrawables(null, null, down, null);
+                tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
                 break;
             case R.id.FL2:
                 isClick2=!isClick2;
                 if (isClick2) {
                     tvShopType.setCompoundDrawables(null, null, down, null);
+                    tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
                 }else {
                     tvShopType.setCompoundDrawables(null, null, up, null);
+                    tvShopType.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
+                tvShopList.setCompoundDrawables(null, null, down, null);
+                tvShopList.setTextColor(getResources().getColor(R.color.color_282828));
+                tvAiSort.setCompoundDrawables(null, null, down, null);
+                tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
+                tvSelect.setCompoundDrawables(null, null, down, null);
+                tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
                 break;
             case R.id.FL3:
                 isClick3=!isClick3;
                 if (isClick3) {
                     tvAiSort.setCompoundDrawables(null, null, down, null);
+                    tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
                 }else {
                     tvAiSort.setCompoundDrawables(null, null, up, null);
+                    tvAiSort.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
+
+                tvShopList.setCompoundDrawables(null, null, down, null);
+                tvShopList.setTextColor(getResources().getColor(R.color.color_282828));
+                tvShopType.setCompoundDrawables(null, null, down, null);
+                tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
+                tvSelect.setCompoundDrawables(null, null, down, null);
+                tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
                 break;
             case R.id.FL4:
                 isClick4=!isClick4;
                 if (isClick4) {
                     tvSelect.setCompoundDrawables(null, null, down, null);
+                    tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
                 }else {
                     tvSelect.setCompoundDrawables(null, null, up, null);
+                    tvSelect.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
+                tvShopList.setCompoundDrawables(null, null, down, null);
+                tvShopList.setTextColor(getResources().getColor(R.color.color_282828));
+                tvShopType.setCompoundDrawables(null, null, down, null);
+                tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
+                tvAiSort.setCompoundDrawables(null, null, down, null);
+                tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
+
                 break;
         }
     }

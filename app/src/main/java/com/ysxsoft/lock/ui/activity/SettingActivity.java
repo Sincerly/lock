@@ -22,6 +22,7 @@ import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.dialog.BaseInputCenterDialog;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.PersonCenterResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.ui.dialog.CheckLoginOutDialog;
 import com.ysxsoft.lock.utils.ClearCacheManagerUtils;
@@ -122,6 +123,38 @@ public class SettingActivity extends BaseActivity {
         }
         initTitle();
         initPhotoHelper();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        requestPersonData();
+    }
+
+    private void requestPersonData() {
+        OkHttpUtils.post()
+                .url(Api.PERSON_DATA)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        PersonCenterResponse resp = JsonUtils.parseByGson(response, PersonCenterResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                Glide.with(mContext).load(AppConfig.BASE_URL+resp.getData().getIcon()).into(ivAvatar);
+                                name.setText(resp.getData().getNickname());
+                                autograph.setText(resp.getData().getAutograph());
+                            }
+                        }
+                    }
+                });
     }
 
     private void initPhotoHelper() {

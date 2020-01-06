@@ -27,6 +27,7 @@ import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.PacketCardResponse;
+import com.ysxsoft.lock.ui.activity.UseCouponActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -174,7 +175,7 @@ public class TabPacket3Fragment extends BaseFragment implements IListAdapter<Pac
         tv4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("点击了使用");
+                UseCouponActivity.start(item.getId());
             }
         });
     }

@@ -7,7 +7,9 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.bumptech.glide.Glide;
 import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
@@ -15,7 +17,9 @@ import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.IsAuthResponse;
+import com.ysxsoft.lock.models.response.PersonCenterResponse;
 import com.ysxsoft.lock.models.response.ShopCertResponse;
 import com.ysxsoft.lock.models.response.UserInfoResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
@@ -132,6 +136,42 @@ public class MainFragment1 extends BaseFragment {
         title.setText("个人中心");
         title.setTextColor(getResources().getColor(R.color.colorWhite));
         statusBar2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DisplayUtils.getStatusBarHeight(getActivity())));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestPersonData();
+    }
+
+    private void requestPersonData() {
+        OkHttpUtils.post()
+                .url(Api.PERSON_DATA)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        PersonCenterResponse resp = JsonUtils.parseByGson(response, PersonCenterResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                tvL1.setText(resp.getData().getCard1());
+                                tvL2.setText(resp.getData().getCard2());
+                                tvL3.setText(resp.getData().getCard3());
+                                tvL4.setText(resp.getData().getCard4());
+                                Glide.with(getActivity()).load(AppConfig.BASE_URL+resp.getData().getIcon()).into(civ);
+                                tv1.setText(resp.getData().getNickname());
+                                tv2.setText(resp.getData().getAutograph());
+                            }
+                        }
+                    }
+                });
     }
 
     private void IsAuth() {
