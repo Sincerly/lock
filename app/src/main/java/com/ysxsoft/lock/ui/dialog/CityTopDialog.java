@@ -93,11 +93,11 @@ public class CityTopDialog extends Dialog {
             protected void fillItem(RViewHolder holder, CityTopResponse.DataBean.ListkeyBean item, int position) {
                 TextView name=holder.getView(R.id.name);
                 if(position==0){
+                    name.setSelected(true);
+                    name.setTextColor(Color.parseColor("#3BB0D2"));
+                }else {
                     name.setSelected(false);
                     name.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
-                }else {
-                    name.setSelected(true);                    name.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
-
                 }
             }
 

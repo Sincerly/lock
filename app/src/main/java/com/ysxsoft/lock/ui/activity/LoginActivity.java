@@ -26,6 +26,7 @@ import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.ARouterPath;
+import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.LoginResponse;
 import com.ysxsoft.lock.net.Api;
@@ -128,6 +129,7 @@ public class LoginActivity extends BaseActivity {
 //                                    showToast(resp.getMsg());
 //                                }
                             Phone.setText(resp.getPhone());
+                            MainActivity.start();
                             helper.quitAuthActivity();
                         } else {
                             showToast("获取登录失败");

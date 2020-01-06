@@ -86,7 +86,6 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     @Override
     public void doWork(View view) {
         maxOffsetY = DisplayUtils.getDisplayHeight(getActivity()) / 3;
-        initData();
         touchView.setOnTouchListener(this);
         initViewPager2();
     }
@@ -115,7 +114,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         if (offsetX > 0) {
                             //页面向右 获取优惠券
                             Log.e(TAG, "页面向右 获取优惠券");
-                            CouponDialog.show(getActivity(), new CouponDialog.OnDialogClickListener() {
+                            CouponDialog.show(getActivity(), "恭喜！,送你一张优惠券", new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
                                     PacketActivity.start(0);
@@ -138,30 +137,17 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                                 });
                             } else {
                                 Log.e(TAG, "向下");
-                                Set<String> set = map.keySet();
-                                ToastUtils.show(getActivity(), "附近设备" + set.size());
-
-                                LEDevice leDevice = null;
-                                for (Map.Entry<String, LEDevice> entry : map.entrySet()) {
-                                    String key = entry.getKey();
-                                    leDevice = entry.getValue();
-                                }
-                                if (leDevice != null) {
-                                    String devicePassword = "12345678";
-//                                    String devicePasswrod=blueLockPub.generateVisitPassword(leDevice.getDeviceId(),devicePassword,30);
-//                                    Log.e(TAG,"devicePasswrod "+devicePassword);
-                                    Log.e(TAG, "device：" + new Gson().toJson(leDevice) + "  deviceId:" + leDevice.getDeviceId());
-                                    blueLockPub.oneKeyOpenDevice(leDevice, leDevice.getDeviceId(), devicePassword);
-                                }
+                                MainActivity activity = (MainActivity) getActivity();
+                                activity.open();
                             }
                         } else {
                             //上  广告
                             Log.e(TAG, "切换广告");
-                            int currentItem=viewPager2.getCurrentItem();
-                            if(currentItem!=(viewPager2.getAdapter().getItemCount()-1)){
-                                viewPager2.setCurrentItem((currentItem+1));
-                            }else{
-                                ToastUtils.shortToast(getActivity(),"暂无广告");
+                            int currentItem = viewPager2.getCurrentItem();
+                            if (currentItem != (viewPager2.getAdapter().getItemCount() - 1)) {
+                                viewPager2.setCurrentItem((currentItem + 1));
+                            } else {
+                                ToastUtils.shortToast(getActivity(), "暂无广告");
                             }
                         }
                     }
@@ -181,7 +167,8 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     }
 
     BaseQuickAdapter<String, BaseViewHolder> adapter;
-    private void initViewPager2(){
+
+    private void initViewPager2() {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewPager2.getLayoutParams();
         params.width = FrameLayout.LayoutParams.MATCH_PARENT;
         params.height = FrameLayout.LayoutParams.MATCH_PARENT;
@@ -194,14 +181,34 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
             }
         });
 
-        List<String> datas=new ArrayList<>();
-        for (int i = 0; i <3; i++) {
-            datas.add(""+i);
+        List<String> datas = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            datas.add("" + i);
         }
         if (adapter == null) {
             adapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.view_img, datas) {
                 @Override
                 protected void convert(BaseViewHolder helper, String item) {
+                    ImageView pic = helper.getView(R.id.pic);
+                    int resourceId = R.mipmap.a1;
+                    switch (helper.getAdapterPosition()) {
+                        case 0:
+                            resourceId = R.mipmap.main;
+                            break;
+                        case 1:
+                            resourceId = R.mipmap.a1;
+                            break;
+                        case 2:
+                            resourceId = R.mipmap.a2;
+                            break;
+                        case 3:
+                            resourceId = R.mipmap.a3;
+                            break;
+                        case 4:
+                            resourceId = R.mipmap.a4;
+                            break;
+                    }
+                    pic.setImageResource(resourceId);
                 }
             };
             viewPager2.setAdapter(adapter);
@@ -209,173 +216,4 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
             viewPager2.getAdapter().notifyDataSetChanged();
         }
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 智能锁蓝牙
-    ///////////////////////////////////////////////////////////////////////////
-    private BlueLockPubCallBack blueLockCallBack;
-    private BlueLockPub blueLockPub;
-    private Handler mHandler;
-    private final int MST_WHAT_START_SCAN_DEVICE = 0x01;
-    private boolean hasScannedDaHaoLock;
-
-    private void initHandler() {
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case MST_WHAT_START_SCAN_DEVICE:
-                        blueLockPub.scanDevice(10000);
-                        break;
-                }
-            }
-        };
-    }
-
-    private void initData() {
-        initHandler();
-        blueLockPub = BlueLockPub.bleLockInit(getActivity());
-        int result = blueLockPub.bleInit(getActivity());
-        blueLockCallBack = new BlueLockPubCallBack();
-        blueLockPub.setLockMode(Constants.LOCK_MODE_MANUL, null, false);
-
-        if (result == 0) {
-            //初始化成功
-            //开始扫描设备
-            mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 1000);
-        } else if (result == -4) {
-            //不支持蓝牙
-            ToastUtils.show(getActivity(),"暂不支持蓝牙");
-        } else if (result == -5) {
-            //请开启蓝牙
-            ToastUtils.show(getActivity(),"请开启蓝牙");
-
-            OpenBluthDialog.show(getActivity(), new OpenBluthDialog.OnDialogClickListener() {
-                @Override
-                public void sure() {
-                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
-                }
-
-                @Override
-                public void setting() {
-                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
-                }
-            });
-        }
-    }
-
-    private Map<String, LEDevice> map = new HashMap<>();
-
-    public class BlueLockPubCallBack extends BlueLockPubCallBackBase {
-        @Override
-        public void scanDeviceCallBack(final LEDevice ledevice,
-                                       final int result, final int rssi) {
-            hasScannedDaHaoLock=true;
-           // Log.e(TAG, "scanDeviceCallBack "+rssi);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        //adapter.addDevice(ledevice);
-                        String deviceId = ledevice.getDeviceId();
-                        if (!map.containsKey(deviceId)) {
-                            map.put(deviceId, ledevice);
-                            //blueLockPub.connectDevice(ledevice);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void scanDeviceEndCallBack(final int result) {
-            //showToast("scanDeviceEndCallBack "+result);
-            //Log.e(TAG,"scanDeviceEndCallBack "+result);
-            mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
-            mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 1000);
-        }
-
-        @Override
-        public void connectDeviceCallBack(int result, int status) {
-//            showToast("onConnectDevice "+result+" "+status);
-            //Log.e(TAG,"connectDeviceCallBack "+result);
-        }
-
-        @Override
-        public void disconnectDeviceCallBack(int result, int status) {
-//            showToast("onDisconnectDevice"+result+" "+status);
-            Log.e(TAG,"disconnectDeviceCallBack "+result);
-        }
-
-        @Override
-        public void connectingDeviceCallBack(int result) {
-            Log.e(TAG,"onConnectingDevice"+result);
-        }
-
-        @Override
-        public void openCloseDeviceCallBack(int result, int battery, String... params) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.e(TAG, " =============openCloseDeviceCallBack result: "
-                            + result);
-
-                    if (null != params && params.length > 0) {
-
-                        Log.e(TAG, " ============device Id: " + params[0]);
-                    }
-                    if (0 == result) {
-                        showToast("已打开");
-                    } else if (11 == result) {
-                        showToast("未注");
-                    } else {
-                        //enabledBtn(true);
-                        showToast(" openCloseDeviceCallBack err code: "
-                                + result);
-                        if (-9 == result) {
-                            if (hasScannedDaHaoLock) {
-                                showToast("您走错门了！");
-                            } else {
-                                showToast("没有扫描到门禁设备！");
-                            }
-                        } else if (-6 == result) {
-                            showToast("开门超时请验证密码是否正确");
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        blueLockPub.stopScanDevice();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        blueLockPub.removeResultCallBack(blueLockCallBack);
-        mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        blueLockPub.setResultCallBack(blueLockCallBack);
-        super.onResume();
-    }
-
-    /*CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
-        @Override
-        public void sure(String requid) {
-        }
-
-        @Override
-        public void cancle() {
-            AddPlaceActivity.start();
-        }
-    });*/
 }

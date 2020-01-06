@@ -15,6 +15,8 @@ import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.piehead.PieLayout;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.IsAuthResponse;
+import com.ysxsoft.lock.models.response.ShopCertResponse;
 import com.ysxsoft.lock.models.response.UserInfoResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
@@ -22,6 +24,7 @@ import com.ysxsoft.lock.ui.activity.FeedBackActivity;
 import com.ysxsoft.lock.ui.activity.IdcardCertActivity;
 import com.ysxsoft.lock.ui.activity.IdcardCertFailedActivity;
 import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
+import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.PropertyCertActivity;
 import com.ysxsoft.lock.ui.activity.SettingActivity;
 import com.ysxsoft.lock.ui.activity.ShopAuditFailedActivity;
@@ -104,6 +107,15 @@ public class MainFragment1 extends BaseFragment {
     TextView tv10;
     @BindView(R.id.parent)
     LinearLayout parent;
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
+    @BindView(R.id.LL2)
+    LinearLayout LL2;
+    @BindView(R.id.LL3)
+    LinearLayout LL3;
+    @BindView(R.id.LL4)
+    LinearLayout LL4;
+
     private List<String> approveList;
 
     @Override
@@ -136,8 +148,9 @@ public class MainFragment1 extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
                         if (resp != null) {
+                            showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     showToast("已实名认证");
@@ -180,12 +193,24 @@ public class MainFragment1 extends BaseFragment {
         title.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 
-    @OnClick({R.id.backLayout, R.id.tv10, R.id.tv9, R.id.tv8, R.id.tv7, R.id.tv6, R.id.tv5, R.id.tv1, R.id.tv2, R.id.iv1, R.id.cL1})
+    @OnClick({R.id.backLayout, R.id.tv10, R.id.tv9, R.id.tv8, R.id.tv7, R.id.tv6, R.id.tv5, R.id.tv1, R.id.tv2, R.id.iv1, R.id.LL1, R.id.LL2, R.id.LL3, R.id.LL4, R.id.cL1})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
                 MainActivity activity= (MainActivity) getActivity();
                 activity.toTab(0);
+                break;
+            case R.id.LL1:
+                PacketActivity.start(0);
+                break;
+            case R.id.LL2:
+                PacketActivity.start(1);
+                break;
+            case R.id.LL3:
+                PacketActivity.start(2);
+                break;
+            case R.id.LL4:
+                PacketActivity.start(3);
                 break;
             case R.id.tv5:
                 KeyManagerActivity.start();
@@ -200,8 +225,8 @@ public class MainFragment1 extends BaseFragment {
                 IsShopCert();
                 break;
             case R.id.tv9://广告中心
-                showToast("广告中心");
-                ShopInfoActivity.start();
+                //showToast("广告中心");
+                //ShopInfoActivity.start();
                 break;
             case R.id.tv10:
                 FeedBackActivity.start();
@@ -234,8 +259,9 @@ public class MainFragment1 extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        ShopCertResponse resp = JsonUtils.parseByGson(response, ShopCertResponse.class);
                         if (resp != null) {
+                            showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     ShopManagerActivity.start();
