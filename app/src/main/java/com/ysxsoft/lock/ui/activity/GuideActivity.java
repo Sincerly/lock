@@ -239,6 +239,7 @@ public class GuideActivity extends BaseActivity {
                         hideLoadingDialog();
                         LoginResponse resp = JsonUtils.parseByGson(response, LoginResponse.class);
                         if (resp != null) {
+                            SharedPreferencesUtils.saveToken(GuideActivity.this,resp.getToken());
                             MainActivity.start();
                             helper.quitAuthActivity();
                         } else {
