@@ -27,7 +27,6 @@
                 android:text="确认退出登录？"
                 android:gravity="center"
                 android:paddingLeft="@dimen/dp_8"
-                android:textStyle="bold"
                 android:paddingRight="@dimen/dp_8"
                 android:textColor="@color/color_282828"
                 android:textSize="@dimen/sp_18"/>
