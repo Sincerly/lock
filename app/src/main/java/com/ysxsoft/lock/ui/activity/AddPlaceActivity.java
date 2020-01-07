@@ -131,7 +131,7 @@ public class AddPlaceActivity extends BaseActivity {
                     showToast("城市不能为空");
                     return;
                 }
-                if (TextUtils.isEmpty(tv1.getText().toString().trim())) {
+                if (TextUtils.isEmpty(tv2.getText().toString().trim())) {
                     showToast("小区不能为空");
                     return;
                 }

@@ -172,7 +172,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         if (offsetX > 0) {
                             //页面向右 获取优惠券
                             Log.e(TAG, "页面向右 获取优惠券");
-                            CouponDialog.show(getActivity(), "恭喜！,送你一张优惠券", new CouponDialog.OnDialogClickListener() {
+                            CouponDialog.show(getActivity(), "恭喜！送你一张优惠券", new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
                                     PacketActivity.start(0);
