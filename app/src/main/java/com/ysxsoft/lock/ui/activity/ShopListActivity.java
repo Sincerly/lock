@@ -27,6 +27,7 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
+import com.ysxsoft.lock.ui.dialog.BusinessAreaDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -40,6 +41,7 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -103,6 +105,8 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
     TextView tvAiSort;
     @BindView(R.id.tvSelect)
     TextView tvSelect;
+    @BindView(R.id.LL1)
+    LinearLayout LL1;
 
 
     public static void start() {
@@ -167,10 +171,12 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("社区商圈");
     }
-    public boolean isClick1 = true;
-    public boolean isClick2 = true;
-    public boolean isClick3 = true;
-    public boolean isClick4 = true;
+
+    public boolean isClick1 = false;
+    public boolean isClick2 = false;
+    public boolean isClick3 = false;
+    public boolean isClick4 = false;
+
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2, R.id.FL3, R.id.FL4,})
     public void onViewClicked(View view) {
         Drawable down = getResources().getDrawable(R.mipmap.icon_black_down_arrow);
@@ -182,13 +188,18 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 backToActivity();
                 break;
             case R.id.FL1:
-                isClick1=!isClick1;
-                if (isClick1){
+                if (isClick1) {
+                    isClick1 = false;
                     tvShopList.setCompoundDrawables(null, null, down, null);
                     tvShopList.setTextColor(getResources().getColor(R.color.color_282828));
-                }else {
+                } else {
+                    isClick1 = true;
                     tvShopList.setCompoundDrawables(null, null, up, null);
                     tvShopList.setTextColor(getResources().getColor(R.color.color_3BB0D2));
+
+                    BusinessAreaDialog businessAreaDialog = new BusinessAreaDialog();
+                    businessAreaDialog.init(ShopListActivity.this);
+                    businessAreaDialog.showPopDown(LL1,0,0);
                 }
                 tvShopType.setCompoundDrawables(null, null, down, null);
                 tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
@@ -196,13 +207,19 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
                 tvSelect.setCompoundDrawables(null, null, down, null);
                 tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
+                isClick2 = false;
+                isClick3 = false;
+                isClick4 = false;
+
                 break;
             case R.id.FL2:
-                isClick2=!isClick2;
+
                 if (isClick2) {
+                    isClick2 = false;
                     tvShopType.setCompoundDrawables(null, null, down, null);
                     tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
-                }else {
+                } else {
+                    isClick2 = true;
                     tvShopType.setCompoundDrawables(null, null, up, null);
                     tvShopType.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
@@ -212,30 +229,39 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
                 tvSelect.setCompoundDrawables(null, null, down, null);
                 tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
+                isClick1 = false;
+                isClick3 = false;
+                isClick4 = false;
                 break;
             case R.id.FL3:
-                isClick3=!isClick3;
+
                 if (isClick3) {
+                    isClick3 = false;
                     tvAiSort.setCompoundDrawables(null, null, down, null);
                     tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
-                }else {
+                } else {
+                    isClick3 = true;
                     tvAiSort.setCompoundDrawables(null, null, up, null);
                     tvAiSort.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
-
                 tvShopList.setCompoundDrawables(null, null, down, null);
                 tvShopList.setTextColor(getResources().getColor(R.color.color_282828));
                 tvShopType.setCompoundDrawables(null, null, down, null);
                 tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
                 tvSelect.setCompoundDrawables(null, null, down, null);
                 tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
+                isClick1 = false;
+                isClick2 = false;
+                isClick4 = false;
                 break;
             case R.id.FL4:
-                isClick4=!isClick4;
+
                 if (isClick4) {
+                    isClick4 = false;
                     tvSelect.setCompoundDrawables(null, null, down, null);
                     tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
-                }else {
+                } else {
+                    isClick4 = true;
                     tvSelect.setCompoundDrawables(null, null, up, null);
                     tvSelect.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
@@ -245,7 +271,9 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 tvShopType.setTextColor(getResources().getColor(R.color.color_282828));
                 tvAiSort.setCompoundDrawables(null, null, down, null);
                 tvAiSort.setTextColor(getResources().getColor(R.color.color_282828));
-
+                isClick1 = false;
+                isClick2 = false;
+                isClick3 = false;
                 break;
         }
     }

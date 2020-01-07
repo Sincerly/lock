@@ -39,15 +39,21 @@ import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
+import com.ysxsoft.lock.models.response.MessageEvent;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
+import com.ysxsoft.lock.ui.dialog.NearByNoDeviceDialog;
 import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment1;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment2;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment3;
+
+import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
+import org.simple.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,16 +96,25 @@ public class MainActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        EventBus.getDefault().register(this);
         requestPermissions();
         initData();
-        List<Fragment> fragmentList=new ArrayList<>();
+        List<Fragment> fragmentList = new ArrayList<>();
 //        fragmentList.add(new MainFragment3());
         fragmentList.add(new MainFragment2());
         fragmentList.add(new MainFragment1());
-        FragmentPagerAdapter pagerAdapter=new ViewPagerFragmentAdapter(getSupportFragmentManager(),fragmentList,new ArrayList<>());
+        FragmentPagerAdapter pagerAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, new ArrayList<>());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
     }
+
+    @Subscriber()
+    public void MessageEvent(MessageEvent messageEvent) {
+        String pass = messageEvent.getPass();//密码
+        String equ_id = messageEvent.getEqu_id();//门禁设备id
+        String requ_id = messageEvent.getRequ_id();//小区id
+    }
+
 
     private void requestPermissions() {
         RxPermissions re = new RxPermissions(this);
@@ -121,8 +136,8 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
-    public void toTab(int pageIndex){
-        if(viewPager!=null&&viewPager.getChildCount()>pageIndex){
+    public void toTab(int pageIndex) {
+        if (viewPager != null && viewPager.getChildCount() > pageIndex) {
             viewPager.setCurrentItem(pageIndex);
         }
     }
@@ -156,17 +171,17 @@ public class MainActivity extends BaseActivity {
         blueLockCallBack = new BlueLockPubCallBack();
         blueLockPub.setLockMode(Constants.LOCK_MODE_MANUL, null, false);
 
-        Log.e("tag",result+"");
+        Log.e("tag", result + "");
         if (result == 0) {
             //初始化成功
             //开始扫描设备
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         } else if (result == -4) {
             //不支持蓝牙
-            ToastUtils.show(MainActivity.this,"暂不支持蓝牙");
+            ToastUtils.show(MainActivity.this, "暂不支持蓝牙");
         } else if (result == -5) {
             //请开启蓝牙
-            ToastUtils.show(MainActivity.this,"请开启蓝牙");
+            ToastUtils.show(MainActivity.this, "请开启蓝牙");
 
             OpenBluthDialog.show(MainActivity.this, new OpenBluthDialog.OnDialogClickListener() {
                 @Override
@@ -188,8 +203,8 @@ public class MainActivity extends BaseActivity {
         @Override
         public void scanDeviceCallBack(final LEDevice ledevice,
                                        final int result, final int rssi) {
-            hasScannedDaHaoLock=true;
-             Log.e(TAG, "scanDeviceCallBack "+rssi);
+            hasScannedDaHaoLock = true;
+            Log.e(TAG, "scanDeviceCallBack " + rssi);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -210,7 +225,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void scanDeviceEndCallBack(final int result) {
             //showToast("scanDeviceEndCallBack "+result);
-            Log.e(TAG,"scanDeviceEndCallBack "+result);
+            Log.e(TAG, "scanDeviceEndCallBack " + result);
             mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         }
@@ -218,18 +233,18 @@ public class MainActivity extends BaseActivity {
         @Override
         public void connectDeviceCallBack(int result, int status) {
 //            showToast("onConnectDevice "+result+" "+status);
-            Log.e(TAG,"connectDeviceCallBack "+result);
+            Log.e(TAG, "connectDeviceCallBack " + result);
         }
 
         @Override
         public void disconnectDeviceCallBack(int result, int status) {
 //            showToast("onDisconnectDevice"+result+" "+status);
-            Log.e(TAG,"disconnectDeviceCallBack "+result);
+            Log.e(TAG, "disconnectDeviceCallBack " + result);
         }
 
         @Override
         public void connectingDeviceCallBack(int result) {
-            Log.e(TAG,"onConnectingDevice"+result);
+            Log.e(TAG, "onConnectingDevice" + result);
         }
 
         @Override
@@ -246,7 +261,7 @@ public class MainActivity extends BaseActivity {
                     }
                     if (0 == result) {
                         showToast("已打开");
-                        CouponDialog.show(MainActivity.this,"门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
+                        CouponDialog.show(MainActivity.this, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
                             @Override
                             public void sure() {
                                 PacketActivity.start(0);
@@ -276,6 +291,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         blueLockPub.stopScanDevice();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -292,18 +308,20 @@ public class MainActivity extends BaseActivity {
         super.onResume();
     }
 
-    public Map<String, LEDevice> getMap(){
+    public Map<String, LEDevice> getMap() {
         return map;
     }
 
-    public Map<String, LEDevice> getBlueLockPub(){
+    public Map<String, LEDevice> getBlueLockPub() {
         return map;
     }
 
-    public void open(){
+    public void open() {
         Set<String> set = map.keySet();
-        ToastUtils.show(this, "附近设备" + set.size());
-
+//        ToastUtils.show(this, "附近设备" + set.size());
+        if (set.size() == 0) {
+            NearByNoDeviceDialog.show(mContext);
+        }
         LEDevice leDevice = null;
         for (Map.Entry<String, LEDevice> entry : map.entrySet()) {
             String key = entry.getKey();

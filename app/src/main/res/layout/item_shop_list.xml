@@ -42,6 +42,7 @@
             android:layout_marginTop="@dimen/dp_5"
             android:isIndicator="true"
             android:numStars="5"
+            android:visibility="gone"
             android:progressBackgroundTint="@color/color_2AA9E0"
             android:progressTint="@color/color_2AA9E0"
             android:secondaryProgressTint="@color/color_2AA9E0"
@@ -57,6 +58,7 @@
             android:text="5.0"
             android:textColor="@color/color_3BB0D2"
             android:textSize="@dimen/sp_18"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/rbar"
             app:layout_constraintLeft_toRightOf="@id/rbar"
             app:layout_constraintTop_toTopOf="@id/rbar" />
@@ -69,9 +71,8 @@
             android:text="月售300单"
             android:textColor="@color/color_666666"
             android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/tvLevel"
-            app:layout_constraintLeft_toRightOf="@id/tvLevel"
-            app:layout_constraintTop_toTopOf="@id/tvLevel" />
+            app:layout_constraintLeft_toLeftOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName"/>
 
         <LinearLayout
             android:id="@+id/LL"

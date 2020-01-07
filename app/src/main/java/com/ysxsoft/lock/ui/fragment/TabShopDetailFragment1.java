@@ -11,11 +11,18 @@ import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
+import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.PacketCardResponse;
+import com.ysxsoft.lock.net.Api;
+import com.ysxsoft.lock.ui.activity.UseCouponActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -30,7 +37,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * Create By 胡
  * on 2019/12/17 0017
  */
-public class TabShopDetailFragment1 extends BaseFragment implements IListAdapter {
+public class TabShopDetailFragment1 extends BaseFragment implements IListAdapter<PacketCardResponse.DataBean> {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -77,12 +84,14 @@ public class TabShopDetailFragment1 extends BaseFragment implements IListAdapter
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
+        if (false) {
             debug(manager);
         } else {
             OkHttpUtils.post()
-//                    .url(Api.GET_CODE)
-                    .addParams("uid", SharedPreferencesUtils.getUid(getActivity()))
+                    .url(Api.MEM_BERCARD)
+                    .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                    .addParams("type", "1")
+                    .addParams("status", "1")
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
@@ -94,26 +103,27 @@ public class TabShopDetailFragment1 extends BaseFragment implements IListAdapter
                         @Override
                         public void onResponse(String response, int id) {
                             manager.releaseRefresh();
-//                        HomeArticleResponse resp = JsonUtils.parseByGson(response, HomeArticleResponse.class);
-//                        if (resp != null) {
-//                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                //请求成功
-//                                List<HomeArticleResponse.DataBean> data = resp.getData();
-//                                manager.setData(data);
-//                            } else {
-//                                //请求失败
-//                                showToast(resp.getMsg());
-//                            }
-//                        } else {
-//                            showToast("获取失败");
-//                        }
+                            PacketCardResponse resp = JsonUtils.parseByGson(response, PacketCardResponse.class);
+                            if (resp != null) {
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                    //请求成功
+                                    List<PacketCardResponse.DataBean> data = resp.getData();
+                                    manager.resetPage();
+                                    manager.setData(data);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
+                            } else {
+                                showToast("获取失败");
+                            }
                         }
                     });
         }
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, Object o) {
+    public void fillView(BaseViewHolder helper, PacketCardResponse.DataBean o) {
         TextView tv5 = helper.getView(R.id.tv5);
         TextView tv6 = helper.getView(R.id.tv6);
         ImageView iv1 = helper.getView(R.id.iv1);
@@ -122,6 +132,15 @@ public class TabShopDetailFragment1 extends BaseFragment implements IListAdapter
         tv6.setVisibility(View.VISIBLE);
         iv1.setVisibility(View.GONE);
 
+
+
+        helper.setText(R.id.tv2, o.getPrice());
+        helper.setText(R.id.tvmj, "满" + o.getOprice() + "可用");
+        helper.setText(R.id.tv3, o.getTitle());
+        helper.setText(R.id.tv4, o.getStart_time_str() + "-" + o.getEnd_time_str());
+        helper.setText(R.id.tv7, o.getRemark());
+
+
         Drawable down = getResources().getDrawable(R.mipmap.icon_down_arrow);
         Drawable up = getResources().getDrawable(R.mipmap.icon_up_arrow);
         down.setBounds(0, 0, down.getIntrinsicWidth(), down.getIntrinsicHeight());
@@ -129,20 +148,27 @@ public class TabShopDetailFragment1 extends BaseFragment implements IListAdapter
         tv5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isClick = !isClick;
-                if (isClick) {
+                if (o.isClick()) {
+                    o.setClick(false);
                     cv1.setVisibility(View.GONE);
                     tv5.setCompoundDrawables(null, null, down, null);
                 } else {
+                    o.setClick(true);
                     cv1.setVisibility(View.VISIBLE);
                     tv5.setCompoundDrawables(null, null, up, null);
                 }
             }
         });
+        tv6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UseCouponActivity.start(o.getId());
+            }
+        });
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, Object o) {
+    public void fillMuteView(BaseViewHolder helper, PacketCardResponse.DataBean o) {
 
     }
 

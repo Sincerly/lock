@@ -213,7 +213,6 @@ public class ShopDetailActivity extends BaseActivity {
         if (TextUtils.isEmpty(business_id)){
             return;
         }
-
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.ID_SHOP_INFO)

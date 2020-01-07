@@ -12,7 +12,10 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.MessageEvent;
 import com.ysxsoft.lock.ui.dialog.OpenLockPwdDialog;
+
+import org.simple.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -55,9 +58,13 @@ public class UnlockingModeActivity extends BaseActivity {
 
     @Autowired
     String pass;
+    @Autowired
+    String equ_id;//门禁设备id
+    @Autowired
+    String requ_id;//小区id
 
-    public static void start(String pass) {
-        ARouter.getInstance().build(ARouterPath.getUnlockingModeActivity()).withString("pass", pass).navigation();
+    public static void start(String pass, String equ_id, String requ_id) {
+        ARouter.getInstance().build(ARouterPath.getUnlockingModeActivity()).withString("pass", pass).withString("equ_id", equ_id).withString("requ_id", requ_id).navigation();
     }
 
     @Override
@@ -86,7 +93,7 @@ public class UnlockingModeActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.tv2:
-                showToast("蓝牙开门");
+                EventBus.getDefault().post(new MessageEvent(pass,requ_id,equ_id));
                 break;
             case R.id.tv4:
                 OpenLockPwdDialog dialog = new OpenLockPwdDialog(mContext, R.style.CenterDialogStyle);

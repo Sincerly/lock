@@ -30,6 +30,7 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.models.response.CityTopResponse;
+import com.ysxsoft.lock.models.response.DefaultPlaceResponse;
 import com.ysxsoft.lock.models.response.TabKeyManager1FragmentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -49,6 +50,9 @@ public class CityTopDialog extends Dialog {
     private OnDialogClickListener listener;
     RecyclerView recyclerView;
     RecyclerView fangShiViewMenu;
+    private int click=0;
+    private int click1=0;
+    private TextView tvName;
 
     public CityTopDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -58,10 +62,11 @@ public class CityTopDialog extends Dialog {
 
     private View init() {
         View view = View.inflate(mContext, R.layout.dialog_city_top, null);
+        tvName = view.findViewById(R.id.tvName);
         recyclerView = view.findViewById(R.id.recyclerView);
         fangShiViewMenu = view.findViewById(R.id.fangShiViewMenu);
-//        request();
-        initData();
+        request();
+        initData2();
         return view;
     }
 
@@ -114,25 +119,28 @@ public class CityTopDialog extends Dialog {
         recyclerView.setAdapter(adapter);
     }
 
-
     private void initData2(){
-        recyclerView.setAdapter(null);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new GridLayoutManager(mContext,4));
-        List<CityTopResponse.DataBean.ListkeyBean> data=new ArrayList<>();
-        for (int i = 0; i <4; i++) {
-            data.add(new CityTopResponse.DataBean.ListkeyBean());
-        }
-        RBaseAdapter<CityTopResponse.DataBean.ListkeyBean> adapter = new RBaseAdapter<CityTopResponse.DataBean.ListkeyBean>(mContext, R.layout.item_city_top, data) {
-            @Override
-            protected void fillItem(RViewHolder holder, CityTopResponse.DataBean.ListkeyBean item, int position) {
-                TextView name=holder.getView(R.id.name);
-                if(position==0){
-                    name.setSelected(false);
-                }else {
-                    name.setSelected(true);
-                }
+        fangShiViewMenu.setAdapter(null);
+        fangShiViewMenu.setNestedScrollingEnabled(false);
+        fangShiViewMenu.setLayoutManager(new GridLayoutManager(mContext,4));
 
+        ArrayList<String> list = new ArrayList<>();
+        list.add("密码开门");
+        list.add("蓝牙开门");
+        list.add("远程开门");
+
+        RBaseAdapter<String> adapter = new RBaseAdapter<String>(mContext, R.layout.item_city_top, list) {
+            @Override
+            protected void fillItem(RViewHolder holder, String item, int position) {
+                TextView name=holder.getView(R.id.name);
+                if(position==click1){
+                    name.setSelected(true);
+                    name.setTextColor(Color.parseColor("#3BB0D2"));
+                }else {
+                    name.setSelected(false);
+                    name.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
+                }
+                name.setText(item);
                 switch (position){
                     case 0:
                         break;
@@ -146,21 +154,24 @@ public class CityTopDialog extends Dialog {
             }
 
             @Override
-            protected int getViewType(CityTopResponse.DataBean.ListkeyBean item, int position) {
+            protected int getViewType(String item, int position) {
                 return 0;
             }
         };
         adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(RViewHolder holder, View view, int position) {
+                click1=position;
+                adapter.notifyDataSetChanged();
             }
         });
-        recyclerView.setAdapter(adapter);
+        fangShiViewMenu.setAdapter(adapter);
     }
 
     private void request() {
         OkHttpUtils.get()
-                .url(Api.GET_BIND_PLACE_LIST)
+//                .url(Api.GET_BIND_PLACE_LIST)
+                .url(Api.GET_DEFAULT_PLACE_INFO)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                 .tag(this)
                 .build()
@@ -172,31 +183,43 @@ public class CityTopDialog extends Dialog {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        CityTopResponse cityTopResponse = JsonUtils.parseByGson(response, CityTopResponse.class);
-                        if (cityTopResponse != null) {
-                            if (HttpResponse.SUCCESS.equals(cityTopResponse.getCode())) {
+//                        CityTopResponse cityTopResponse = JsonUtils.parseByGson(response, CityTopResponse.class);
+                        DefaultPlaceResponse resp = JsonUtils.parseByGson(response, DefaultPlaceResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                tvName.setText(resp.getData().getQuarters_name());
                                 recyclerView.setAdapter(null);
                                 recyclerView.setNestedScrollingEnabled(false);
                                 recyclerView.setLayoutManager(new GridLayoutManager(mContext,4));
-
-                                List<CityTopResponse.DataBean.ListkeyBean> data=new ArrayList<>();
-                                for (int i = 0; i <5; i++) {
-                                    data.add(new CityTopResponse.DataBean.ListkeyBean());
-                                }
-                                RBaseAdapter<CityTopResponse.DataBean.ListkeyBean> adapter = new RBaseAdapter<CityTopResponse.DataBean.ListkeyBean>(mContext, R.layout.item_city_top, data) {
+                                List<DefaultPlaceResponse.DataBean.ListkeyBean> listkey = resp.getData().getListkey();
+//                                List<CityTopResponse.DataBean.ListkeyBean> data=new ArrayList<>();
+//                                for (int i = 0; i <5; i++) {
+//                                    data.add(new CityTopResponse.DataBean.ListkeyBean());
+//                                }
+                                RBaseAdapter<DefaultPlaceResponse.DataBean.ListkeyBean> adapter = new RBaseAdapter<DefaultPlaceResponse.DataBean.ListkeyBean>(mContext, R.layout.item_city_top, listkey) {
                                     @Override
-                                    protected void fillItem(RViewHolder holder, CityTopResponse.DataBean.ListkeyBean item, int position) {
-
+                                    protected void fillItem(RViewHolder holder, DefaultPlaceResponse.DataBean.ListkeyBean item, int position) {
+                                        TextView name=holder.getView(R.id.name);
+                                        if(position==click){
+                                            name.setSelected(true);
+                                            name.setTextColor(Color.parseColor("#3BB0D2"));
+                                        }else {
+                                            name.setSelected(false);
+                                            name.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
+                                        }
+                                        name.setText(item.getEqu_name());
                                     }
 
                                     @Override
-                                    protected int getViewType(CityTopResponse.DataBean.ListkeyBean item, int position) {
+                                    protected int getViewType(DefaultPlaceResponse.DataBean.ListkeyBean item, int position) {
                                         return 0;
                                     }
                                 };
                                 adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(RViewHolder holder, View view, int position) {
+                                        click=position;
+                                        adapter.notifyDataSetChanged();
                                     }
                                 });
                                 recyclerView.setAdapter(adapter);
