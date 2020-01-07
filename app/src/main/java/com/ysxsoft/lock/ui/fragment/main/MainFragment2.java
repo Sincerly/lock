@@ -87,6 +87,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     TextView tvName;
 
     private static final String TAG = "MainFragment2";
+    private DefaultPlaceResponse.DataBean dataBean;
 
     @Override
     public int getLayoutId() {
@@ -125,6 +126,20 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         DefaultPlaceResponse resp = JsonUtils.parseByGson(response, DefaultPlaceResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                dataBean = resp.getData();
+//                                if (TextUtils.isEmpty(dataBean.getQuarters_name())) {
+//                                    CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
+//                                        @Override
+//                                        public void sure(String requid) {
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void cancle() {
+//
+//                                        }
+//                                    });
+//                                }
                                 tvName.setText(resp.getData().getQuarters_name());
                             }
                         }
@@ -172,12 +187,28 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         if (offsetY > 0) {
                             //下 开锁 下滑一半选择小区
                             if (DisplayUtils.getDisplayHeight(getActivity()) / 3 > offsetY && downY < DisplayUtils.getDisplayHeight(getActivity()) / 3) {
-                                Log.e(TAG, "滑动距离未超过1/3");
-                                CityTopDialog.show(getActivity(), new CityTopDialog.OnDialogClickListener() {
-                                    @Override
-                                    public void sure() {
-                                    }
-                                });
+
+                                if (TextUtils.isEmpty(dataBean.getQuarters_name())) {
+
+                                    CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
+                                        @Override
+                                        public void sure(String requid) {
+
+                                        }
+
+                                        @Override
+                                        public void cancle() {
+
+                                        }
+                                    });
+                                } else {
+                                    Log.e(TAG, "滑动距离未超过1/3");
+                                    CityTopDialog.show(getActivity(), new CityTopDialog.OnDialogClickListener() {
+                                        @Override
+                                        public void sure() {
+                                        }
+                                    });
+                                }
                             } else {
                                 Log.e(TAG, "向下");
                                 MainActivity activity = (MainActivity) getActivity();
