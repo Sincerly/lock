@@ -12,15 +12,17 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </androidx.viewpager2.widget.ViewPager2>
+            android:layout_height="match_parent"></androidx.viewpager2.widget.ViewPager2>
+
         <ImageView
             android:id="@+id/touchView"
             android:layout_width="match_parent"
-            android:background="#01000000"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"/>
+            android:background="#01000000"
+            android:scaleType="fitXY" />
+
         <TextView
+            android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_16"

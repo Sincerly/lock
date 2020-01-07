@@ -8,6 +8,7 @@ import android.os.Message;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,9 +35,11 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.umeng.share.ShareUtil;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.IntentUtils;
+import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
@@ -44,6 +47,8 @@ import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.DefaultPlaceResponse;
+import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.activity.UserInfoActivity;
@@ -51,6 +56,8 @@ import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CityTopDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
 import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +66,7 @@ import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
+import okhttp3.Call;
 
 /**
  * 首页操作页面
@@ -75,6 +83,8 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     ImageView touchView;
     @BindView(R.id.viewPager2)
     ViewPager2 viewPager2;
+    @BindView(R.id.tvName)
+    TextView tvName;
 
     private static final String TAG = "MainFragment2";
 
@@ -88,6 +98,39 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         maxOffsetY = DisplayUtils.getDisplayHeight(getActivity()) / 3;
         touchView.setOnTouchListener(this);
         initViewPager2();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestData();
+    }
+
+    private void requestData() {
+        showLoading("请求中...");
+        OkHttpUtils.get()
+                .url(Api.GET_DEFAULT_PLACE_INFO)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        DefaultPlaceResponse resp = JsonUtils.parseByGson(response, DefaultPlaceResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                tvName.setText(resp.getData().getQuarters_name());
+                            }
+                        }
+                    }
+                });
+
     }
 
     @Override

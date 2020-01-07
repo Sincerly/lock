@@ -277,7 +277,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
                     tvOpenMethod.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            UnlockingModeActivity.start(item.getEqu_pass());
+                            UnlockingModeActivity.start(item.getEqu_pass(),item.getEqu_id(),groups.get(AreaPosition).getRequ_id());
                         }
                     });
                     switch (item.getEqu_type()) {
@@ -329,7 +329,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
                                 tvOpenMethod.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        UnlockingModeActivity.start(item.getEqu_pass());
+                                        UnlockingModeActivity.start(item.getEqu_pass(),item.getEqu_id(),groups.get(AreaPosition).getRequ_id());
                                     }
                                 });
                                 break;
