@@ -18,10 +18,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_40"
             android:gravity="center_horizontal"
-            android:text="未连接到附近设备"
+            android:text="手机蓝牙未连接到附近设备"
             android:textColor="@color/color_282828"
             android:textSize="@dimen/sp_18"
-            android:textStyle="bold" />
+           />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="请重新链接"
+            android:textColor="@color/color_282828"
+            android:textSize="@dimen/sp_18"
+            />
 
     </LinearLayout>
 
