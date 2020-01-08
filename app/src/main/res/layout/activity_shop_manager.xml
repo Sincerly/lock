@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_5"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingBottom="@dimen/dp_10"
         android:background="@color/colorWhite">
 
         <com.ysxsoft.common_base.view.custom.image.CircleImageView
@@ -27,6 +29,7 @@
 
         <TextView
             android:id="@+id/tvName"
+            android:layout_marginLeft="@dimen/dp_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="肯德基"
@@ -36,6 +39,7 @@
             app:layout_constraintTop_toTopOf="@id/civ" />
 
         <TextView
+            android:layout_marginLeft="@dimen/dp_4"
             android:id="@+id/tvType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,6 +55,7 @@
             android:layout_marginRight="15dp"
             android:drawableRight="@mipmap/icon_right_arrow"
             android:text="编辑"
+            android:drawablePadding="@dimen/dp_8"
             android:textColor="@color/color_999999"
             android:textSize="@dimen/sp_12"
             app:layout_constraintBottom_toBottomOf="@id/tvType"

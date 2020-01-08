@@ -54,7 +54,7 @@
             android:gravity="center"
             android:paddingTop="@dimen/dp_8"
             android:paddingBottom="@dimen/dp_8"
-            android:text="设置"
+            android:text="去设置"
             android:textColor="@color/color_666666"
             android:textSize="17sp" />
 

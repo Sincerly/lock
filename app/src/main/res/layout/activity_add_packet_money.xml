@@ -78,7 +78,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center_vertical|right"
-                        android:text="￥"
+                        android:text=""
                         android:textColor="@color/color_282828"
                         android:textSize="@dimen/sp_14" />
 
@@ -115,7 +115,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center_vertical|right"
-                        android:text="￥"
+                        android:text=""
                         android:textColor="@color/color_282828"
                         android:textSize="@dimen/sp_14" />
 

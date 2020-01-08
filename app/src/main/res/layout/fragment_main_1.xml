@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/user_info_bg"
-        android:minHeight="200dp">
+        android:minHeight="220dp">
 
         <LinearLayout
             app:layout_constraintTop_toTopOf="parent"
@@ -118,6 +118,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="@dimen/dp_16"
             android:src="@mipmap/ic_launcher"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -141,7 +142,8 @@
             android:text="无论何人，不要求自己的益处，乃要求别人的益处。"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/sp_12"
-            app:layout_constraintBottom_toBottomOf="@id/civ"
+            android:layout_marginTop="@dimen/dp_5"
+            app:layout_constraintTop_toBottomOf="@id/tv1"
             app:layout_constraintLeft_toLeftOf="@id/tv1" />
 
         <ImageView
