@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,6 +170,7 @@ public class CityTopDialog extends Dialog {
     }
 
     private void request() {
+        Log.e("tag","token:"+SharedPreferencesUtils.getToken(mContext));
         OkHttpUtils.get()
 //                .url(Api.GET_BIND_PLACE_LIST)
                 .url(Api.GET_DEFAULT_PLACE_INFO)
@@ -178,7 +180,7 @@ public class CityTopDialog extends Dialog {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Log.e("tag",e.getMessage());
                     }
 
                     @Override

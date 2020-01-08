@@ -2,8 +2,11 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,17 +14,27 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
+import com.mobile.auth.gatewayauth.AuthUIConfig;
+import com.mobile.auth.gatewayauth.AuthUIControlClickListener;
+import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
+import com.mobile.auth.gatewayauth.TokenResultListener;
+import com.mobile.auth.gatewayauth.model.TokenRet;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.dialog.BaseInputCenterDialog;
+import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.MobileResponse;
 import com.ysxsoft.lock.models.response.PersonCenterResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.ui.dialog.CheckLoginOutDialog;
@@ -278,7 +291,9 @@ public class SettingActivity extends BaseActivity {
                         CommentResponse gson = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (gson != null) {
                             if (HttpResponse.SUCCESS.equals(gson.getCode())) {
-                                toLogin();
+//                                toLogin();
+                                SharedPreferencesUtils.saveToken(SettingActivity.this,"");
+                                call();
                             }
                         }
                     }
@@ -394,6 +409,128 @@ public class SettingActivity extends BaseActivity {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 Glide.with(mContext).load(new File(path)).into(ivAvatar);
                             }
+                        }
+                    }
+                });
+    }
+    PhoneNumberAuthHelper helper;
+    private void call() {
+        helper = PhoneNumberAuthHelper.getInstance(this, tokenResultListener);
+        helper.setAuthSDKInfo("isgu8Z+e5PJrU4I19s1OUByrgrcXD2aZswJ66jWoD/VRTW7umKLhbR1AAGGcMP9epo/v5LniY45VHEkbVRupMffyzUfTjpWZQyuuMnO/7r66hu/TDpjBKSAB8MqFh+F9FxUpx6+eUn75ZH1RLvJ3VIBRl/5qmu1gIWGFs9dgNFQJtWt6jVw8jfK6ZyXLjakfI5HmV2d2ekoxwDOjacGAeQdR+NobYAwBbCFP2sXB/ouESJd/Pko2aBzODZc1H0+/UWWyPmkNo8M2WTuwa4rT3A0v1/zR7D/b");
+        helper.setLoggerEnable(true);
+        if (helper.checkEnvAvailable()) {
+            //检查终端是否支持号码认证
+            helper.setAuthUIConfig(new AuthUIConfig.Builder()
+                    .setLogBtnText("手机号码一键登录")
+                    .setNavHidden(true)
+                    .setNavColor(getResources().getColor(R.color.colorPrimary))
+                    .setLogoImgPath("ic_launcher")
+                    .setLogoWidth(DisplayUtils.dp2px(SettingActivity.this, 24))
+                    .setLogoHeight(DisplayUtils.dp2px(SettingActivity.this, 24))
+                    .setSloganText(" ")
+                    .setLogBtnBackgroundPath("shape_btn_bg")
+                    .setLogBtnWidth(DisplayUtils.dp2px(SettingActivity.this, 122))
+                    .setLogBtnHeight(DisplayUtils.dp2px(SettingActivity.this, 16))
+                    .setLogBtnTextSize(16)
+                    .setSwitchAccText("其他方式登录")
+                    .setSwitchAccTextSize(12)
+                    .setSwitchAccTextColor(Color.parseColor("#666666"))
+
+                    .setPrivacyBefore("登录即同意我们的")
+                    .setCheckboxHidden(true)
+                    .setAppPrivacyOne("《服务协议》","http://www.baidu.com")
+                    .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
+                    .create());
+            helper.getLoginToken(SettingActivity.this, 30000);
+        }
+    }
+
+    private TokenResultListener tokenResultListener = new TokenResultListener() {
+        @Override
+        public void onTokenSuccess(final String token) {
+            Log.e("tag", "onTokenSuccess" + token);
+            helper.setUIClickListener(new AuthUIControlClickListener() {
+                @Override
+                public void onClick(String s, Context context, JSONObject jsonObject) {
+                    Log.e("tag",s+" "+jsonObject);
+                    switch (s){
+                        case "700000":
+                            //点击返回 用户取消免密登录
+                            break;
+                        case "700001":
+                            //点击切换 用户取消免密登录
+                            OtherLoginActivity.start();
+                            break;
+                        case "700002":
+                            //点击登录按钮事件
+                            break;
+                        case "700003":
+                            //点击check box事件
+                            break;
+                        case "700004":
+                            //点击协议富文本文字事件
+                            break;
+                    }
+                }
+            });
+
+            TokenRet tokenRet = JSON.parseObject(token, TokenRet.class);
+            if (tokenRet != null) {
+                switch (tokenRet.getCode()){
+                    case "600000":
+                        //获取token成功
+                        String tok = tokenRet.getToken();
+                        getMobile(tok);
+                        break;
+                    case "600001":
+                        //唤起授权页成功
+                        //showToast(tokenRet.getMsg());
+                        break;
+                    case "600002":
+                        //唤起授权页失败
+                        showToast(tokenRet.getMsg());
+                        break;
+                    case "600004":
+                        //获取运营商配置信息失败
+                        showToast(tokenRet.getMsg());
+                        break;
+                    case "600005":
+                        //手机终端不安全
+                        showToast(tokenRet.getMsg());
+                        break;
+                }
+            }
+        }
+
+        @Override
+        public void onTokenFailed(String s) {
+            Log.e("tag", "onTokenFailed" + s);
+        }
+    };
+
+    public void getMobile(String accessToken) {
+        showLoadingDialog("请求中");
+        OkHttpUtils.get()
+                .url(Api.GET_MOBILE+"?accessToken="+accessToken)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("tag","返回值:"+response);
+                        hideLoadingDialog();
+                        MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
+                        if (resp != null) {
+                            SharedPreferencesUtils.saveToken(SettingActivity.this,resp.getApitoken());
+                            MainActivity.start();
+                            helper.quitAuthActivity();
+                        } else {
+                            showToast("获取登录失败");
                         }
                     }
                 });

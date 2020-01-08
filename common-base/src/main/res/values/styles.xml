@@ -37,6 +37,24 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="LeftDialogOutStyle" parent="@android:style/Theme.Dialog">
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- 浮于Activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- Dialog以外的区域模糊效果 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@style/popWindowLeftAnimation</item>
+    </style>
+
     <style name="CenterDialogStyleClose" parent="@android:style/Theme.Dialog">
         <!-- 背景透明 -->
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -148,6 +166,11 @@
     <style name="popWindowTopAnimation">
         <item name="android:windowEnterAnimation">@anim/pop_top_in</item>
         <item name="android:windowExitAnimation">@anim/pop_top_out</item>
+    </style>
+
+    <style name="popWindowLeftAnimation">
+        <item name="android:windowEnterAnimation">@anim/anim_activity_left_out</item>
+        <item name="android:windowExitAnimation">@anim/anim_activity_left_in</item>
     </style>
 
     <style name="popWindowAlphaAnimation">

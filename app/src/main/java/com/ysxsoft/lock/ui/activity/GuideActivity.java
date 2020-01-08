@@ -29,6 +29,7 @@ import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.LoginResponse;
+import com.ysxsoft.lock.models.response.MobileResponse;
 import com.ysxsoft.lock.net.Api;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -237,9 +238,9 @@ public class GuideActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         Log.e("tag","返回值:"+response);
                         hideLoadingDialog();
-                        LoginResponse resp = JsonUtils.parseByGson(response, LoginResponse.class);
+                        MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
-                            SharedPreferencesUtils.saveToken(GuideActivity.this,resp.getToken());
+                            SharedPreferencesUtils.saveToken(GuideActivity.this,resp.getApitoken());
                             MainActivity.start();
                             helper.quitAuthActivity();
                         } else {

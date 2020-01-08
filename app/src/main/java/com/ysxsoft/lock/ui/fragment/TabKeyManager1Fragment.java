@@ -91,6 +91,12 @@ public class TabKeyManager1Fragment extends BaseFragment {
                         if (gson != null) {
                             if (HttpResponse.SUCCESS.equals(gson.getCode())) {
                                 groups = gson.getData();
+                                for (int i = 0; i <groups.size(); i++) {
+                                    TabKeyManager1FragmentResponse.DataBean d=groups.get(i);
+                                    if(d.getIsdefault()==1){
+                                        d.setExpanded(true);
+                                    };
+                                }
                                 recyclerView.setAdapter(null);
                                 recyclerView.setNestedScrollingEnabled(false);
                                 recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
@@ -137,6 +143,7 @@ public class TabKeyManager1Fragment extends BaseFragment {
                                 RBaseAdapter<TabKeyManager1FragmentResponse.DataBean> adapter = new RBaseAdapter<TabKeyManager1FragmentResponse.DataBean>(getActivity(), R.layout.item_tab_key_manager_list, groups) {
                                     @Override
                                     protected void fillItem(RViewHolder holder, TabKeyManager1FragmentResponse.DataBean item, int position) {
+                                        ImageView downIcon = holder.getView(R.id.downIcon);
                                         TextView tvNormal = holder.getView(R.id.tvNormal);
                                         TextView tvAddress = holder.getView(R.id.tvAddress);
                                         TextView tvName = holder.getView(R.id.tvName);
@@ -146,9 +153,11 @@ public class TabKeyManager1Fragment extends BaseFragment {
                                         if (item.isExpanded()) {
                                             itemRecyclerView.setVisibility(View.VISIBLE);
                                             tvName.setSelected(true);
+                                            downIcon.setImageResource(R.mipmap.icon_down_arrow);
                                         } else {
                                             itemRecyclerView.setVisibility(View.GONE);
                                             tvName.setSelected(false);
+                                            downIcon.setImageResource(R.mipmap.icon_right_arrow);
                                         }
                                         if (item.getIsdefault() == 1) {
                                             tvNormal.setVisibility(View.VISIBLE);

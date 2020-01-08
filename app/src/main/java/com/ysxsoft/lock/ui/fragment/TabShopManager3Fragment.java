@@ -92,7 +92,7 @@ public class TabShopManager3Fragment extends BaseFragment {
     }
 
     private void requestData() {
-        showLoadingDialog("请求中...");
+        //showLoadingDialog("请求中...");
         OkHttpUtils.get()
                 .url(Api.CARD_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
@@ -103,7 +103,7 @@ public class TabShopManager3Fragment extends BaseFragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
+                        //hideLoadingDialog();
                     }
 
                     @Override
@@ -111,7 +111,7 @@ public class TabShopManager3Fragment extends BaseFragment {
                         CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                hideLoadingDialog();
+                                //hideLoadingDialog();
                                 groups = resp.getData();
 
                                 RBaseAdapter<CardListResponse.DataBean> adapter = new RBaseAdapter<CardListResponse.DataBean>(getActivity(), R.layout.item_tabshopmanager3_fragment_list, groups) {

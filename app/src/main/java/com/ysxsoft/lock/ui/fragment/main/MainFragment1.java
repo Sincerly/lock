@@ -190,7 +190,7 @@ public class MainFragment1 extends BaseFragment {
                     public void onResponse(String response, int id) {
                         IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
                         if (resp != null) {
-                            showToast(resp.getMsg());
+                           //showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     showToast("已实名认证");
@@ -301,7 +301,7 @@ public class MainFragment1 extends BaseFragment {
                     public void onResponse(String response, int id) {
                         ShopCertResponse resp = JsonUtils.parseByGson(response, ShopCertResponse.class);
                         if (resp != null) {
-                            showToast(resp.getMsg());
+                            //showToast(resp.getMsg());
                             switch (resp.getCode()) {
                                 case "200":
                                     ShopManagerActivity.start();

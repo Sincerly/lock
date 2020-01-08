@@ -92,7 +92,7 @@ public class TabShopManager2Fragment extends BaseFragment {
     }
 
     private void requestData() {
-        showLoadingDialog("请求中...");
+        //showLoadingDialog("请求中...");
         OkHttpUtils.get()
                 .url(Api.CARD_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
@@ -103,12 +103,12 @@ public class TabShopManager2Fragment extends BaseFragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
+                        //hideLoadingDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        hideLoadingDialog();
+                        //hideLoadingDialog();
                         CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {

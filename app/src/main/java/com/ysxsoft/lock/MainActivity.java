@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.MainThread;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorListener;
 import androidx.core.view.ViewPropertyAnimatorUpdateListener;
@@ -150,6 +151,7 @@ public class MainActivity extends BaseActivity {
     private Handler mHandler;
     private final int MST_WHAT_START_SCAN_DEVICE = 0x01;
     private boolean hasScannedDaHaoLock;
+    private boolean isConnected=false;
 
     private void initHandler() {
         mHandler = new Handler() {
@@ -175,6 +177,7 @@ public class MainActivity extends BaseActivity {
         if (result == 0) {
             //初始化成功
             //开始扫描设备
+            isConnected=true;
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         } else if (result == -4) {
             //不支持蓝牙
@@ -239,6 +242,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void disconnectDeviceCallBack(int result, int status) {
 //            showToast("onDisconnectDevice"+result+" "+status);
+            isLocking=false;
             Log.e(TAG, "disconnectDeviceCallBack " + result);
         }
 
@@ -249,6 +253,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void openCloseDeviceCallBack(int result, int battery, String... params) {
+            isLocking=false;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -260,8 +265,9 @@ public class MainActivity extends BaseActivity {
                         Log.e(TAG, " ============device Id: " + params[0]);
                     }
                     if (0 == result) {
-                        showToast("已打开");
-                        CouponDialog.show(MainActivity.this, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
+                        //showToast("已打开");
+                        hideLoadingDialog();
+                        CouponDialog.show(MainActivity.this,false, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
                             @Override
                             public void sure() {
                                 PacketActivity.start(0);
@@ -316,7 +322,12 @@ public class MainActivity extends BaseActivity {
         return map;
     }
 
+    private boolean isLocking=false;
     public void open() {
+        if(isLocking){
+            return;
+        }
+        isLocking=true;
         Set<String> set = map.keySet();
 //        ToastUtils.show(this, "附近设备" + set.size());
         if (set.size() == 0) {
@@ -334,5 +345,6 @@ public class MainActivity extends BaseActivity {
             Log.e(TAG, "device：" + new Gson().toJson(leDevice) + "  deviceId:" + leDevice.getDeviceId());
             blueLockPub.oneKeyOpenDevice(leDevice, leDevice.getDeviceId(), devicePassword);
         }
+        showLoadingDialog("开门中");
     }
 }

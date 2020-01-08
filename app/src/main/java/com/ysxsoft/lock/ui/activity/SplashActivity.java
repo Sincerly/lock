@@ -25,6 +25,7 @@ import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.MainActivity;
+import com.ysxsoft.lock.models.response.MobileResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -188,9 +189,9 @@ public class SplashActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         Log.e("tag","返回值:"+response);
                         hideLoadingDialog();
-                        LoginResponse resp = JsonUtils.parseByGson(response, LoginResponse.class);
+                        MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
-                            SharedPreferencesUtils.saveToken(SplashActivity.this,resp.getToken());
+                            SharedPreferencesUtils.saveToken(SplashActivity.this,resp.getApitoken());
                             MainActivity.start();
                             helper.quitAuthActivity();
                         } else {

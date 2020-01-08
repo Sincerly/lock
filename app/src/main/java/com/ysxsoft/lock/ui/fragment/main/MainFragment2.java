@@ -172,7 +172,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         if (offsetX > 0) {
                             //页面向右 获取优惠券
                             Log.e(TAG, "页面向右 获取优惠券");
-                            CouponDialog.show(getActivity(), "恭喜！送你一张优惠券", new CouponDialog.OnDialogClickListener() {
+                            CouponDialog.show(getActivity(), true,"恭喜！,送你一张优惠券", new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
                                     PacketActivity.start(0);
@@ -188,26 +188,27 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                             //下 开锁 下滑一半选择小区
                             if (DisplayUtils.getDisplayHeight(getActivity()) / 3 > offsetY && downY < DisplayUtils.getDisplayHeight(getActivity()) / 3) {
 
-                                if (TextUtils.isEmpty(dataBean.getQuarters_name())) {
+                                if(dataBean!=null){
+                                    if (TextUtils.isEmpty(dataBean.getQuarters_name())) {
+                                        CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
+                                            @Override
+                                            public void sure(String requid) {
 
-                                    CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
-                                        @Override
-                                        public void sure(String requid) {
+                                            }
 
-                                        }
+                                            @Override
+                                            public void cancle() {
 
-                                        @Override
-                                        public void cancle() {
-
-                                        }
-                                    });
-                                } else {
-                                    Log.e(TAG, "滑动距离未超过1/3");
-                                    CityTopDialog.show(getActivity(), new CityTopDialog.OnDialogClickListener() {
-                                        @Override
-                                        public void sure() {
-                                        }
-                                    });
+                                            }
+                                        });
+                                    } else {
+                                        Log.e(TAG, "滑动距离未超过1/3");
+                                        CityTopDialog.show(getActivity(), new CityTopDialog.OnDialogClickListener() {
+                                            @Override
+                                            public void sure() {
+                                            }
+                                        });
+                                    }
                                 }
                             } else {
                                 Log.e(TAG, "向下");

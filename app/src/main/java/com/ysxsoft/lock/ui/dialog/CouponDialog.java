@@ -85,8 +85,12 @@ public class CouponDialog extends Dialog {
         }
     }
 
-    public static CouponDialog show(Context context,String tips, OnDialogClickListener listener) {
-        CouponDialog dialog = new CouponDialog(context, R.style.CenterDialogStyle);
+    public static CouponDialog show(Context context,boolean isFromLeft,String tips, OnDialogClickListener listener) {
+        int themeId=R.style.CenterDialogStyle;
+        if(isFromLeft){
+            themeId=R.style.LeftDialogOutStyle;
+        }
+        CouponDialog dialog = new CouponDialog(context, themeId);
         dialog.setListener(listener);
         dialog.showDialog();
         tvTips.setText(tips);
