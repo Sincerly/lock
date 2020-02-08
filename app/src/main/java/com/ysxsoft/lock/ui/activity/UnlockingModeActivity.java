@@ -114,6 +114,4 @@ public class UnlockingModeActivity extends BaseActivity {
                 break;
         }
     }
-
-
 }

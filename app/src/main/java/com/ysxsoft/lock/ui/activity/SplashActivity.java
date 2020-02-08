@@ -29,6 +29,8 @@ import com.ysxsoft.lock.models.response.MobileResponse;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import static com.ysxsoft.lock.config.AppConfig.IS_TEST_LOGIN;
+
 /**
  * create by Sincerly on 2019/1/3 0003
  **/
@@ -61,8 +63,10 @@ public class SplashActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 //未登录 跳转到登录页面  Tips:宿主工程必须依赖 annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
-//                                ARouter.getInstance().build("/main/LoginActivity").navigation();
-//                                finish();
+                                if(IS_TEST_LOGIN){
+                                    ARouter.getInstance().build("/main/LoginActivity").navigation();
+                                    finish();
+                                }
                                 call();
                             }
                         }, 500);
@@ -174,7 +178,6 @@ public class SplashActivity extends BaseActivity {
     };
 
     public void getMobile(String accessToken) {
-        showLoadingDialog("请求中");
         OkHttpUtils.get()
                 .url("http://47.99.219.208:8080/api/auth/getmobile?accessToken="+accessToken)
                 .tag(this)
@@ -182,13 +185,12 @@ public class SplashActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
+                        Log.e("tag","onError"+e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         Log.e("tag","返回值:"+response);
-                        hideLoadingDialog();
                         MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
                             SharedPreferencesUtils.saveToken(SplashActivity.this,resp.getApitoken());

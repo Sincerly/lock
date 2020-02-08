@@ -75,6 +75,14 @@ public class TabIdcardCert1Fragment extends BaseFragment {
     }
 
     public void request() {
+        if(IdCardNum.getText().toString().trim().length()!=18){
+            showToast("身份证号码格式不正确！");
+            return;
+        }
+        if(inputPhoneNum.getText().toString().trim().length()!=11){
+            showToast("手机号码格式不正确！");
+            return;
+        }
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.SAVE_AUTH_INFO)

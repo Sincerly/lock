@@ -41,6 +41,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 
+import static com.ysxsoft.lock.config.AppConfig.IS_TEST_LOGIN;
+
 @Route(path = "/main/GuideActivity")
 public class GuideActivity extends BaseActivity {
     @BindView(R.id.viewPager)
@@ -123,11 +125,16 @@ public class GuideActivity extends BaseActivity {
         SharedPreferencesUtils.saveFirst(GuideActivity.this,true);
         if("".equals(SharedPreferencesUtils.getToken(GuideActivity.this))){
             //调用一键取号
+            if(IS_TEST_LOGIN){
+                ARouter.getInstance().build("/main/LoginActivity").navigation();
+                finish();
+            }
             call();
         }else{
 //            ARouter.getInstance().build("/main/MainActivity").navigation();
         }
     }
+
     private void call() {
         helper = PhoneNumberAuthHelper.getInstance(this, tokenResultListener);
         helper.setAuthSDKInfo("isgu8Z+e5PJrU4I19s1OUByrgrcXD2aZswJ66jWoD/VRTW7umKLhbR1AAGGcMP9epo/v5LniY45VHEkbVRupMffyzUfTjpWZQyuuMnO/7r66hu/TDpjBKSAB8MqFh+F9FxUpx6+eUn75ZH1RLvJ3VIBRl/5qmu1gIWGFs9dgNFQJtWt6jVw8jfK6ZyXLjakfI5HmV2d2ekoxwDOjacGAeQdR+NobYAwBbCFP2sXB/ouESJd/Pko2aBzODZc1H0+/UWWyPmkNo8M2WTuwa4rT3A0v1/zR7D/b");
@@ -223,7 +230,6 @@ public class GuideActivity extends BaseActivity {
     };
 
     public void getMobile(String accessToken) {
-        showLoadingDialog("请求中");
         OkHttpUtils.get()
                 .url(Api.GET_MOBILE+"?accessToken="+accessToken)
                 .tag(this)
@@ -231,13 +237,11 @@ public class GuideActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         Log.e("tag","返回值:"+response);
-                        hideLoadingDialog();
                         MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
                             SharedPreferencesUtils.saveToken(GuideActivity.this,resp.getApitoken());

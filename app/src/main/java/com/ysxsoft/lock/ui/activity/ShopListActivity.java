@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -23,6 +26,8 @@ import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
 import com.ysxsoft.common_base.base.frame.list.ListManager;
+import com.ysxsoft.common_base.map.GDMapUtils;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
@@ -57,7 +62,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * create by Sincerly on 9999/9/9 0009
  **/
 @Route(path = "/main/ShopListActivity")
-public class ShopListActivity extends BaseActivity implements IListAdapter {
+public class ShopListActivity extends BaseActivity implements IListAdapter{
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -87,8 +92,6 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
     SmartRefreshLayout smartRefresh;
     ListManager manager;
 
-    @BindView(R.id.banner)
-    BGABanner banner;
     @BindView(R.id.FL1)
     FrameLayout FL1;
     @BindView(R.id.FL2)
@@ -107,6 +110,7 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
     TextView tvSelect;
     @BindView(R.id.LL1)
     LinearLayout LL1;
+    private double lat,lng;
 
 
     public static void start() {
@@ -122,8 +126,6 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
     public void doWork() {
         super.doWork();
         initTitle();
-        initBanner();
-        //http://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%9B%BE%E7%89%87&hs=0&pn=3&spn=0&di=58520&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cl=2&lm=-1&cs=2229864841%2C4232235061&os=1657753798%2C2900886188&simid=4281798412%2C697443542&adpicid=0&lpn=0&ln=30&fr=ala&fm=&sme=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Ffile02.16sucai.com%2Fd%2Ffile%2F2014%2F0704%2Fe53c868ee9e8e7b28c424b56afe2066d.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3F8mf7vwt_z%26e3Bv54AzdH3Fda89AzdH3Fa0AzdH3F99ndm_z%26e3Bip4s&gsm=&islist=&querylist=
         initList();
     }
 
@@ -136,6 +138,8 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 //setResult(RESULT_OK, intent);
                 //finish();
                 Object o = adapter.getData().get(position);
+                adapter.getItem(position);
+
 //                ShopDetailActivity.start();
             }
         });
@@ -145,24 +149,16 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
                 request(manager.nextPage());
             }
         }, recyclerView);
-        request(1);
-    }
 
-    private void initBanner() {
-        List<String> bannerBeans = new ArrayList<>();
-        bannerBeans.add("http://alaing.cn/uploads/images/20190612/691307f0342f03cd49f50dce6d1f7c99.png");
-        bannerBeans.add("http://alaing.cn/uploads/images/20190612/691307f0342f03cd49f50dce6d1f7c99.png");
-        bannerBeans.add("http://alaing.cn/uploads/images/20190612/691307f0342f03cd49f50dce6d1f7c99.png");
-        banner.setAdapter(new BGABanner.Adapter<ImageView, String>() {
+        GDMapUtils mapUtils=new GDMapUtils();
+        mapUtils.startOnceLocation(ShopListActivity.this, new AMapLocationListener() {
             @Override
-            public void fillBannerItem(BGABanner banner, ImageView itemView, String item, int position) {
-                Glide.with(mContext)
-                        .load(item).apply(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL))
-                        .into(itemView);
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                lat=aMapLocation.getLatitude();
+                lng=aMapLocation.getLongitude();
+                request(1);
             }
         });
-        banner.setData(bannerBeans, new ArrayList<String>());
-
     }
 
     private void initTitle() {
@@ -170,6 +166,7 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
         title.setText("社区商圈");
+        title.setVisibility(View.GONE);
     }
 
     public boolean isClick1 = false;
@@ -177,7 +174,7 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
     public boolean isClick3 = false;
     public boolean isClick4 = false;
 
-    @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2, R.id.FL3, R.id.FL4,})
+    @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2, R.id.FL3, R.id.FL4})
     public void onViewClicked(View view) {
         Drawable down = getResources().getDrawable(R.mipmap.icon_black_down_arrow);
         Drawable up = getResources().getDrawable(R.mipmap.icon_theme_up_arrow);
@@ -258,11 +255,11 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
 
                 if (isClick4) {
                     isClick4 = false;
-                    tvSelect.setCompoundDrawables(null, null, down, null);
+                    //tvSelect.setCompoundDrawables(null, null, down, null);
                     tvSelect.setTextColor(getResources().getColor(R.color.color_282828));
                 } else {
                     isClick4 = true;
-                    tvSelect.setCompoundDrawables(null, null, up, null);
+                    //tvSelect.setCompoundDrawables(null, null, up, null);
                     tvSelect.setTextColor(getResources().getColor(R.color.color_3BB0D2));
                 }
                 tvShopList.setCompoundDrawables(null, null, down, null);
@@ -285,34 +282,39 @@ public class ShopListActivity extends BaseActivity implements IListAdapter {
 
     @Override
     public void request(int page) {
-        if (IS_DEBUG_ENABLED) {
+        if (false) {
             debug(manager);
         } else {
             showLoadingDialog("请求中");
-            OkHttpUtils.post()
-                    .url(Api.GET_SHOP_LIST)
-                    .addParams("uid", SharedPreferencesUtils.getUid(ShopListActivity.this))
+            OkHttpUtils.get()
+                    .url(Api.LIST_NEAR)
+                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                    .addParams("lng",lng+"")
+                    .addParams("lat", lat+"")
+                    .addParams("near", 10+"")
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
                             hideLoadingDialog();
+                            Log.e("tag"," "+e.getMessage());
                         }
 
                         @Override
                         public void onResponse(String response, int id) {
+                            Log.e("tag",response+" ");
                             hideLoadingDialog();
                             ShopListResponse resp = JsonUtils.parseByGson(response, ShopListResponse.class);
                             if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
-//                                    List<ShopListResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                                    List<ShopListResponse.RowsBean> rowsBeans=resp.getRows();
+                                    manager.setData(rowsBeans);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
                             } else {
                                 showToast("获取商圈失败");
                             }

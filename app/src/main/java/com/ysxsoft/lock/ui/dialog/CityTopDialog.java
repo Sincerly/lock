@@ -55,6 +55,8 @@ public class CityTopDialog extends Dialog {
     private int click1=0;
     private TextView tvName;
 
+    private RBaseAdapter<DefaultPlaceResponse.DataBean.ListkeyBean> keyAdapter;
+
     public CityTopDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         this.mContext = context;
@@ -84,40 +86,6 @@ public class CityTopDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setCanceledOnTouchOutside(true);
         setContentView(init());
-    }
-
-    private void initData(){
-        recyclerView.setAdapter(null);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new GridLayoutManager(mContext,4));
-        List<CityTopResponse.DataBean.ListkeyBean> data=new ArrayList<>();
-        for (int i = 0; i <5; i++) {
-            data.add(new CityTopResponse.DataBean.ListkeyBean());
-        }
-        RBaseAdapter<CityTopResponse.DataBean.ListkeyBean> adapter = new RBaseAdapter<CityTopResponse.DataBean.ListkeyBean>(mContext, R.layout.item_city_top, data) {
-            @Override
-            protected void fillItem(RViewHolder holder, CityTopResponse.DataBean.ListkeyBean item, int position) {
-                TextView name=holder.getView(R.id.name);
-                if(position==0){
-                    name.setSelected(true);
-                    name.setTextColor(Color.parseColor("#3BB0D2"));
-                }else {
-                    name.setSelected(false);
-                    name.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
-                }
-            }
-
-            @Override
-            protected int getViewType(CityTopResponse.DataBean.ListkeyBean item, int position) {
-                return 0;
-            }
-        };
-        adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RViewHolder holder, View view, int position) {
-            }
-        });
-        recyclerView.setAdapter(adapter);
     }
 
     private void initData2(){
@@ -164,6 +132,7 @@ public class CityTopDialog extends Dialog {
             public void onItemClick(RViewHolder holder, View view, int position) {
                 click1=position;
                 adapter.notifyDataSetChanged();
+
             }
         });
         fangShiViewMenu.setAdapter(adapter);
@@ -198,7 +167,7 @@ public class CityTopDialog extends Dialog {
 //                                for (int i = 0; i <5; i++) {
 //                                    data.add(new CityTopResponse.DataBean.ListkeyBean());
 //                                }
-                                RBaseAdapter<DefaultPlaceResponse.DataBean.ListkeyBean> adapter = new RBaseAdapter<DefaultPlaceResponse.DataBean.ListkeyBean>(mContext, R.layout.item_city_top, listkey) {
+                                keyAdapter = new RBaseAdapter<DefaultPlaceResponse.DataBean.ListkeyBean>(mContext, R.layout.item_city_top, listkey) {
                                     @Override
                                     protected void fillItem(RViewHolder holder, DefaultPlaceResponse.DataBean.ListkeyBean item, int position) {
                                         TextView name=holder.getView(R.id.name);
@@ -217,14 +186,14 @@ public class CityTopDialog extends Dialog {
                                         return 0;
                                     }
                                 };
-                                adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
+                                keyAdapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(RViewHolder holder, View view, int position) {
                                         click=position;
-                                        adapter.notifyDataSetChanged();
+                                        keyAdapter.notifyDataSetChanged();
                                     }
                                 });
-                                recyclerView.setAdapter(adapter);
+                                recyclerView.setAdapter(keyAdapter);
                             }
                         }
                     }

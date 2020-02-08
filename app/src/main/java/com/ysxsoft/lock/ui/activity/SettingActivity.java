@@ -60,6 +60,8 @@ import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
 import io.reactivex.functions.Consumer;
 import okhttp3.Call;
 
+import static com.ysxsoft.lock.config.AppConfig.IS_TEST_LOGIN;
+
 /**
  * 设置
  * create by Sincerly on 9999/9/9 0009
@@ -293,6 +295,10 @@ public class SettingActivity extends BaseActivity {
                             if (HttpResponse.SUCCESS.equals(gson.getCode())) {
 //                                toLogin();
                                 SharedPreferencesUtils.saveToken(SettingActivity.this,"");
+                                if(IS_TEST_LOGIN){
+                                    ARouter.getInstance().build("/main/LoginActivity").navigation();
+                                    finish();
+                                }
                                 call();
                             }
                         }
@@ -509,7 +515,6 @@ public class SettingActivity extends BaseActivity {
     };
 
     public void getMobile(String accessToken) {
-        showLoadingDialog("请求中");
         OkHttpUtils.get()
                 .url(Api.GET_MOBILE+"?accessToken="+accessToken)
                 .tag(this)
@@ -517,13 +522,11 @@ public class SettingActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         Log.e("tag","返回值:"+response);
-                        hideLoadingDialog();
                         MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
                             SharedPreferencesUtils.saveToken(SettingActivity.this,resp.getApitoken());

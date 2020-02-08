@@ -1,71 +1,45 @@
 package com.ysxsoft.lock.ui.fragment.main;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.Settings;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
+import androidx.core.view.ViewCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
-import com.dh.bluelock.imp.BlueLockPubCallBackBase;
-import com.dh.bluelock.object.LEDevice;
-import com.dh.bluelock.pub.BlueLockPub;
-import com.dh.bluelock.util.Constants;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.gson.Gson;
-import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.net.HttpResponse;
-import com.ysxsoft.common_base.umeng.share.ShareUtil;
 import com.ysxsoft.common_base.utils.DisplayUtils;
-import com.ysxsoft.common_base.utils.IntentUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
-import com.ysxsoft.common_base.utils.StatusBarUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
-import com.ysxsoft.common_base.view.custom.image.CircleImageView;
-import com.ysxsoft.common_base.view.custom.image.RoundImageView;
+import com.ysxsoft.common_base.utils.ViewHelper;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.models.response.ADResponse;
 import com.ysxsoft.lock.models.response.DefaultPlaceResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
-import com.ysxsoft.lock.ui.activity.UserInfoActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CityTopDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
-import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import okhttp3.Call;
 
 /**
@@ -85,6 +59,8 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     ViewPager2 viewPager2;
     @BindView(R.id.tvName)
     TextView tvName;
+    @BindView(R.id.down)
+    TextView down;
 
     private static final String TAG = "MainFragment2";
     private DefaultPlaceResponse.DataBean dataBean;
@@ -107,7 +83,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         requestData();
     }
 
-    private void requestData() {
+    public void requestData() {
         showLoading("请求中...");
         OkHttpUtils.get()
                 .url(Api.GET_DEFAULT_PLACE_INFO)
@@ -122,34 +98,35 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag", "default place" + response);
                         hideLoadingDialog();
                         DefaultPlaceResponse resp = JsonUtils.parseByGson(response, DefaultPlaceResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 dataBean = resp.getData();
-//                                if (TextUtils.isEmpty(dataBean.getQuarters_name())) {
-//                                    CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
-//                                        @Override
-//                                        public void sure(String requid) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void cancle() {
-//
-//                                        }
-//                                    });
-//                                }
+                                getad();//获取广告
                                 tvName.setText(resp.getData().getQuarters_name());
+                            } else if (HttpResponse.NO_RESPONSE.equals(resp.getCode())) {
+                                CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
+                                    @Override
+                                    public void sure(String requid) {
+
+                                    }
+
+                                    @Override
+                                    public void cancle() {
+
+                                    }
+                                });
                             }
                         }
                     }
                 });
-
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        boolean result = true;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getX();
@@ -172,7 +149,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         if (offsetX > 0) {
                             //页面向右 获取优惠券
                             Log.e(TAG, "页面向右 获取优惠券");
-                            CouponDialog.show(getActivity(), true,"恭喜！,送你一张优惠券", new CouponDialog.OnDialogClickListener() {
+                            CouponDialog.show(getActivity(), true, "恭喜！送你一张优惠券", new CouponDialog.OnDialogClickListener() {
                                 @Override
                                 public void sure() {
                                     PacketActivity.start(0);
@@ -188,12 +165,11 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                             //下 开锁 下滑一半选择小区
                             if (DisplayUtils.getDisplayHeight(getActivity()) / 3 > offsetY && downY < DisplayUtils.getDisplayHeight(getActivity()) / 3) {
 
-                                if(dataBean!=null){
+                                if (dataBean != null) {
                                     if (TextUtils.isEmpty(dataBean.getQuarters_name())) {
                                         CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
                                             @Override
                                             public void sure(String requid) {
-
                                             }
 
                                             @Override
@@ -213,11 +189,16 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                             } else {
                                 Log.e(TAG, "向下");
                                 MainActivity activity = (MainActivity) getActivity();
-                                activity.open();
+                                String deviceId=activity.getDeivceId();
+                                if(dataBean!=null){
+                                    //检查开锁权限
+                                    activity.checkPermision(dataBean.getId(),deviceId,"");
+                                }
                             }
                         } else {
                             //上  广告
                             Log.e(TAG, "切换广告");
+
                             int currentItem = viewPager2.getCurrentItem();
                             if (currentItem != (viewPager2.getAdapter().getItemCount() - 1)) {
                                 viewPager2.setCurrentItem((currentItem + 1));
@@ -238,10 +219,10 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                 }
                 break;
         }
-        return true;
+        return result;
     }
 
-    BaseQuickAdapter<String, BaseViewHolder> adapter;
+    BaseQuickAdapter<ADResponse.DataBean, BaseViewHolder> adapter;
 
     private void initViewPager2() {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewPager2.getLayoutParams();
@@ -253,17 +234,26 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                if(position==0){
+                    down.setAlpha(1);
+                    ViewCompat.animate(down).alpha(1f).alpha(0f).setDuration(600).start();
+                    down.setVisibility(View.GONE);
+                }else{
+                    if(down.getAlpha()!=1){
+                        down.setAlpha(0);
+                        down.setVisibility(View.VISIBLE);
+                        ViewCompat.animate(down).alphaBy(0f).alpha(1f).setDuration(600).start();
+                    }
+                }
             }
         });
 
-        List<String> datas = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            datas.add("" + i);
-        }
+        List<ADResponse.DataBean> datas = new ArrayList<>();
+        datas.add(new ADResponse.DataBean());
         if (adapter == null) {
-            adapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.view_img, datas) {
+            adapter = new BaseQuickAdapter<ADResponse.DataBean, BaseViewHolder>(R.layout.view_img, datas) {
                 @Override
-                protected void convert(BaseViewHolder helper, String item) {
+                protected void convert(BaseViewHolder helper,ADResponse.DataBean item) {
                     ImageView pic = helper.getView(R.id.pic);
                     int resourceId = R.mipmap.a1;
                     switch (helper.getAdapterPosition()) {
@@ -289,6 +279,63 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
             viewPager2.setAdapter(adapter);
         } else {
             viewPager2.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 获取广告
+     */
+    public void getad() {
+        String requid = "";
+        if (dataBean != null) {
+            requid = dataBean.getId();//默认小区id
+            if (requid == null) {
+                return;
+            }
+        }
+        OkHttpUtils.get()
+                .url(Api.AD)
+                //.addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("requid", "1")
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        ADResponse resp = JsonUtils.parseByGson(response, ADResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                Log.e("tag","获取广告");
+                                List<ADResponse.DataBean> dataBeans=new ArrayList<>();
+                                if(resp.getData()!=null){
+                                    dataBeans.add(new ADResponse.DataBean());
+                                    dataBeans.add(resp.getData());
+                                }
+                                adapter.setNewData(dataBeans);
+                            } else {
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("获取广告失败");
+                        }
+                    }
+                });
+    }
+
+    @OnClick({R.id.tvName, R.id.down})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tvName:
+                //选择城市
+                AddPlaceActivity.start();
+                break;
+            case R.id.down:
+                viewPager2.setCurrentItem(0,false);
+                break;
         }
     }
 }

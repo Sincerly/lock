@@ -80,7 +80,7 @@ public class PersonCenterResponse {
         }
 
         public String getNickname() {
-            return nickname;
+            return nickname==null?"邻里邻外":nickname;
         }
 
         public void setNickname(String nickname) {
@@ -88,7 +88,7 @@ public class PersonCenterResponse {
         }
 
         public String getAutograph() {
-            return autograph;
+            return autograph==null?"我为邻里邻外代言，我的地盘我做主":autograph;
         }
 
         public void setAutograph(String autograph) {

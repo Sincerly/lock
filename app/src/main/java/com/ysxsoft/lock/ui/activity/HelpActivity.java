@@ -2,6 +2,7 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -122,21 +123,22 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
         if(IS_DEBUG_ENABLED){
             debug(manager);
         }else{
-            OkHttpUtils.post()
-                    .url(Api.GET_HELP_LIST)
-                    .addParams("uid", SharedPreferencesUtils.getUid(HelpActivity.this))
-                    .addParams("page", String.valueOf(page))
+            OkHttpUtils.get()
+                    .url(Api.HELP_LIST)
+                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
                             manager.releaseRefresh();
+                            Log.e("tag",e.getMessage()+" ");
                         }
 
                         @Override
                         public void onResponse(String response, int id) {
                             manager.releaseRefresh();
+                            Log.e("tag",response+" =");
                             HelpResponse resp = JsonUtils.parseByGson(response, HelpResponse.class);
                             if (resp != null) {
 //                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {

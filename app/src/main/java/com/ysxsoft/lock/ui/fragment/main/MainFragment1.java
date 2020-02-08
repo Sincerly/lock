@@ -165,7 +165,11 @@ public class MainFragment1 extends BaseFragment {
                                 tvL2.setText(resp.getData().getCard2());
                                 tvL3.setText(resp.getData().getCard3());
                                 tvL4.setText(resp.getData().getCard4());
-                                Glide.with(getActivity()).load(AppConfig.BASE_URL+resp.getData().getIcon()).into(civ);
+                                if(resp.getData().getIcon()!=null){
+                                    Glide.with(getActivity()).load(AppConfig.BASE_URL+resp.getData().getIcon()).into(civ);
+                                }else{
+                                    Glide.with(getActivity()).load(R.mipmap.icon_app_logo).into(civ);
+                                }
                                 tv1.setText(resp.getData().getNickname());
                                 tv2.setText(resp.getData().getAutograph());
                             }
@@ -196,7 +200,7 @@ public class MainFragment1 extends BaseFragment {
                                     showToast("已实名认证");
                                     break;
                                 case "201":
-                                    ShopEgisActivity.start("个人认证");
+                                    ShopEgisActivity.start("实名认证");
                                     break;
                                 case "202":
                                     IdcardCertFailedActivity.start();

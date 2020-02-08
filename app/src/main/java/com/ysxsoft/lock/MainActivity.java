@@ -1,26 +1,14 @@
 package com.ysxsoft.lock;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import androidx.annotation.MainThread;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.ViewPropertyAnimatorListener;
-import androidx.core.view.ViewPropertyAnimatorUpdateListener;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -28,7 +16,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.dh.bluelock.imp.BlueLockPubCallBackBase;
-import com.dh.bluelock.imp.OneKeyInterface;
 import com.dh.bluelock.object.LEDevice;
 import com.dh.bluelock.pub.BlueLockPub;
 import com.dh.bluelock.util.Constants;
@@ -37,24 +24,25 @@ import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
-import com.ysxsoft.common_base.utils.DisplayUtils;
-import com.ysxsoft.common_base.utils.StatusBarUtils;
+import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.utils.JsonUtils;
+import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
+import com.ysxsoft.lock.models.response.ADResponse;
+import com.ysxsoft.lock.models.response.CheckPermissionResponse;
 import com.ysxsoft.lock.models.response.MessageEvent;
-import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
+import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
-import com.ysxsoft.lock.ui.activity.UserInfoActivity;
-import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
 import com.ysxsoft.lock.ui.dialog.NearByNoDeviceDialog;
 import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment1;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment2;
-import com.ysxsoft.lock.ui.fragment.main.MainFragment3;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
-import org.simple.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,8 +51,8 @@ import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
+import okhttp3.Call;
 
 @Route(path = "/main/MainActivity")
 public class MainActivity extends BaseActivity {
@@ -84,6 +72,7 @@ public class MainActivity extends BaseActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
+    private MainFragment2 fragment2;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getMainActivity()).navigation();
@@ -92,6 +81,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
+
     }
 
     @Override
@@ -99,10 +89,10 @@ public class MainActivity extends BaseActivity {
         super.doWork();
         EventBus.getDefault().register(this);
         requestPermissions();
-        initData();
         List<Fragment> fragmentList = new ArrayList<>();
 //        fragmentList.add(new MainFragment3());
-        fragmentList.add(new MainFragment2());
+        fragment2 = new MainFragment2();
+        fragmentList.add(fragment2);
         fragmentList.add(new MainFragment1());
         FragmentPagerAdapter pagerAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, new ArrayList<>());
         viewPager.setAdapter(pagerAdapter);
@@ -114,8 +104,8 @@ public class MainActivity extends BaseActivity {
         String pass = messageEvent.getPass();//密码
         String equ_id = messageEvent.getEqu_id();//门禁设备id
         String requ_id = messageEvent.getRequ_id();//小区id
+        checkPermision(equ_id, requ_id, pass);
     }
-
 
     private void requestPermissions() {
         RxPermissions re = new RxPermissions(this);
@@ -151,7 +141,7 @@ public class MainActivity extends BaseActivity {
     private Handler mHandler;
     private final int MST_WHAT_START_SCAN_DEVICE = 0x01;
     private boolean hasScannedDaHaoLock;
-    private boolean isConnected=false;
+    private boolean isConnected = false;
 
     private void initHandler() {
         mHandler = new Handler() {
@@ -173,11 +163,15 @@ public class MainActivity extends BaseActivity {
         blueLockCallBack = new BlueLockPubCallBack();
         blueLockPub.setLockMode(Constants.LOCK_MODE_MANUL, null, false);
 
+        if (blueLockPub != null) {
+            blueLockPub.setResultCallBack(blueLockCallBack);
+        }
         Log.e("tag", result + "");
         if (result == 0) {
             //初始化成功
             //开始扫描设备
-            isConnected=true;
+            isConnected = true;
+            mHandler.removeCallbacksAndMessages(null);
             mHandler.sendEmptyMessageDelayed(MST_WHAT_START_SCAN_DEVICE, 500);
         } else if (result == -4) {
             //不支持蓝牙
@@ -185,15 +179,16 @@ public class MainActivity extends BaseActivity {
         } else if (result == -5) {
             //请开启蓝牙
             ToastUtils.show(MainActivity.this, "请开启蓝牙");
-
             OpenBluthDialog.show(MainActivity.this, new OpenBluthDialog.OnDialogClickListener() {
                 @Override
                 public void sure() {
+                    isConnected = false;
                     startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
                 }
 
                 @Override
                 public void setting() {
+                    isConnected = false;
                     startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
                 }
             });
@@ -242,7 +237,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void disconnectDeviceCallBack(int result, int status) {
 //            showToast("onDisconnectDevice"+result+" "+status);
-            isLocking=false;
+            isLocking = false;
             Log.e(TAG, "disconnectDeviceCallBack " + result);
         }
 
@@ -253,7 +248,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void openCloseDeviceCallBack(int result, int battery, String... params) {
-            isLocking=false;
+            isLocking = false;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -267,7 +262,7 @@ public class MainActivity extends BaseActivity {
                     if (0 == result) {
                         //showToast("已打开");
                         hideLoadingDialog();
-                        CouponDialog.show(MainActivity.this,false, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
+                        CouponDialog.show(MainActivity.this, false, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
                             @Override
                             public void sure() {
                                 PacketActivity.start(0);
@@ -303,14 +298,22 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onPause() {
-        blueLockPub.removeResultCallBack(blueLockCallBack);
+        if (blueLockPub != null) {
+            blueLockPub.removeResultCallBack(blueLockCallBack);
+        }
         mHandler.removeMessages(MST_WHAT_START_SCAN_DEVICE);
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        blueLockPub.setResultCallBack(blueLockCallBack);
+        if (blueLockPub != null) {
+            blueLockPub.setResultCallBack(blueLockCallBack);
+        }
+        if (!isConnected) {
+            //未连接上 进行链接
+            initData();
+        }
         super.onResume();
     }
 
@@ -322,16 +325,38 @@ public class MainActivity extends BaseActivity {
         return map;
     }
 
-    private boolean isLocking=false;
-    public void open() {
-        if(isLocking){
+    private boolean isLocking = false;
+
+    public void open(String devicePassword) {
+        if (isLocking) {
             return;
         }
-        isLocking=true;
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (!adapter.isEnabled()) {
+            //提示开启蓝牙
+            OpenBluthDialog.show(MainActivity.this, new OpenBluthDialog.OnDialogClickListener() {
+                @Override
+                public void sure() {
+                    isConnected = false;
+                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                }
+
+                @Override
+                public void setting() {
+                    isConnected = false;
+                    startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                }
+            });
+            isLocking = false;
+            return;
+        }
+        isLocking = true;
         Set<String> set = map.keySet();
-//        ToastUtils.show(this, "附近设备" + set.size());
         if (set.size() == 0) {
+            Log.e("tag","附近设备数量:"+map.size());
             NearByNoDeviceDialog.show(mContext);
+            isLocking = false;
+            return;
         }
         LEDevice leDevice = null;
         for (Map.Entry<String, LEDevice> entry : map.entrySet()) {
@@ -339,12 +364,71 @@ public class MainActivity extends BaseActivity {
             leDevice = entry.getValue();
         }
         if (leDevice != null) {
-            String devicePassword = "12345678";
-//                                    String devicePasswrod=blueLockPub.generateVisitPassword(leDevice.getDeviceId(),devicePassword,30);
-//                                    Log.e(TAG,"devicePasswrod "+devicePassword);
-            Log.e(TAG, "device：" + new Gson().toJson(leDevice) + "  deviceId:" + leDevice.getDeviceId());
+            if ("".equals(devicePassword)) {
+                devicePassword = "12345678";
+            }
             blueLockPub.oneKeyOpenDevice(leDevice, leDevice.getDeviceId(), devicePassword);
         }
         showLoadingDialog("开门中");
+    }
+
+    /**
+     * 开锁接口
+     *
+     * @param requid
+     * @param equid
+     */
+    public void checkPermision(String requid, String equid, String password) {
+        showLoadingDialog("请求中");
+        OkHttpUtils.post()
+                .url(Api.OPEN_JUR)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(MainActivity.this))
+                .addParams("requid", requid)//小区id
+                .addParams("equid", equid)//设备id
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("tag", "response:" + response);
+                        hideLoadingDialog();
+                        CheckPermissionResponse resp = JsonUtils.parseByGson(response, CheckPermissionResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                int jur = resp.getData().getJur();
+                                if (jur == 1) {
+                                    //有权限开门
+                                    open(password);
+                                } else {
+                                    //无权限开门
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ToastUtils.shortToast(MainActivity.this, "无开门权限!");
+                                        }
+                                    });
+                                }
+                            } else {
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("检测权限失败");
+                        }
+                    }
+                });
+    }
+
+    public String getDeivceId(){
+        String result="";
+        for (Map.Entry<String,LEDevice> entry:map.entrySet()){
+            LEDevice device=entry.getValue();
+            result=device.getDeviceId();
+        }
+        return result;
     }
 }

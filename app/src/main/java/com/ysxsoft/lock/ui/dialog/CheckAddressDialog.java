@@ -97,6 +97,10 @@ public class CheckAddressDialog extends Dialog {
         sure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(requid==null){
+                    ToastUtils.shortToast(mContext,"附近暂无小区");
+                    return;
+                }
                 if (listener != null) {
                     listener.sure(requid);
                 }

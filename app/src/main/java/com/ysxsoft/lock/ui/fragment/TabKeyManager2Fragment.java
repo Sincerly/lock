@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,9 +18,12 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.ImageUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.WebViewUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.AboutMeResponse;
+import com.ysxsoft.lock.models.response.ActionResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.models.response.resp.FaceResponse;
 import com.ysxsoft.lock.net.Api;
@@ -77,6 +81,7 @@ public class TabKeyManager2Fragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         getIsface();
+        request();
     }
 
     private void getIsface() {
@@ -248,5 +253,39 @@ public class TabKeyManager2Fragment extends BaseFragment {
                     break;
             }
         }
+    }
+
+    /**
+     * 用户人脸认证状态
+     */
+    public void request() {
+        OkHttpUtils.post()
+                .url(Api.MEMBER_STATUS)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addHeader("type", "2")//1=人脸识别 2=业主认证 3=租户认证
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        Log.e("tag",e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        ActionResponse resp = JsonUtils.parseByGson(response, ActionResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("获取用户状态失败");
+                        }
+                    }
+                });
     }
 }

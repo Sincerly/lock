@@ -174,8 +174,6 @@ public class ShopDetailActivity extends BaseActivity {
             }
         };
         recyclerView2.setAdapter(adapter2);
-
-
     }
 
     private void initTitle() {

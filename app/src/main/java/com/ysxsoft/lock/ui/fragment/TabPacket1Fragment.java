@@ -3,7 +3,6 @@ package com.ysxsoft.lock.ui.fragment;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alibaba.android.arouter.launcher.ARouter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
 import com.ysxsoft.common_base.base.frame.list.IListAdapter;
@@ -23,25 +20,21 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
+import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
 import com.ysxsoft.lock.models.response.PacketCardResponse;
-import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
+import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.UseCouponActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ysxsoft.lock.ARouterPath;
-import com.ysxsoft.lock.R;
-import com.ysxsoft.lock.net.Api;
-
 import butterknife.BindView;
 import okhttp3.Call;
-
-import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
 
 /**
  * create by Sincerly on 9999/9/9 0009
@@ -165,7 +158,7 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter<Pac
 
     @Override
     public void fillView(BaseViewHolder helper, PacketCardResponse.DataBean item) {
-        helper.setText(R.id.tv2, item.getPrice());
+        helper.setText(R.id.tv2, new BigDecimal(item.getPrice()).intValue()+"");
         helper.setText(R.id.tvmj, "满" + item.getOprice() + "可用");
         helper.setText(R.id.tv3, item.getTitle());
         helper.setText(R.id.tv4, item.getStart_time_str() + "-" + item.getEnd_time_str());

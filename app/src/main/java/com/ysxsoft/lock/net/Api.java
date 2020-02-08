@@ -145,4 +145,11 @@ public interface Api {
     public final String PERSON_DATA=BASE_URL+"/api/members/getmemberinfo";//个人中心
     public final String CARD_DETAIL_DATA=BASE_URL+"/api/members/getmembercard";//获取用户卡券详细信息
     public final String OPEN_JUR=BASE_URL+"/api/members/openjur";//是否有开门权限，返回 权限标记和优惠券信息
+    public final String AD=BASE_URL+"/api/noauth/adv/getLockAdv";//小区id
+
+    public final String MEMBER_STATUS=BASE_URL+"/api/members/getmemberstatus";//获取用户认证状态   type 1=人脸识别 2=业主认证 3=租户认证
+    public final String HELP_LIST=BASE_URL+"/api/noauth/help";//帮助列表
+    public final String ABOUT_ME=BASE_URL+"/api/noauth/aboutus";//关于我们  403接口
+    public final String AGREEMENT=BASE_URL+"/api/noauth/agreement";//服务协议
+    public final String LIST_NEAR=BASE_URL+"/api/business/listnear";//获取附近商圈商户列表
 }
