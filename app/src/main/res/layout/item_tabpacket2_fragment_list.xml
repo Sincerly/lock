@@ -18,6 +18,7 @@
         <com.ysxsoft.common_base.view.custom.image.RoundImageView
             android:id="@+id/riv"
             android:layout_width="60dp"
+            android:scaleType="fitXY"
             android:layout_height="60dp"
             android:src="@mipmap/ic_launcher"
             app:layout_constraintLeft_toLeftOf="parent"

@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
@@ -18,6 +19,7 @@ import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.CheckRecordResponse;
+import com.ysxsoft.lock.models.response.ScanHistoryResponse;
 import com.ysxsoft.lock.models.response.ThrowInListResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
@@ -29,6 +31,7 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -40,7 +43,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * on 2019/12/30 0030
  */
 @Route(path = "/main/ThrowInMoneyRecordActivity")
-public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAdapter<ThrowInListResponse.DataBean> {
+public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAdapter<ScanHistoryResponse.RowsBean> {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -62,10 +65,22 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private ListManager<ThrowInListResponse.DataBean> manager;
+    private ListManager<ScanHistoryResponse.RowsBean> manager;
+
+    @Autowired
+    String touId;
+    @Autowired
+    String putName;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getThrowInMoneyRecordActivity()).navigation();
+    }
+
+    public static void start(String touId,String putName) {
+        ARouter.getInstance().build(ARouterPath.getThrowInMoneyRecordActivity())
+                .withString("touId", touId)
+                .withString("putName", putName)
+                .navigation();
     }
 
     @Override
@@ -76,6 +91,7 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
         initList();
     }
@@ -86,8 +102,6 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
         manager.getAdapter().setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //setResult(RESULT_OK, intent);
-                //finish();
             }
         });
         manager.getAdapter().setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -118,10 +132,10 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
         } else {
             showLoadingDialog("请求中");
             OkHttpUtils.post()
-                    .url(Api.TOU_HISTORY)
+                    .url(Api.TOU_LIST)
                     .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                    .addParams("put_id", touId)
                     .addParams("pageSize", "10")
-                    .addParams("type", "1")
                     .addParams("pageNum", String.valueOf(page))
                     .tag(this)
                     .build()
@@ -136,11 +150,11 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
                         public void onResponse(String response, int id) {
                             manager.releaseRefresh();
                             hideLoadingDialog();
-                            ThrowInListResponse resp = JsonUtils.parseByGson(response, ThrowInListResponse.class);
+                            ScanHistoryResponse resp = JsonUtils.parseByGson(response, ScanHistoryResponse.class);
                             if (resp != null) {
                                 if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                     //请求成功
-                                    List<ThrowInListResponse.DataBean> data = resp.getData();
+                                    List<ScanHistoryResponse.RowsBean> data = resp.getRows();
                                     manager.setData(data);
                                 } else {
                                     //请求失败
@@ -153,21 +167,22 @@ public class ThrowInMoneyRecordActivity extends BaseActivity implements IListAda
     }
 
     @Override
-    public void fillView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
-        helper.setText(R.id.tvName, o.getTitle());
-//        helper.setText(R.id.tvPhone, "手机号码：");
-//        helper.setText(R.id.tvNikeName, "会员昵称：");
-        if (helper.getAdapterPosition() % 2 == 0) {
-            helper.setText(R.id.tvTime, "投放日期：");
-        } else {
-            helper.setText(R.id.tvTime, "核销日期：");
+    public void fillView(BaseViewHolder helper, ScanHistoryResponse.RowsBean o) {
+        helper.setText(R.id.tvName,putName==null?"":putName);
+        helper.setText(R.id.tvName2, o.getTitle());//卡券名称
+        helper.setText(R.id.tvPhone, "手机号码：" + o.getTel());
+        helper.setText(R.id.tvNikeName, "会员昵称：" + o.getName());
+        helper.setText(R.id.tvTime, "核销日期：" + o.getEnd_time_str());
+        if("1".equals(o.getStatus())){
+            helper.setText(R.id.tvCheck, "已核销");
+        }else{
+            helper.setText(R.id.tvCheck, "未核销");
         }
-//        helper.setText(R.id.tvCheck, "已核销");
-//        helper.setText(R.id.tvMoney, "¥");
+        helper.setText(R.id.tvMoney, "¥"+o.getPrice());
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, ThrowInListResponse.DataBean o) {
+    public void fillMuteView(BaseViewHolder helper, ScanHistoryResponse.RowsBean o) {
 
     }
 

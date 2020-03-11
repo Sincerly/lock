@@ -39,6 +39,15 @@ public class PacketRechargeListResponse {
 
     public class DataBean{
         String price;
+        private String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getPrice() {
             return price;

@@ -55,6 +55,30 @@ public class CouponDialog extends Dialog {
                 dismiss();
             }
         });
+
+        if(m1!=null){
+            tvMoney.setText(m1);
+        }
+        if(m2!=null){
+            tvmj.setText("满"+m2+"可用");
+        }
+        if(t!=null){
+            tv3.setText(t);
+        }
+        if(s!=null){
+            tvTime.setText(s+"--"+e);
+        }
+        if(isOpenLock){
+            tvYHQ.setText("本次开门获得"+(m1==null?"0":m1)+"元优惠券");
+        }else{
+            tvYHQ.setVisibility(View.GONE);
+        }
+
+        if(isOpenLock){
+            tvTips.setText("门已开启！欢迎回家");
+        }else{
+            tvTips.setText("获得一张优惠券");
+        }
         return view;
     }
 
@@ -97,7 +121,38 @@ public class CouponDialog extends Dialog {
         return dialog;
     }
 
+    public static CouponDialog show(Context context,boolean isFromLeft,boolean isOpen,String money,String money2,String title,String startTime,String endTime, OnDialogClickListener listener) {
+        int themeId=R.style.CenterDialogStyle;
+        if(isFromLeft){
+            themeId=R.style.LeftDialogOutStyle;
+        }
+        CouponDialog dialog = new CouponDialog(context, themeId);
+        dialog.setListener(listener);
+        dialog.setData(isOpen,money,money2,title,startTime,endTime);
+        dialog.showDialog();
+        return dialog;
+    }
+
+    public void setData(boolean isOpen,String money,String money2,String title,String startTime,String endTime){
+        isOpenLock=isOpen;
+        m1=money;
+        m2=money2;
+        t=title;
+        s=startTime;
+        e=endTime;
+    }
+
+    private String m1,m2,t,s,e;
+    private boolean isOpenLock=true;//是否是开锁
+
     public interface OnDialogClickListener {
         void sure();
+    }
+
+    private void setData(){
+        //本次开门获得500元优惠券
+
+        //减tvMoney
+        //满
     }
 }

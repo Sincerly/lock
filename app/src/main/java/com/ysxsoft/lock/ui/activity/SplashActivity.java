@@ -107,7 +107,7 @@ public class SplashActivity extends BaseActivity {
 
                     .setPrivacyBefore("登录即同意我们的")
                     .setCheckboxHidden(true)
-                    .setAppPrivacyOne("《服务协议》","http://www.baidu.com")
+                    .setAppPrivacyOne("《服务协议》","http://info.linlilinwai.com/appinfo/xy")
                     .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
                     .create());
             helper.getLoginToken(SplashActivity.this, 30000);

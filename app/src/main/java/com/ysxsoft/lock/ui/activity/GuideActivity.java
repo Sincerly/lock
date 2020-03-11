@@ -25,6 +25,7 @@ import com.ysxsoft.common_base.base.ViewPagerViewAdapter;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
@@ -122,23 +123,28 @@ public class GuideActivity extends BaseActivity {
 
     @OnClick(R.id.into)
     public void onViewClicked() {
-        SharedPreferencesUtils.saveFirst(GuideActivity.this,true);
-        if("".equals(SharedPreferencesUtils.getToken(GuideActivity.this))){
-            //调用一键取号
-            if(IS_TEST_LOGIN){
-                ARouter.getInstance().build("/main/LoginActivity").navigation();
-                finish();
-            }
-            call();
-        }else{
-//            ARouter.getInstance().build("/main/MainActivity").navigation();
+        try {
+            SharedPreferencesUtils.saveFirst(GuideActivity.this, true);
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        call();
+//        if("".equals(SharedPreferencesUtils.getToken(GuideActivity.this))){
+//            //调用一键取号
+//            if(IS_TEST_LOGIN){
+//                ARouter.getInstance().build("/main/LoginActivity").navigation();
+//                finish();
+//            }
+//        }else{
+////            ARouter.getInstance().build("/main/MainActivity").navigation();
+//        }
     }
 
     private void call() {
         helper = PhoneNumberAuthHelper.getInstance(this, tokenResultListener);
         helper.setAuthSDKInfo("isgu8Z+e5PJrU4I19s1OUByrgrcXD2aZswJ66jWoD/VRTW7umKLhbR1AAGGcMP9epo/v5LniY45VHEkbVRupMffyzUfTjpWZQyuuMnO/7r66hu/TDpjBKSAB8MqFh+F9FxUpx6+eUn75ZH1RLvJ3VIBRl/5qmu1gIWGFs9dgNFQJtWt6jVw8jfK6ZyXLjakfI5HmV2d2ekoxwDOjacGAeQdR+NobYAwBbCFP2sXB/ouESJd/Pko2aBzODZc1H0+/UWWyPmkNo8M2WTuwa4rT3A0v1/zR7D/b");
         helper.setLoggerEnable(true);
+        helper.setDebugMode(true);
         if (helper.checkEnvAvailable()) {
             //检查终端是否支持号码认证
             helper.setAuthUIConfig(new AuthUIConfig.Builder()
@@ -159,10 +165,10 @@ public class GuideActivity extends BaseActivity {
 
                     .setPrivacyBefore("登录即同意我们的")
                     .setCheckboxHidden(true)
-                    .setAppPrivacyOne("《服务协议》","http://www.baidu.com")
+                    .setAppPrivacyOne("《服务协议》","http://info.linlilinwai.com/appinfo/xy")
                     .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
                     .create());
-            helper.getLoginToken(GuideActivity.this, 30000);
+            helper.getLoginToken(GuideActivity.this, 3000000);
         }
     }
 
@@ -237,14 +243,17 @@ public class GuideActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        ToastUtils.shortToast(GuideActivity.this,"返回值：onError"+e.getMessage());
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("tag","返回值:"+response);
+                        //Log.e("tag","返回值:"+response);
+//                        ToastUtils.shortToast(GuideActivity.this,"返回值："+response);
                         MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
                             SharedPreferencesUtils.saveToken(GuideActivity.this,resp.getApitoken());
+                            SharedPreferencesUtils.savePhone(GuideActivity.this,resp.getPhone());
                             MainActivity.start();
                             helper.quitAuthActivity();
                         } else {

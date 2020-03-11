@@ -96,7 +96,7 @@ public class TabIdcardCert2Fragment extends BaseFragment {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
                             if (resp.getCode().equals(HttpResponse.SUCCESS)) {
-                                ShopEgisActivity.start("个人认证");
+//                                ShopEgisActivity.start("个人认证");
                                 getActivity().finish();
                             }
                             showToast(resp.getMsg());

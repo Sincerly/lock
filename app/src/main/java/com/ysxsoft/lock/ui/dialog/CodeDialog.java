@@ -12,11 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.zxing.util.ZxingUtils;
 import com.ysxsoft.lock.R;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.CodeBean;
 
 /**
  * 券码弹窗
@@ -44,7 +46,9 @@ public class CodeDialog extends Dialog {
         TextView tvCode = view.findViewById(R.id.tvCode);
 
         Glide.with(mContext).load(AppConfig.BASE_URL + logo).into(civ);
-        tvCode.setText(card_id);
+
+        CodeBean codeBean= JsonUtils.parseByGson(card_id,CodeBean.class);
+        tvCode.setText(codeBean.getId());
         iv2Code.setImageBitmap(ZxingUtils.createBarcode(mContext, card_id, DisplayUtils.dp2px(mContext, 160), DisplayUtils.dp2px(mContext, 54), false));
         ivQRCode.setImageBitmap(ZxingUtils.createQRImage(card_id, DisplayUtils.dp2px(mContext, 135), DisplayUtils.dp2px(mContext, 135), null, "url"));
 

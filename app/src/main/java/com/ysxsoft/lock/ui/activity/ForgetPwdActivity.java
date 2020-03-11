@@ -96,6 +96,10 @@ public class ForgetPwdActivity extends BaseActivity {
         ARouter.getInstance().inject(this);
         initTitle();
         utils = GetCodeTimerUtils.getInstance();
+        String phone=SharedPreferencesUtils.getPhone(ForgetPwdActivity.this);
+        if(phone!=null&&!"".equals(phone)){
+            inputLoginPhone.setText(phone);
+        }
     }
 
     private void initTitle() {
@@ -268,5 +272,13 @@ public class ForgetPwdActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(utils!=null){
+            utils.stopDelay();
+        }
     }
 }

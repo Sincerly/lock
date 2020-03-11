@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 
 import com.ysxsoft.common_base.R;
+import com.ysxsoft.common_base.view.dialog.CenterTipsDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,18 +76,18 @@ public class IntentUtils {
      * @param phoneNum
      */
     public static void callEdit(Context context, String phoneNum) {
-//        CenterTipsDialog tipsDialog = new CenterTipsDialog(context, R.style.CenterDialogStyle);
-//        tipsDialog.initContent("是否要拨打" + phoneNum + "?");
-//        tipsDialog.setListener(new CenterTipsDialog.OnDialogClickListener() {
-//            @Override
-//            public void sure() {
-//                Intent intent = new Intent();
-//                intent.setAction(Intent.ACTION_DIAL);
-//                intent.setData(Uri.parse("tel://" + phoneNum));
-//                context.startActivity(intent);
-//            }
-//        });
-//        tipsDialog.showDialog();
+        CenterTipsDialog tipsDialog = new CenterTipsDialog(context, R.style.CenterDialogStyle);
+        tipsDialog.initContent("是否要拨打" + phoneNum + "?");
+        tipsDialog.setListener(new CenterTipsDialog.OnDialogClickListener() {
+            @Override
+            public void sure() {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel://" + phoneNum));
+                context.startActivity(intent);
+            }
+        });
+        tipsDialog.showDialog();
     }
 
     /**

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,7 +19,10 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.ActionResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
+import com.ysxsoft.lock.ui.activity.PropertyCertActivity;
+import com.ysxsoft.lock.ui.activity.StatusActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -26,6 +30,7 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.net.Api;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -36,6 +41,11 @@ import cn.bingoogolapple.photopicker.util.BGAPhotoHelper;
 import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
 import io.reactivex.functions.Consumer;
 import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * create by Sincerly on 9999/9/9 0009
@@ -130,10 +140,67 @@ public class TabPropertyCert1Fragment extends BaseFragment {
                         CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                         if (resp != null) {
                             showToast(resp.getMsg());
+                            getWuYeStatus();
                         }
                     }
                 });
 
+    }
+
+    public void getWuYeStatus() {
+        showLoadingDialog("请求中");
+        OkHttpClient httpClient = new OkHttpClient();
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        builder.addFormDataPart("type","2");//1=人脸识别 2=物业认证
+        Request request = new Request.Builder()
+                .header("Authorization", SharedPreferencesUtils.getToken(getActivity()))//添加请求头的身份认证Token
+                .url(Api.MEMBER_STATUS)
+                .post(builder.build())
+                .build();
+
+        Call call = httpClient.newCall(request);
+        call.enqueue(new Callback() {
+                         @Override
+                         public void onFailure(Call call, IOException e) {
+                             hideLoadingDialog();
+                             Log.e("TAG-失败：", e.toString() + "");
+                         }
+
+                         @Override
+                         public void onResponse(Call call, Response response) throws IOException {
+                             hideLoadingDialog();
+                             ActionResponse resp = JsonUtils.parseByGson(response.body().string(), ActionResponse.class);
+                             if (resp != null) {
+                                 if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                     //请求成功
+                                     switch (resp.getData()){//0=未提交认证 1=通过 2=审核中 3=审核失败
+                                         case "0":
+                                             PropertyCertActivity.start();
+                                             getActivity().finish();
+                                             break;
+                                         case "1":
+                                             StatusActivity.start("物业认证",2,1);
+                                             getActivity().finish();
+                                             break;
+                                         case "2":
+                                             StatusActivity.start("物业认证",0,1);
+                                             getActivity().finish();
+                                             break;
+                                         case "3":
+                                             StatusActivity.start("物业认证",resp.getMsg(),1,1);
+                                             getActivity().finish();
+                                             break;
+                                     }
+                                 } else {
+                                     //请求失败
+                                     showToast(resp.getMsg());
+                                 }
+                             } else {
+                                 showToast("获取物业认证状态失败");
+                             }
+                         }
+                     }
+        );
     }
 
 

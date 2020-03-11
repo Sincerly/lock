@@ -51,6 +51,9 @@ import cn.bingoogolapple.photopicker.util.BGAPhotoHelper;
 import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
 import io.reactivex.functions.Consumer;
 import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * 添加卡卷体验券
@@ -239,7 +242,7 @@ public class AddPacketExperienceActivity extends BaseActivity {
                 });
                 break;
             case R.id.tvOk:
-                submintData();
+                submitData();
                 break;
         }
     }
@@ -269,12 +272,12 @@ public class AddPacketExperienceActivity extends BaseActivity {
 
     }
 
-    private void submintData() {
-
+    private void submitData() {
         showLoadingDialog("请求中");
         PostFormBuilder formBuilder = OkHttpUtils.post().url(Api.ADD_CARD);
         formBuilder.addHeader("Authorization", SharedPreferencesUtils.getToken(mContext));
         formBuilder.addParams("type", String.valueOf(typeClick + 1));//1=现金券 2=团购套餐 3=体验套餐 4=会员卡
+        formBuilder.addParams("collar","1");//限领数量
 
         switch (typeClick) {
             case 0://现金券

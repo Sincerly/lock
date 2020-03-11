@@ -57,11 +57,8 @@ public class LoginActivity extends BaseActivity {
 
     private final String[] BASIC_PERMISSIONS = new String[]{
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            android.Manifest.permission.READ_CONTACTS,
-            android.Manifest.permission.WRITE_CONTACTS,
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
             android.Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -129,6 +126,7 @@ public class LoginActivity extends BaseActivity {
 //                                    showToast(resp.getMsg());
 //                                }
                             Phone.setText(resp.getPhone());
+                            SharedPreferencesUtils.savePhone(LoginActivity.this,resp.getPhone());
                             MainActivity.start();
                             helper.quitAuthActivity();
                         } else {
@@ -223,7 +221,7 @@ public class LoginActivity extends BaseActivity {
 
                     .setPrivacyBefore("登录即同意我们的")
                     .setCheckboxHidden(true)
-                    .setAppPrivacyOne("《服务协议》","http://www.baidu.com")
+                    .setAppPrivacyOne("《服务协议》","http://info.linlilinwai.com/appinfo/xy")
                     .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
                     .create());
 

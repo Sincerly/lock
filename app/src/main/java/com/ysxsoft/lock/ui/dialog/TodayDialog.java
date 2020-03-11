@@ -35,25 +35,14 @@ public class TodayDialog {
     public void showPopDown(View parentView, int offsetX, int offsetY) {
         View view = View.inflate(activity, R.layout.dialog_today, null);
         if (popupWindow == null) {
-            TextView tv1 = view.findViewById(R.id.tv1);
             TextView tv2 = view.findViewById(R.id.tv2);
             TextView tv3 = view.findViewById(R.id.tv3);
             TextView tv4 = view.findViewById(R.id.tv4);
-            TextView tv5 = view.findViewById(R.id.tv5);
-            tv1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.select("true",0);
-                    }
-                    dismiss();
-                }
-            });
             tv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("true",1);
+                        listener.select("现金券",1);
                     }
                     dismiss();
                 }
@@ -62,7 +51,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("true",2);
+                        listener.select("团购套餐",2);
                     }
                     dismiss();
                 }
@@ -71,16 +60,7 @@ public class TodayDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("true",3);
-                    }
-                    dismiss();
-                }
-            });
-            tv5.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.select("true",4);
+                        listener.select("免费体验",3);
                     }
                     dismiss();
                 }

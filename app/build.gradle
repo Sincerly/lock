@@ -97,4 +97,5 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0-beta04'
     implementation files('libs/dhlib_20191012.jar')
     implementation files('libs/BaiduLBS_Android.jar')
+    implementation 'com.caimuhao:rxpicker:1.1.5'
 }

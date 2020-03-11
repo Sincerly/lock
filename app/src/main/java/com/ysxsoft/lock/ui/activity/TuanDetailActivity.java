@@ -3,22 +3,31 @@ package com.ysxsoft.lock.ui.activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.base.ViewPagerFragmentAdapter;
+import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.WebViewUtils;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.widgets.NoScrollViewPager;
+import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.AboutMeResponse;
+import com.ysxsoft.lock.models.response.CardDetailResponse;
 import com.ysxsoft.lock.ui.fragment.TabTuanDetailFragment1;
 import com.ysxsoft.lock.ui.fragment.TabTuanDetailFragment2;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -76,15 +85,19 @@ public class TuanDetailActivity extends BaseActivity {
     TextView tvLevel;
     @BindView(R.id.tvSales)
     TextView tvSales;
+    @BindView(R.id.webview)
+    WebView webview;
 
 
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
     @BindView(R.id.viewPager)
     NoScrollViewPager viewPager;
+    @Autowired
+    String id;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getTuanDetailActivity()).navigation();
+    public static void start(String id) {
+        ARouter.getInstance().build(ARouterPath.getTuanDetailActivity()).withString("id",id).navigation();
     }
 
     @Override
@@ -95,23 +108,66 @@ public class TuanDetailActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
+        WebViewUtils.init(webview);
         initTitle();
         tabLayout.removeAllTabs();
         List<Fragment> fragmentList = new ArrayList<>();
         List<String> titles = new ArrayList<>();
-        titles.add("团购详情");
-        titles.add("使用规则");
-        fragmentList.add(new TabTuanDetailFragment1());
-        fragmentList.add(new TabTuanDetailFragment2());
-        initViewPage(fragmentList, titles);
-        initTabLayout(titles);
+        titles.add("活动详情");
+//        titles.add("使用规则");
+//        fragmentList.add(new TabTuanDetailFragment1());
+//        fragmentList.add(new TabTuanDetailFragment2());
+//        initViewPage(fragmentList, titles);
+//        initTabLayout(titles);
+        getDetail();
+    }
+
+    public void getDetail() {
+        showLoadingDialog("请求中");
+        OkHttpUtils.get()
+                .url(Api.CARD_INFO+"?id="+id)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                        Log.e("tag","onError"+e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        Log.e("tag",""+response);
+                        CardDetailResponse resp = JsonUtils.parseByGson(response, CardDetailResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                //请求成功
+                                CardDetailResponse.DataBean data = resp.getData();
+                                String content=data.getSnum();
+                                tvSales.setText("月销"+content+"单");
+                                tvName.setText(data.getTitle());
+                                Glide.with(TuanDetailActivity.this).load(AppConfig.BASE_URL+data.getImg()).into(riv);
+                                WebViewUtils.setH5Data(webview,data.getRemark());
+//                                WebViewUtils.setH5Data(webview,"2225<img src='http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/business/card/u1k3upjks3y9bdwd.jpeg'><img src='http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/business/card/u1k3upjks3y9bdwd.jpeg'><img src='http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/business/card/u1k3upjks3y9bdwd.jpeg'><img src='http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/business/card/u1k3upjks3y9bdwd.jpeg'><img src='http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/business/card/u1k3upjks3y9bdwd.jpeg'><img src='http://linlilinwaiv2.oss-cn-shanghai.aliyuncs.com/business/card/u1k3upjks3y9bdwd.jpeg'>");
+                            } else {
+                                //请求失败
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("获取关于我们失败");
+                        }
+                    }
+                });
     }
 
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("团购详情");
+        title.setText("活动详情");
 
         //1,获取图片的高度
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.icon_ratingbar_ok);

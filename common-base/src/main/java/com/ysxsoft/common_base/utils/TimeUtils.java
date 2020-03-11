@@ -77,9 +77,13 @@ public class TimeUtils {
             ss = "" + s;
         }
         if (h > 0) {
-            formatTime = hs + ":" + ms + ":" + ss;
+            if("00".equals(ms)){
+                formatTime = hs + "小时";
+            }else{
+                formatTime = hs + "小时" + ms + "分钟";
+            }
         } else {
-            formatTime = ms + ":" + ss;
+            formatTime = ms + "分钟";
         }
         return formatTime;
     }

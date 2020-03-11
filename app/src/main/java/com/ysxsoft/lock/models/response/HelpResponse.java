@@ -1,5 +1,7 @@
 package com.ysxsoft.lock.models.response;
 
+import java.util.List;
+
 /**
 * 帮助
 * create by Sincerly on 9999/9/9 0009
@@ -10,12 +12,12 @@ public class HelpResponse{
     /**
      * msg : 操作成功
      * code : 200
-     * data : {"id":1,"title":null,"content":"服务协议","create_time":"2020-01-09 00:08:32"}
+     * data : [{"id":3,"title":"帮助列表","content":"帮助列表","create_time":"2020-01-18 17:49:55"},{"id":4,"title":"帮助列表1","content":"帮助列表1","create_time":"2020-01-18 17:50:03"}]
      */
 
     private String msg;
     private String code;
-    private DataBean data;
+    private List<DataBean> data;
 
     public String getMsg() {
         return msg;
@@ -33,20 +35,20 @@ public class HelpResponse{
         this.code = code;
     }
 
-    public DataBean getData() {
+    public List<DataBean> getData() {
         return data;
     }
 
-    public void setData(DataBean data) {
+    public void setData(List<DataBean> data) {
         this.data = data;
     }
 
     public static class DataBean {
         /**
-         * id : 1
-         * title : null
-         * content : 服务协议
-         * create_time : 2020-01-09 00:08:32
+         * id : 3
+         * title : 帮助列表
+         * content : 帮助列表
+         * create_time : 2020-01-18 17:49:55
          */
 
         private String id;

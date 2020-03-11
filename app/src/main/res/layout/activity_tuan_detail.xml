@@ -23,9 +23,9 @@
             <com.ysxsoft.common_base.view.custom.image.RoundImageView
                 android:id="@+id/riv"
                 android:layout_width="match_parent"
+                android:scaleType="fitXY"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
-                android:background="@mipmap/icon_business_banner"
                 android:minHeight="180dp"
                 app:radius="@dimen/dp_10" />
 
@@ -36,8 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginVertical="@dimen/dp_10"
-                android:singleLine="true"
-                android:text="沙拉原滋味来尝沙拉原生态态沙拉原原…"
+                android:text=""
                 android:textColor="@color/color_282828"
                 android:textSize="17sp" />
 
@@ -54,6 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
+                    android:visibility="gone"
                     android:numStars="5"
                     android:progressBackgroundTint="@color/color_2AA9E0"
                     android:progressTint="@color/color_2AA9E0"
@@ -61,6 +61,7 @@
                     android:stepSize="1.0" />
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tvLevel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,8 +74,7 @@
                     android:id="@+id/tvSales"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="月售300单"
-                    android:layout_marginLeft="@dimen/dp_20"
+                    android:text=""
                     android:textColor="@color/color_666666"
                     android:textSize="11sp" />
 
@@ -91,6 +91,7 @@
                 app:tabIndicatorColor="@color/colorPrimary"
                 app:tabIndicatorFullWidth="false"
                 app:tabMode="scrollable"
+                android:visibility="gone"
                 app:tabSelectedTextColor="@color/colorPrimary"
                 android:background="@color/transparent"
                 app:tabTextColor="@color/color_989898">
@@ -98,9 +99,17 @@
 
             <com.ysxsoft.common_base.view.widgets.NoScrollViewPager
                 android:id="@+id/viewPager"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/dp_5"
+                android:layout_marginRight="@dimen/dp_5"
+
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 

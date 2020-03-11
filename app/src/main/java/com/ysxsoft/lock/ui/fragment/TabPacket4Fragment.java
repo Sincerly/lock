@@ -1,15 +1,18 @@
 package com.ysxsoft.lock.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
@@ -22,9 +25,11 @@ import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.CodeBean;
 import com.ysxsoft.lock.models.response.PacketCardResponse;
 import com.ysxsoft.lock.ui.dialog.CodeDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.builder.PostFormBuilder;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.List;
@@ -51,6 +56,16 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter<Pac
     SmartRefreshLayout smartRefresh;
     ListManager manager;
 
+    private String shopId;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            shopId=getArguments().getString("shopId");
+        }
+    }
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_tabpacket4;
@@ -69,7 +84,10 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter<Pac
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 PacketCardResponse.DataBean item = (PacketCardResponse.DataBean)manager.getAdapter().getItem(position);
                 if (item.getStatus().equals("1")) {
-                    CodeDialog.show(getActivity(),item.getCard_id(),item.getLogo());
+                    CodeBean bean=new CodeBean();
+                    bean.setId(item.getId());
+                    bean.setType("1");
+                    CodeDialog.show(getActivity(),new Gson().toJson(bean),item.getLogo());
                 }
             }
         });
@@ -84,12 +102,15 @@ public class TabPacket4Fragment extends BaseFragment implements IListAdapter<Pac
 
     @Override
     public void request(int page) {
-        OkHttpUtils.post()
+        PostFormBuilder builder=OkHttpUtils.post()
                 .url(Api.MEM_BERCARD)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
                 .addParams("type", "4")
-                .addParams("status","")
-                .tag(this)
+                .addParams("status","");
+        if(shopId!=null){
+            builder.addParams("business_id", shopId+"");
+        }
+        builder.tag(this)
                 .build()
                 .execute(new StringCallback() {
                     @Override

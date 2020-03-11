@@ -4,9 +4,11 @@ import android.content.Context;
 
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
+import com.caimuhao.rxpicker.RxPicker;
 import com.dh.bluelock.pub.BlueLockPub;
 import com.ysxsoft.common_base.base.BaseApplication;
 import com.ysxsoft.common_base.jpush.JpushUtils;
+import com.ysxsoft.lock.utils.RxPickerGlideImageLoader;
 
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ public class BApplication extends BaseApplication {
     @Override
     protected void handle() {
         super.handle();
+        RxPicker.init(new RxPickerGlideImageLoader());
         JpushUtils.init(this);
         BlueLockPub.bleLockInit(this);
         context = super.getApplicationContext();

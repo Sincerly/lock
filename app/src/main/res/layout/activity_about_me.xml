@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/t"
@@ -13,5 +13,33 @@
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/icon_about_me"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"></ImageView>
+
+            <TextView
+                android:lineSpacingMultiplier="1.3"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_282828"
+                android:textSize="@dimen/sp_14"
+                android:text="\t\t\t\t上海邻里邻外信息科技有限公司成立于2017年初，公司以物联网应用技术为核心，为政府、物业提供一站式智慧社区解决方案，为社区居民提供智慧社区生活服务平台，致力于成为智慧社区AloT生态圈的领航者。\n\t\t\t\t邻里邻外依托智能硬件体系、社区应用系统及多元化产品的建设，运用人工智能+大数据+云计算等创新性技术，助推社区传统物业管理向智慧社区物业服务升级。面向物业管理、智能家居、社区安防、社区医疗、社区养老、社区商圈等领域，全方位打造设施智能、服务便捷、管理精细、生态官居的智慧社区。"></TextView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

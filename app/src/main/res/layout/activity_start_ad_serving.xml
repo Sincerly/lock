@@ -24,8 +24,36 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_44"
+                    android:background="@color/colorWhite"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center_vertical"
+                        android:text="投放名称"
+                        android:textColor="@color/color_282828"
+                        android:textSize="@dimen/sp_14" />
+
+                    <EditText
+                        android:id="@+id/tvname"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="center_vertical|right"
+                        android:hint="请输入投放名称"
+                        android:textColor="@color/color_666666"
+                        android:textSize="@dimen/sp_14" />
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -61,14 +89,12 @@
                             android:text="添加"
                             android:textColor="@color/color_666666"
                             android:textSize="@dimen/sp_14" />
-
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-
                 </LinearLayout>
 
                 <TextView
@@ -207,9 +233,9 @@
                 android:id="@+id/tvMoney"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2000点"
                 android:textColor="@color/colorRed"
                 android:textSize="17sp"
+                android:text="0点"
                 app:layout_constraintBottom_toBottomOf="@id/tv1"
                 app:layout_constraintLeft_toRightOf="@id/tv1" />
 
@@ -217,7 +243,7 @@
                 android:id="@+id/tvUseMoney"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="可用点数10000"
+                android:text="可用点数"
                 android:textColor="@color/color_666666"
                 android:textSize="11sp"
                 app:layout_constraintLeft_toLeftOf="@id/tv1"

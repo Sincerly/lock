@@ -136,10 +136,13 @@ public class ShopCenterActivity extends BaseActivity {
                                     finish();
                                     break;
                                 case "201":
-                                    ShopEgisActivity.start("个人认证");
+//                                    ShopEgisActivity.start("个人认证");
+                                    StatusActivity.start("实名认证",0,0);
                                     break;
                                 case "202":
-                                    IdcardCertFailedActivity.start();
+//                                    IdcardCertFailedActivity.start();
+                                    StatusActivity.start("实名认证",1,0);
+                                    finish();
                                     break;
                                 case "203":
                                     CertificationDialog.show(mContext, new CertificationDialog.OnDialogClickListener() {

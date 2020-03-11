@@ -24,9 +24,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:appComponentFactory="compont"
-        android:requestLegacyExternalStorage="true"
         tools:replace="android:appComponentFactory">
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -74,6 +74,8 @@
         <activity android:name=".ui.activity.ForgetPwdActivity"></activity>
         <!--卡包-->
         <activity android:name=".ui.activity.PacketActivity"/>
+        <!--审核状态页面-->
+        <activity android:name=".ui.activity.StatusActivity"/>
         <!--商铺详情-->
         <activity android:name=".ui.activity.ShopDetailActivity"></activity>
         <!--商圈-->
@@ -138,8 +140,12 @@
         <activity android:name=".ui.activity.PacketRechargeActivity"></activity>
         <!--充值成功-->
         <activity android:name=".ui.activity.RechargeSucessActivity"></activity>
-        <!--帮助-->
+        <!--投放记录-->
+        <activity android:name=".ui.activity.TouListActivity"></activity>
+        <!--帮助列表-->
         <activity android:name=".ui.activity.HelpActivity"></activity>
+        <!--网页-->
+        <activity android:name=".ui.activity.WebViewActivity"></activity>
 
         <!--联通电信授权页-->
         <activity

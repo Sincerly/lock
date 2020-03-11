@@ -9,6 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/dp_20"
         android:paddingVertical="@dimen/dp_10">
 
         <TextView
@@ -23,96 +24,111 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:id="@+id/tv3"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="核销数"
-            android:textColor="@color/color_999999"
-            android:layout_marginTop="@dimen/dp_10"
-            android:textSize="@dimen/sp_10"
             app:layout_constraintLeft_toLeftOf="@id/tvShopName"
-            app:layout_constraintTop_toBottomOf="@id/tvShopName" />
-
-        <TextView
-            android:id="@+id/tvNum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_5"
-            android:text="100"
-            android:textColor="@color/color_282828"
-            android:textSize="@dimen/sp_10"
-            app:layout_constraintLeft_toRightOf="@id/tv3"
-            app:layout_constraintTop_toTopOf="@id/tv3" />
-
-        <TextView
-            android:id="@+id/tv4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:text="总投放"
-            android:textColor="@color/color_999999"
-            android:textSize="@dimen/sp_10"
-            app:layout_constraintLeft_toRightOf="@id/tvNum"
-            app:layout_constraintTop_toTopOf="@id/tv3" />
-
-        <TextView
-            android:id="@+id/tvSum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_5"
-            android:text="1000"
-            android:textColor="@color/color_282828"
-            android:textSize="@dimen/sp_10"
-            app:layout_constraintLeft_toRightOf="@id/tv4"
-            app:layout_constraintTop_toTopOf="@id/tv4" />
-
-        <TextView
-            android:id="@+id/tv5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="添加日期"
-            android:textColor="@color/color_999999"
-            android:textSize="@dimen/sp_10"
-            android:layout_marginTop="@dimen/dp_5"
-            app:layout_constraintLeft_toLeftOf="@id/tvShopName"
-            app:layout_constraintTop_toBottomOf="@id/tv3" />
-
-        <TextView
-            android:id="@+id/tvTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_5"
-            android:text="2019-12-18 10:00:00"
-            android:textColor="@color/color_282828"
-            android:textSize="@dimen/sp_10"
-            app:layout_constraintBottom_toBottomOf="@id/tv5"
-            app:layout_constraintLeft_toRightOf="@id/tv5" />
-
-
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/dp_5"
-            android:text="待投中"
-            android:textColor="@color/color_3BB0D2"
-            android:textSize="@dimen/sp_10"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/iv"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <ImageView
-            android:id="@+id/iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
-            android:src="@mipmap/icon_right_arrow"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="@dimen/dp_8"
+            app:layout_constraintTop_toBottomOf="@id/tvShopName">
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="总投放"
+                        android:textColor="@color/color_999999"
+                        android:textSize="@dimen/sp_10"
+                        app:layout_constraintLeft_toLeftOf="@id/tvShopName"
+                        app:layout_constraintTop_toBottomOf="@id/tvShopName" />
+
+                    <TextView
+                        android:id="@+id/tvSum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100"
+                        android:textColor="@color/color_282828"
+                        android:textSize="@dimen/sp_10"
+                        app:layout_constraintLeft_toRightOf="@id/tv3"
+                        app:layout_constraintTop_toTopOf="@id/tv3" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="核实次数"
+                    android:textColor="@color/color_999999"
+                    android:textSize="@dimen/sp_10"
+                    app:layout_constraintLeft_toLeftOf="@id/tvShopName"
+                    app:layout_constraintTop_toBottomOf="@id/tvShopName" />
+
+                <TextView
+                    android:id="@+id/tvNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100"
+                    android:textColor="@color/color_282828"
+                    android:textSize="@dimen/sp_10"
+                    app:layout_constraintLeft_toRightOf="@id/tv3"
+                    app:layout_constraintTop_toTopOf="@id/tv3" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="添加日期"
+                        android:textColor="@color/color_999999"
+                        android:textSize="@dimen/sp_10"
+                        app:layout_constraintLeft_toLeftOf="@id/tvShopName"
+                        app:layout_constraintTop_toBottomOf="@id/tvShopName" />
+
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100"
+                        android:textColor="@color/color_282828"
+                        android:textSize="@dimen/sp_10"
+                        app:layout_constraintLeft_toRightOf="@id/tv3"
+                        app:layout_constraintTop_toTopOf="@id/tv3" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,5 +136,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_1"
         android:layout_marginHorizontal="15dp"
-        android:background="@color/color_ebebeb" />
+        android:background="@color/color_f2f2f2" />
+    <include layout="@layout/layout_shop_menu" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_8"
+        android:background="@color/color_f2f2f2" />
 </LinearLayout>

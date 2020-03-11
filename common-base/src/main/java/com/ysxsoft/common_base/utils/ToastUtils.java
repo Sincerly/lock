@@ -40,19 +40,21 @@ public class ToastUtils {
 	 * @return void
 	 */
 	public static void longToast( Context context,  String message) {
-		if (null == toast) {
+//		if (null == toast) {
 			toast = new Toast(context);
 			toast.setDuration(Toast.LENGTH_LONG);
 			View view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_toast, null);
 			TextView textView = (TextView) view.findViewById(R.id.toastContent);
 			textView.setText(message);
 			toast.setView(view);
+			toast.setGravity(Gravity.CENTER,0,0);
 			toast.show();
-		} else {
-			TextView textView = (TextView) toast.getView().findViewById(R.id.toastContent);
-			textView.setText(message);
-			toast.show();
-		}
+//		} else {
+//			TextView textView = (TextView) toast.getView().findViewById(R.id.toastContent);
+//			textView.setText(message);
+//			toast.setGravity(Gravity.CENTER,0,0);
+//			toast.show();
+//		}
 	}
 
 	/**

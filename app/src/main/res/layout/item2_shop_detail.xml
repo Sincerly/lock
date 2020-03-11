@@ -15,15 +15,17 @@
         android:orientation="vertical">
 
         <com.ysxsoft.common_base.view.custom.image.RoundImageView
+           android:id="@+id/riv"
             android:layout_width="match_parent"
             android:layout_height="85dp"
-            android:background="@mipmap/ic_launcher"
             app:leftBottomRadius="0dp"
             app:leftRadius="@dimen/dp_10"
+            android:scaleType="fitXY"
             app:rightBottomRadius="0dp"
             app:rightRadius="@dimen/dp_10" />
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_10"
@@ -33,6 +35,7 @@
             android:textSize="@dimen/sp_14" />
 
         <TextView
+            android:id="@+id/address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="上海市 南明区美味小吃"

@@ -91,7 +91,8 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter<Ch
     private AllDialog allDialog;
     private MyBroadCast myBroadCast;
 
-    private String todayType="true";
+    private String todayType="1";
+    private String allType="true";//true今日数据  false历史数据
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getCheckRecordActivity()).navigation();
@@ -161,7 +162,7 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter<Ch
         title.setText("核销记录");
     }
 
-    private int intToday;
+    private int intToday=1;
 
     @OnClick({R.id.backLayout, R.id.FL1, R.id.FL2})
     public void onViewClicked(View view) {
@@ -188,6 +189,7 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter<Ch
                     public void select(String type, int today) {
                         intToday = today;
                         todayType = type;
+                        tvToday.setText(type);
                         request(1);
                     }
                 });
@@ -212,8 +214,12 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter<Ch
                 allDialog.setOnPopupWindowListener(new AllDialog.OnPopupWindowListener() {
                     @Override
                     public void select(String type,int allDay) {
-                        intToday = allDay;
-                        todayType = type;
+                        if(allDay==0){
+                            allType= "true";
+                        }else{
+                            allType= "false";
+                        }
+                        tvAll.setText(type);
                         request(1);
                     }
                 });
@@ -244,7 +250,7 @@ public class CheckRecordActivity extends BaseActivity implements IListAdapter<Ch
             showLoadingDialog("请求中");
             GetBuilder getBuilder = OkHttpUtils.get().url(Api.HX_HISTORY);
             getBuilder.addHeader("Authorization", SharedPreferencesUtils.getToken(mContext));
-            getBuilder.addParams("today", todayType);
+            getBuilder.addParams("today", allType);
             getBuilder.addParams("type", String.valueOf(intToday));
             getBuilder.addParams("pageNum", String.valueOf(page))
                     .addParams("pageSize", "10")

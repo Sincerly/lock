@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,16 +34,27 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
+import com.ysxsoft.common_base.view.dialog.CenterTipsDialog;
 import com.ysxsoft.common_base.view.widgets.MultipleStatusView;
 import com.ysxsoft.lock.base.RBaseAdapter;
 import com.ysxsoft.lock.base.RViewHolder;
+import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.response.ActionResponse;
 import com.ysxsoft.lock.models.response.CardListResponse;
+import com.ysxsoft.lock.models.response.IsAuthResponse;
+import com.ysxsoft.lock.models.response.TypeResponse;
 import com.ysxsoft.lock.ui.activity.AddPacketMoneyActivity;
 import com.ysxsoft.lock.ui.activity.CheckRecordActivity;
 import com.ysxsoft.lock.ui.activity.CheckSucessActivity;
 import com.ysxsoft.lock.ui.activity.HelpActivity;
+import com.ysxsoft.lock.ui.activity.IdcardCertActivity;
+import com.ysxsoft.lock.ui.activity.ShopInfoActivity;
 import com.ysxsoft.lock.ui.activity.StartAdServingActivity;
+import com.ysxsoft.lock.ui.activity.StatusActivity;
 import com.ysxsoft.lock.ui.activity.ThrowInListActivity;
+import com.ysxsoft.lock.ui.activity.TouListActivity;
+import com.ysxsoft.lock.ui.dialog.ApplyShopDialog;
+import com.ysxsoft.lock.ui.dialog.CertificationDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -96,7 +108,6 @@ public class TabShopManager1Fragment extends BaseFragment {
     }
 
     private void requestData() {
-        //showLoadingDialog("请求中...");
         OkHttpUtils.get()
                 .url(Api.CARD_LIST)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
@@ -107,12 +118,10 @@ public class TabShopManager1Fragment extends BaseFragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        //hideLoadingDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        //hideLoadingDialog();
                         CardListResponse resp = JsonUtils.parseByGson(response, CardListResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
@@ -123,31 +132,61 @@ public class TabShopManager1Fragment extends BaseFragment {
                                     protected void fillItem(RViewHolder holder, CardListResponse.DataBean item, int position) {
                                         holder.setText(R.id.tv2, item.getPrice());
 //                holder.setText(R.id.tvMj,"");
+                                        String oprice = item.getOprice();
+                                        if ("0.0".equals(oprice)) {
+                                            holder.setText(R.id.tvMj, "全场通用");
+                                        }else{
+                                            holder.setText(R.id.tvMj, "满"+oprice+"可用");
+                                        }
                                         holder.setText(R.id.tvShopName, item.getTitle());
                                         holder.setText(R.id.tvNum, item.getYsnum());
                                         holder.setText(R.id.tvSum, item.getTotalnum());
-//                holder.setText(R.id.tvTime,"");
-                                        TextView tvStatus = holder.getView(R.id.tvStatus);
-                                        switch (holder.getAdapterPosition() % 4) {
-                                            case 0:
-                                                tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                                                tvStatus.setText("待投中");
-                                                StartAdServingActivity.start();
-                                                break;
-                                            case 1:
-                                                tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
-                                                tvStatus.setText("投放结束");
-                                                break;
-                                            case 2:
-                                                tvStatus.setTextColor(getResources().getColor(R.color.color_999999));
-                                                tvStatus.setText("投放中");
-                                                break;
-                                            case 3:
-                                                tvStatus.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-                                                tvStatus.setText("继续投放");
-                                                StartAdServingActivity.start();
-                                                break;
-                                        }
+                                        holder.setText(R.id.tvTime, item.getCreate_time2());
+                                        TextView submit = holder.getView(R.id.submit);
+                                        TextView delete = holder.getView(R.id.delete);
+                                        TextView edit = holder.getView(R.id.edit);
+                                        TextView list = holder.getView(R.id.list);
+                                        submit.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                //开始投放
+                                                StartAdServingActivity.start(item.getId());
+                                            }
+                                        });
+                                        edit.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                //编辑卡券信息
+                                                int totalNum=Integer.parseInt(item.getTotalnum());
+                                                boolean canEdit=false;
+                                                if(totalNum==0){
+                                                    canEdit=true;
+                                                }
+                                                AddPacketMoneyActivity.start(0,canEdit,item.getId(),item.getPrice(),item.getOprice(), AppConfig .BASE_URL+item.getImg(),item.getTitle(),item.getPrice());
+                                            }
+                                        });
+                                        delete.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                //删除卡券信息
+                                                CenterTipsDialog tipsDialog=new CenterTipsDialog(getActivity(),R.style.CenterDialogStyle);
+                                                tipsDialog.initContent("是否删除优惠券?");
+                                                tipsDialog.setListener(new CenterTipsDialog.OnDialogClickListener() {
+                                                    @Override
+                                                    public void sure() {
+                                                        delete(item.getId());
+                                                    }
+                                                });
+                                                tipsDialog.showDialog();
+                                            }
+                                        });
+                                        list.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                //列表  跳转到投放列表
+                                                TouListActivity.start(item.getId());
+                                            }
+                                        });
                                     }
 
                                     @Override
@@ -155,8 +194,13 @@ public class TabShopManager1Fragment extends BaseFragment {
                                         return 0;
                                     }
                                 };
+                                adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(RViewHolder holder, View view, int position) {
+                                        TouListActivity.start(adapter.getItemData(position).getId());
+                                    }
+                                });
                                 recyclerView.setAdapter(adapter);
-
                             }
                         }
                     }
@@ -165,20 +209,20 @@ public class TabShopManager1Fragment extends BaseFragment {
 
     private void initList(View view) {
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
-            @Override
-            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int position) {
-
-                SwipeMenuItem setNormalItem = new SwipeMenuItem(getActivity());
-                setNormalItem.setWidth(DisplayUtils.dp2px(getActivity(), 50));
-                setNormalItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-                setNormalItem.setBackgroundColor(Color.parseColor("#F9596C"));
-                setNormalItem.setTextSize(12);
-                setNormalItem.setText("删除\n" + "卡券");
-                setNormalItem.setTextColor(Color.parseColor("#FFFFFF"));
-                rightMenu.addMenuItem(setNormalItem);
-            }
-        });
+//        recyclerView.setSwipeMenuCreator(new SwipeMenuCreator() {
+//            @Override
+//            public void onCreateMenu(SwipeMenu leftMenu, SwipeMenu rightMenu, int position) {
+//
+//                SwipeMenuItem setNormalItem = new SwipeMenuItem(getActivity());
+//                setNormalItem.setWidth(DisplayUtils.dp2px(getActivity(), 50));
+//                setNormalItem.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+//                setNormalItem.setBackgroundColor(Color.parseColor("#F9596C"));
+//                setNormalItem.setTextSize(12);
+//                setNormalItem.setText("删除\n" + "卡券");
+//                setNormalItem.setTextColor(Color.parseColor("#FFFFFF"));
+//                rightMenu.addMenuItem(setNormalItem);
+//            }
+//        });
         recyclerView.setOnItemMenuClickListener(new OnItemMenuClickListener() {
             @Override
             public void onItemClick(SwipeMenuBridge menuBridge, int position) {
@@ -203,9 +247,68 @@ public class TabShopManager1Fragment extends BaseFragment {
                 ThrowInListActivity.start(0, business_id);
                 break;
             case R.id.FL2:
-                AddPacketMoneyActivity.start();
+                getStatus();
                 break;
         }
     }
 
+    private void getStatus(){
+        OkHttpUtils.post()
+                .url(Api.IS_BUSINESS)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        IsAuthResponse resp = JsonUtils.parseByGson(response, IsAuthResponse.class);
+                        if (resp != null) {
+                            switch (resp.getCode()) {
+                                case "200"://已完善
+                                    AddPacketMoneyActivity.start(0);
+                                    break;
+                                case "201"://未完善
+                                    ApplyShopDialog.show(getActivity(), new ApplyShopDialog.OnDialogClickListener() {
+                                        @Override
+                                        public void sure() {
+                                            ShopInfoActivity.start();
+                                        }
+                                    });
+                                    break;
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void delete(String cardId) {
+        OkHttpUtils.post()
+                .url(Api.DELETE_CARD)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("id", cardId)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        ActionResponse resp = JsonUtils.parseByGson(response, ActionResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                requestData();
+                            } else {
+                                showToast(resp.getMsg());
+                            }
+                        }
+                    }
+                });
+    }
 }

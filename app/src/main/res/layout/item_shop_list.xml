@@ -18,6 +18,7 @@
             android:layout_height="75dp"
             android:layout_margin="@dimen/dp_10"
             android:src="@mipmap/ic_launcher"
+            android:scaleType="fitXY"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:radius="@dimen/dp_10" />
@@ -67,8 +68,8 @@
             android:id="@+id/tvSales"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
             android:text="月售300单"
+            android:layout_marginTop="@dimen/dp_4"
             android:textColor="@color/color_666666"
             android:textSize="11sp"
             app:layout_constraintLeft_toLeftOf="@id/tvName"
@@ -76,16 +77,13 @@
 
         <LinearLayout
             android:id="@+id/LL"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            app:layout_constraintRight_toRightOf="parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_5"
-            android:background="@drawable/bg_shape_gray_color_r8"
            android:layout_marginRight="@dimen/dp_10"
-            android:layout_marginLeft="95dp"
             android:orientation="vertical"
-            android:paddingVertical="@dimen/dp_5"
-            android:paddingHorizontal="@dimen/dp_10"
-            app:layout_constraintLeft_toLeftOf="@id/rbar"
+            app:layout_constraintLeft_toLeftOf="@id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvSales">
 
             <TextView
@@ -95,8 +93,6 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="满20减10"
-                android:drawablePadding="@dimen/dp_5"
-                android:drawableLeft="@mipmap/icon_quan"
                 android:textColor="@color/color_999999"
                 android:textSize="11sp" />
 
@@ -106,36 +102,45 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:drawablePadding="@dimen/dp_5"
-                android:drawableLeft="@mipmap/icon_hui"
                 android:text="到店立减5.00元"
+                android:visibility="gone"
                 android:textColor="@color/color_999999"
                 android:textSize="11sp" />
 
-
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_999999"
-            android:textSize="@dimen/sp_10"
+        <LinearLayout
+            android:layout_width="0dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/LL"
             app:layout_constraintLeft_toLeftOf="@id/LL"
-            android:layout_marginTop="@dimen/dp_5"
-            android:text="上海市 南明区美味小吃"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_999999"
+                android:layout_weight="1"
+                android:textSize="@dimen/sp_10"
+                app:layout_constraintTop_toBottomOf="@id/LL"
+                app:layout_constraintLeft_toLeftOf="@id/LL"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="上海市 南明区美味小吃"/>
 
-        <TextView
-            android:id="@+id/tvDistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/sp_10"
-            android:textColor="@color/color_999999"
-            android:text="距562m"
-            app:layout_constraintTop_toTopOf="@id/tvAddress"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="@dimen/dp_10"/>
+            <TextView
+                android:id="@+id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_10"
+                android:textColor="@color/color_999999"
+                android:text="距562m"
+                app:layout_constraintTop_toTopOf="@id/tvAddress"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="@dimen/dp_10"/>
+        </LinearLayout>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

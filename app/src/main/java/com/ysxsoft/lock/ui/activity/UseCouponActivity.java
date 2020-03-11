@@ -22,16 +22,19 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.DisplayUtils;
 import com.ysxsoft.common_base.utils.IntentUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
+import com.ysxsoft.common_base.utils.TimeUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
 import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.zxing.util.ZxingUtils;
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.CodeBean;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -40,6 +43,7 @@ import com.ysxsoft.lock.R;
 import com.ysxsoft.lock.models.response.UseCouponResponse;
 import com.ysxsoft.lock.net.Api;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -159,13 +163,15 @@ public class UseCouponActivity extends BaseActivity {
                 backToActivity();
                 break;
             case R.id.cl1:
-                TuanDetailActivity.start();
+                TuanDetailActivity.start(dataBean.getCard_id());
                 break;
             case R.id.cl2:
                 ShopDetailActivity.start(dataBean.getBusiness_id());
                 break;
             case R.id.tv8:
-                IntentUtils.call(mContext, tv7.getText().toString().trim());
+                if(dataBean!=null){
+                    IntentUtils.callEdit(UseCouponActivity.this, dataBean.getTel());
+                }
                 break;
         }
     }
@@ -195,11 +201,28 @@ public class UseCouponActivity extends BaseActivity {
                                 tv1.setText(resp.getData().getTitle());
                                 tv2.setText(resp.getData().getStart_time_str() + " -- " + resp.getData().getEnd_time_str());
                                 tv3.setText("总价：￥" + resp.getData().getPrice());
-                                ivBarCode.setImageBitmap(ZxingUtils.createBarcode(mContext, resp.getData().getId(), DisplayUtils.dp2px(mContext, 160), DisplayUtils.dp2px(mContext, 54), false));
-                                ivQrCode.setImageBitmap(ZxingUtils.createQRImage(resp.getData().getId(), DisplayUtils.dp2px(mContext, 160), DisplayUtils.dp2px(mContext, 160), null, "url"));
+                                CodeBean bean=new CodeBean();
+                                bean.setId(resp.getData().getId());
+                                bean.setType("0");
+
+                                ivBarCode.setImageBitmap(ZxingUtils.createBarcode(mContext,new Gson().toJson(bean), DisplayUtils.dp2px(mContext, 160), DisplayUtils.dp2px(mContext, 54), false));
+                                ivQrCode.setImageBitmap(ZxingUtils.createQRImage(new Gson().toJson(bean), DisplayUtils.dp2px(mContext, 160), DisplayUtils.dp2px(mContext, 160), null, "url"));
                                 tvCode.setText(resp.getData().getId());
                                 tv4.setText(resp.getData().getName());
-                                tv5.setText("距5你116m，步行约2分钟");
+
+
+                                String distance = resp.getData().getDistance();
+                                if (distance != null) {
+                                    Double d = Double.valueOf(distance);
+                                    BigDecimal b = new BigDecimal(d);
+                                    double value = b.doubleValue();
+                                    //距离  公里
+                                    int minute = (int) (value * 1000 / 50);//有多少分钟
+                                    String time = TimeUtils.formattedTime(minute * 60 * 100);
+                                    tv5.setText("距您" + distance + "km,步行约" + time);
+                                } else {
+                                    tv5.setText("");
+                                }
                                 tv7.setText(resp.getData().getTel());
                                 Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(iv);
 

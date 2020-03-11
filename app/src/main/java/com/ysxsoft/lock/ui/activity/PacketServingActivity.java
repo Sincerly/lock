@@ -140,6 +140,7 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
                                 if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                     //请求成功
                                     List<PacketServingResponse.DataBean> data = resp.getData();
+                                    manager.resetPage();
                                     manager.setData(data);
                                 } else {
                                     //请求失败
@@ -157,15 +158,14 @@ public class PacketServingActivity extends BaseActivity implements IListAdapter<
     public void fillView(BaseViewHolder helper, PacketServingResponse.DataBean s) {
         helper.setText(R.id.tvTime, "日期："+s.getCreate_time());
         TextView tvMoney = helper.getView(R.id.tvMoney);
-        if (helper.getAdapterPosition()%2==0){
-            tvMoney.setText("500点");
+        if (!s.getNum().contains("-")){
+            tvMoney.setText(s.getNum()+"点");
             tvMoney.setTextColor(getResources().getColor(R.color.color_3BB0D2));
-            helper.setText(R.id.tvType, "点券充值");
         }else {
-            tvMoney.setText("-2000点");
+            tvMoney.setText(s.getNum()+"点");
             tvMoney.setTextColor(getResources().getColor(R.color.color_282828));
-            helper.setText(R.id.tvType, "卡券投放");
         }
+        helper.setText(R.id.tvType, s.getRemark());
 
     }
 

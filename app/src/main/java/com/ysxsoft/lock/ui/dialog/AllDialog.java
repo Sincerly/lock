@@ -37,14 +37,11 @@ public class AllDialog {
             View view = View.inflate(activity, R.layout.dialog_all, null);
             TextView tv1 = view.findViewById(R.id.tv1);
             TextView tv2 = view.findViewById(R.id.tv2);
-            TextView tv3 = view.findViewById(R.id.tv3);
-            TextView tv4 = view.findViewById(R.id.tv4);
-            TextView tv5 = view.findViewById(R.id.tv5);
             tv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("false",0);
+                        listener.select("今日数据",0);
                     }
                     dismiss();
                 }
@@ -53,39 +50,11 @@ public class AllDialog {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.select("false",1);
+                        listener.select("历史数据",1);
                     }
                     dismiss();
                 }
             });
-            tv3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.select("false",2);
-                    }
-                    dismiss();
-                }
-            });
-            tv4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.select("false",3);
-                    }
-                    dismiss();
-                }
-            });
-            tv5.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.select("false",4);
-                    }
-                    dismiss();
-                }
-            });
-
             popupWindow = new PopupWindow(view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             popupWindow.setOutsideTouchable(true);
             popupWindow.setBackgroundDrawable(new ColorDrawable(0x000000));

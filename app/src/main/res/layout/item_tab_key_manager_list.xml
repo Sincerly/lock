@@ -6,6 +6,11 @@
     android:background="@color/colorWhite"
     android:gravity="center_vertical"
     android:orientation="vertical">
+    <View
+        android:background="@color/color_spacing"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_10">
+    </View>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

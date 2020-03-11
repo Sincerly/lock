@@ -13,6 +13,7 @@ public class ARouterPath {
 
     /**
      * 引导页
+     *
      * @return
      */
     public static String getGuideActivity() {
@@ -69,6 +70,15 @@ public class ARouterPath {
     }
 
     /**
+     * 投放列表
+     *
+     * @return
+     */
+    public static String getTouListActivity() {
+        return "/main/TouListActivity";
+    }
+
+    /**
      * 团购详情
      */
     public static String getTuanDetailActivity() {
@@ -87,6 +97,15 @@ public class ARouterPath {
      */
     public static String getUserInfoActivity() {
         return "/main/UserInfoActivity";
+    }
+
+    /**
+     * 网页
+     *
+     * @return
+     */
+    public static String getWebViewActivity() {
+        return "/main/WebViewActivity";
     }
 
     /**
@@ -178,6 +197,15 @@ public class ARouterPath {
      */
     public static String getShopEgisActivity() {
         return "/main/ShopEgisActivity";
+    }
+
+    /**
+     * 状态页面
+     *
+     * @return
+     */
+    public static String getStatusActivity() {
+        return "/main/StatusActivity";
     }
 
     /**

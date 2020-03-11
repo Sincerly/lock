@@ -23,7 +23,7 @@ import com.ysxsoft.common_base.utils.DisplayUtils;
 public class SelectPayMethodDialog extends Dialog {
     private Context mContext;
     private OnDialogClickListener listener;
-    private int type=1;
+    private int type=2;//默认支付宝支付
     private static TextView tvMoney;
 
     public SelectPayMethodDialog(@NonNull Context context, int themeResId) {
@@ -46,6 +46,8 @@ public class SelectPayMethodDialog extends Dialog {
         tvWeChat.setCompoundDrawables(null,null,ok,null);
         TextView tvAliPay = view.findViewById(R.id.tvAliPay);
         ImageView ivClose = view.findViewById(R.id.ivClose);
+        tvAliPay.setCompoundDrawables(null,null,ok,null);
+
         LL1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,5 +1,7 @@
 package com.ysxsoft.lock.ui.fragment.main;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,7 +14,14 @@ import android.widget.TextView;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
+import com.mobile.auth.gatewayauth.AuthUIConfig;
+import com.mobile.auth.gatewayauth.AuthUIControlClickListener;
+import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
+import com.mobile.auth.gatewayauth.TokenResultListener;
+import com.mobile.auth.gatewayauth.model.TokenRet;
 import com.ysxsoft.common_base.adapter.BaseQuickAdapter;
 import com.ysxsoft.common_base.adapter.BaseViewHolder;
 import com.ysxsoft.common_base.base.BaseFragment;
@@ -24,14 +33,23 @@ import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.common_base.utils.ViewHelper;
 import com.ysxsoft.lock.MainActivity;
 import com.ysxsoft.lock.R;
+import com.ysxsoft.lock.config.AppConfig;
 import com.ysxsoft.lock.models.response.ADResponse;
+import com.ysxsoft.lock.models.response.ActionResponse;
+import com.ysxsoft.lock.models.response.CheckPermissionResponse;
 import com.ysxsoft.lock.models.response.DefaultPlaceResponse;
+import com.ysxsoft.lock.models.response.MobileResponse;
+import com.ysxsoft.lock.models.response.PwdResponse;
+import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
+import com.ysxsoft.lock.ui.activity.GuideActivity;
+import com.ysxsoft.lock.ui.activity.OtherLoginActivity;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.dialog.CheckAddressDialog;
 import com.ysxsoft.lock.ui.dialog.CityTopDialog;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
+import com.ysxsoft.lock.ui.dialog.OpenLockPwdDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -41,6 +59,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
+
+import static com.ysxsoft.lock.net.Api.BASE_URL;
 
 /**
  * 首页操作页面
@@ -84,7 +104,6 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
     }
 
     public void requestData() {
-        showLoading("请求中...");
         OkHttpUtils.get()
                 .url(Api.GET_DEFAULT_PLACE_INFO)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
@@ -93,13 +112,11 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         Log.e("tag", "default place" + response);
-                        hideLoadingDialog();
                         DefaultPlaceResponse resp = JsonUtils.parseByGson(response, DefaultPlaceResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
@@ -110,19 +127,49 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                                 CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
                                     @Override
                                     public void sure(String requid) {
-
+                                        //设置默认小区
+                                        setDefault(requid);
                                     }
 
                                     @Override
                                     public void cancle() {
-
+                                        AddPlaceActivity.start();
                                     }
                                 });
+                            }else if("401".equals(resp.getCode())){
+                                ToastUtils.shortToast(getActivity(),"token已过期");
+                                call();
                             }
                         }
                     }
                 });
     }
+
+    private void setDefault(String requid) {
+        OkHttpUtils.post()
+                .url(Api.SET_DEFAULT_PLACE)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("requid", requid)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                requestData();
+                            }
+                        }
+                    }
+                });
+
+    }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -149,12 +196,21 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                         if (offsetX > 0) {
                             //页面向右 获取优惠券
                             Log.e(TAG, "页面向右 获取优惠券");
-                            CouponDialog.show(getActivity(), true, "恭喜！送你一张优惠券", new CouponDialog.OnDialogClickListener() {
-                                @Override
-                                public void sure() {
-                                    PacketActivity.start(0);
+//                            CouponDialog.show(getActivity(), true, "恭喜！送你一张优惠券", new CouponDialog.OnDialogClickListener() {
+//                                @Override
+//                                public void sure() {
+//                                    PacketActivity.start(0);
+//                                }
+//                            });
+                            if(dataBean!=null){
+                                //检查开锁权限
+                                MainActivity activity = (MainActivity) getActivity();
+                                String deviceId=activity.getDeivceId();
+                                if(dataBean!=null){
+                                    //检查开锁权限
+                                    activity.getCoupon(dataBean.getRequ_id(),deviceId);
                                 }
-                            });
+                            }
                         } else {
                             //页面向左 获取优惠券
                             Log.e(TAG, "页面向左 个人中心");
@@ -170,18 +226,43 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                                         CheckAddressDialog.show(getActivity(), new CheckAddressDialog.OnDialogClickListener() {
                                             @Override
                                             public void sure(String requid) {
+                                                //设置默认小区
+                                                setDefault(requid);
                                             }
 
                                             @Override
                                             public void cancle() {
-
+                                                AddPlaceActivity.start();
                                             }
                                         });
                                     } else {
                                         Log.e(TAG, "滑动距离未超过1/3");
                                         CityTopDialog.show(getActivity(), new CityTopDialog.OnDialogClickListener() {
                                             @Override
-                                            public void sure() {
+                                            public void sure(String requid, int type,String deviceId,String password) {
+                                                switch (type){//0蓝牙 1密码开门 2远程开门
+                                                    case 0:
+                                                        //蓝牙开门
+                                                        MainActivity activity = (MainActivity) getActivity();
+                                                        if(activity.getDeivceId().equals(deviceId)){
+                                                            if(dataBean!=null){
+                                                                //检查开锁权限
+                                                                activity.resetStatus();
+                                                                activity.checkPermision(requid,deviceId,"");
+                                                            }
+                                                        }else{
+                                                            ToastUtils.shortToast(getActivity(),"设备不匹配！");
+                                                        }
+                                                        break;
+                                                    case 1:
+                                                        //密码开门
+                                                        getPwd(deviceId);
+                                                        break;
+                                                    case 2:
+                                                        //远程开门
+                                                        openRemote(deviceId);
+                                                        break;
+                                                }
                                             }
                                         });
                                     }
@@ -192,7 +273,8 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                                 String deviceId=activity.getDeivceId();
                                 if(dataBean!=null){
                                     //检查开锁权限
-                                    activity.checkPermision(dataBean.getId(),deviceId,"");
+                                    activity.resetStatus();
+                                    activity.checkPermision(dataBean.getRequ_id(),deviceId,"");
                                 }
                             }
                         } else {
@@ -220,6 +302,77 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                 break;
         }
         return result;
+    }
+
+    private void getPwd(String equid){
+        showLoadingDialog("请求中");
+        OkHttpUtils.get()
+                .url(Api.GET_PASSWORD)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("equid", equid)//设备锁id
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("tag", "response:" + response);
+                        hideLoadingDialog();
+                        PwdResponse resp = JsonUtils.parseByGson(response, PwdResponse.class);
+                        if (resp != null) {
+                            if ("0".equals(resp.getResult())) {
+                                //showToast(resp.getMsg());
+                                OpenLockPwdDialog dialog = new OpenLockPwdDialog(getActivity(), R.style.CenterDialogStyle);
+                                dialog.setData(resp.getData());
+                                dialog.showDialog();
+                            } else {
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("生成密码失败");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 远程开门
+     * @param equid
+     */
+    private void openRemote(String equid) {
+        showLoadingDialog("请求中");
+        OkHttpUtils.get()
+                .url(Api.REMOTDOOR)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
+                .addParams("equid", equid)//设备锁id
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("tag", "response:" + response);
+                        hideLoadingDialog();
+                        ActionResponse resp = JsonUtils.parseByGson(response, ActionResponse.class);
+                        if (resp != null) {
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                showToast(resp.getMsg());
+                            } else {
+                                showToast(resp.getMsg());
+                            }
+                        } else {
+                            showToast("开门失败");
+                        }
+                    }
+                });
     }
 
     BaseQuickAdapter<ADResponse.DataBean, BaseViewHolder> adapter;
@@ -255,25 +408,22 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                 @Override
                 protected void convert(BaseViewHolder helper,ADResponse.DataBean item) {
                     ImageView pic = helper.getView(R.id.pic);
-                    int resourceId = R.mipmap.a1;
+
+                    String url= AppConfig.BASE_URL +item.getPicturePath();
+                    boolean showDefault=true;
                     switch (helper.getAdapterPosition()) {
                         case 0:
-                            resourceId = R.mipmap.main;
+                            showDefault=true;
                             break;
-                        case 1:
-                            resourceId = R.mipmap.a1;
-                            break;
-                        case 2:
-                            resourceId = R.mipmap.a2;
-                            break;
-                        case 3:
-                            resourceId = R.mipmap.a3;
-                            break;
-                        case 4:
-                            resourceId = R.mipmap.a4;
+                         default:
+                             showDefault=false;
                             break;
                     }
-                    pic.setImageResource(resourceId);
+                    if(showDefault){
+                        Glide.with(getActivity()).load(R.mipmap.main).into(pic);
+                    }else{
+                        Glide.with(getActivity()).load(url).into(pic);
+                    }
                 }
             };
             viewPager2.setAdapter(adapter);
@@ -296,7 +446,7 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
         OkHttpUtils.get()
                 .url(Api.AD)
                 //.addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
-                .addParams("requid", "1")
+                .addParams("requid", requid)
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -337,5 +487,129 @@ public class MainFragment2 extends BaseFragment implements View.OnTouchListener 
                 viewPager2.setCurrentItem(0,false);
                 break;
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 手机号登录
+    ///////////////////////////////////////////////////////////////////////////
+    PhoneNumberAuthHelper helper;
+    private void call() {
+        helper = PhoneNumberAuthHelper.getInstance(getActivity(), tokenResultListener);
+        helper.setAuthSDKInfo("isgu8Z+e5PJrU4I19s1OUByrgrcXD2aZswJ66jWoD/VRTW7umKLhbR1AAGGcMP9epo/v5LniY45VHEkbVRupMffyzUfTjpWZQyuuMnO/7r66hu/TDpjBKSAB8MqFh+F9FxUpx6+eUn75ZH1RLvJ3VIBRl/5qmu1gIWGFs9dgNFQJtWt6jVw8jfK6ZyXLjakfI5HmV2d2ekoxwDOjacGAeQdR+NobYAwBbCFP2sXB/ouESJd/Pko2aBzODZc1H0+/UWWyPmkNo8M2WTuwa4rT3A0v1/zR7D/b");
+        helper.setLoggerEnable(true);
+        if (helper.checkEnvAvailable()) {
+            //检查终端是否支持号码认证
+            helper.setAuthUIConfig(new AuthUIConfig.Builder()
+                    .setLogBtnText("手机号码一键登录")
+                    .setNavHidden(true)
+                    .setNavColor(getResources().getColor(R.color.colorPrimary))
+                    .setLogoImgPath("ic_launcher")
+                    .setLogoWidth(DisplayUtils.dp2px(getActivity(), 32))
+                    .setLogoHeight(DisplayUtils.dp2px(getActivity(), 32))
+                    .setSloganText(" ")
+                    .setLogBtnBackgroundPath("shape_btn_bg")
+                    .setLogBtnWidth(DisplayUtils.dp2px(getActivity(), 122))
+                    .setLogBtnHeight(DisplayUtils.dp2px(getActivity(), 16))
+                    .setLogBtnTextSize(16)
+                    .setSwitchAccText("其他方式登录")
+                    .setSwitchAccTextSize(12)
+                    .setSwitchAccTextColor(Color.parseColor("#666666"))
+
+                    .setPrivacyBefore("登录即同意我们的")
+                    .setCheckboxHidden(true)
+                    .setAppPrivacyOne("《服务协议》","http://info.linlilinwai.com/appinfo/xy")
+                    .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
+                    .create());
+            helper.getLoginToken(getActivity(), 30000);
+        }
+    }
+
+    private TokenResultListener tokenResultListener = new TokenResultListener() {
+        @Override
+        public void onTokenSuccess(final String token) {
+            Log.e("tag", "onTokenSuccess" + token);
+            helper.setUIClickListener(new AuthUIControlClickListener() {
+                @Override
+                public void onClick(String s, Context context, JSONObject jsonObject) {
+                    Log.e("tag",s+" "+jsonObject);
+                    switch (s){
+                        case "700000":
+                            //点击返回 用户取消免密登录
+                            break;
+                        case "700001":
+                            //点击切换 用户取消免密登录
+                            OtherLoginActivity.start();
+                            break;
+                        case "700002":
+                            //点击登录按钮事件
+                            break;
+                        case "700003":
+                            //点击check box事件
+                            break;
+                        case "700004":
+                            //点击协议富文本文字事件
+                            break;
+                    }
+                }
+            });
+
+            TokenRet tokenRet = JSON.parseObject(token, TokenRet.class);
+            if (tokenRet != null) {
+                switch (tokenRet.getCode()){
+                    case "600000":
+                        //获取token成功
+                        String tok = tokenRet.getToken();
+                        getMobile(tok);
+                        break;
+                    case "600001":
+                        //唤起授权页成功
+                        //showToast(tokenRet.getMsg());
+                        break;
+                    case "600002":
+                        //唤起授权页失败
+                        showToast(tokenRet.getMsg());
+                        break;
+                    case "600004":
+                        //获取运营商配置信息失败
+                        showToast(tokenRet.getMsg());
+                        break;
+                    case "600005":
+                        //手机终端不安全
+                        showToast(tokenRet.getMsg());
+                        break;
+                }
+            }
+        }
+
+        @Override
+        public void onTokenFailed(String s) {
+            Log.e("tag", "onTokenFailed" + s);
+        }
+    };
+
+    public void getMobile(String accessToken) {
+        OkHttpUtils.get()
+                .url(Api.GET_MOBILE+"?accessToken="+accessToken)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.e("tag","返回值:"+response);
+                        MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
+                        if (resp != null) {
+                            SharedPreferencesUtils.saveToken(getActivity(),resp.getApitoken());
+                            SharedPreferencesUtils.savePhone(getActivity(),resp.getPhone());
+                            MainActivity.start();
+                            helper.quitAuthActivity();
+                        } else {
+                            showToast("获取登录失败");
+                        }
+                    }
+                });
     }
 }

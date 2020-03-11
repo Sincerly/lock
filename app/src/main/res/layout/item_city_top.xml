@@ -12,6 +12,7 @@
         android:paddingTop="@dimen/dp_5"
         android:paddingBottom="@dimen/dp_5"
         android:layout_width="match_parent"
+        android:textSize="@dimen/sp_14"
         android:background="@drawable/bg_city_top_selector"
         android:layout_height="wrap_content"/>
 </LinearLayout>

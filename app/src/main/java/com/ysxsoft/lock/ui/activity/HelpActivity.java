@@ -29,6 +29,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
@@ -46,7 +47,7 @@ import static com.ysxsoft.lock.config.AppConfig.IS_DEBUG_ENABLED;
  * create by Sincerly on 9999/9/9 0009
  **/
 @Route(path = "/main/HelpActivity")
-public class HelpActivity extends BaseActivity implements IListAdapter<String> {
+public class HelpActivity extends BaseActivity implements IListAdapter<HelpResponse.DataBean> {
     @BindView(R.id.statusBar)
     View statusBar;
     @BindView(R.id.backWithText)
@@ -68,7 +69,7 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private ListManager<String> manager;
+    private ListManager<HelpResponse.DataBean> manager;
 
     public static void start(){
         ARouter.getInstance().build(ARouterPath.getHelpActivity()).navigation();
@@ -120,12 +121,11 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
 
     @Override
     public void request(int page) {
-        if(IS_DEBUG_ENABLED){
+        if(false){
             debug(manager);
         }else{
             OkHttpUtils.get()
                     .url(Api.HELP_LIST)
-                    .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
                     .tag(this)
                     .build()
                     .execute(new StringCallback() {
@@ -141,14 +141,14 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
                             Log.e("tag",response+" =");
                             HelpResponse resp = JsonUtils.parseByGson(response, HelpResponse.class);
                             if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
 //                                    //请求成功
-//                                    List<HelpResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
+                                    List<HelpResponse.DataBean> data = resp.getData();
+                                    manager.setData(data);
+                                } else {
+                                    //请求失败
+                                    showToast(resp.getMsg());
+                                }
                             } else {
                                 showToast("获取失败");
                             }
@@ -158,12 +158,14 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
     }
     private boolean isClick=false;
     @Override
-    public void fillView(BaseViewHolder helper, String s) {
-//        helper.setText(R.id.textView,"");
+    public void fillView(BaseViewHolder helper, HelpResponse.DataBean s) {
+        helper.setText(R.id.textView,s.getTitle());
+        helper.setText(R.id.tvDesc,s.getContent());
         ImageView iv = helper.getView(R.id.iv);
         WebView webview = helper.getView(R.id.webview);
         TextView textView = helper.getView(R.id.textView);
         TextView tvDesc = helper.getView(R.id.tvDesc);
+
         helper.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +185,7 @@ public class HelpActivity extends BaseActivity implements IListAdapter<String> {
     }
 
     @Override
-    public void fillMuteView(BaseViewHolder helper, String s) {
+    public void fillMuteView(BaseViewHolder helper, HelpResponse.DataBean s) {
 
     }
 

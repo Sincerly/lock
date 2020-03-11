@@ -444,7 +444,7 @@ public class SettingActivity extends BaseActivity {
 
                     .setPrivacyBefore("登录即同意我们的")
                     .setCheckboxHidden(true)
-                    .setAppPrivacyOne("《服务协议》","http://www.baidu.com")
+                    .setAppPrivacyOne("《服务协议》","http://info.linlilinwai.com/appinfo/xy")
                     .setAppPrivacyColor(Color.parseColor("#999999"),Color.parseColor("#3BB0D2"))
                     .create());
             helper.getLoginToken(SettingActivity.this, 30000);
@@ -530,6 +530,7 @@ public class SettingActivity extends BaseActivity {
                         MobileResponse resp = JsonUtils.parseByGson(response, MobileResponse.class);
                         if (resp != null) {
                             SharedPreferencesUtils.saveToken(SettingActivity.this,resp.getApitoken());
+                            SharedPreferencesUtils.savePhone(SettingActivity.this,resp.getPhone());
                             MainActivity.start();
                             helper.quitAuthActivity();
                         } else {

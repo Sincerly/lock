@@ -24,7 +24,9 @@ import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.KeyBoardUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.TimeUtils;
+import com.ysxsoft.common_base.utils.ToastUtils;
 import com.ysxsoft.common_base.view.custom.image.CircleImageView;
+import com.ysxsoft.common_base.view.custom.image.RoundImageView;
 import com.ysxsoft.common_base.view.custom.picker.CitySelectPicker;
 import com.ysxsoft.common_base.view.custom.picker.TwoPicker;
 import com.ysxsoft.common_base.view.dialog.BaseInputCenterDialog;
@@ -97,11 +99,17 @@ public class ShopInfoActivity extends BaseActivity {
     TextView tvOk;
     @BindView(R.id.tvday)
     TextView tvday;
+    @BindView(R.id.pic)
+    LinearLayout pic;
+    @BindView(R.id.iv)
+    RoundImageView iv;
 
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;
     private static final int RC_CHOOSE_PHOTO = 0x01;
+    private static final int RC_CHOOSE_PHOTO2 = 0x04;
     public static final int REQUEST_CODE_CROP = 0x02;
+    public static final int REQUEST_CODE_CROP2 = 0x05;
 
     private String day1;
     private String day2;
@@ -115,6 +123,8 @@ public class ShopInfoActivity extends BaseActivity {
     private String longitude;
     private String detailAddress;
 
+    private String address;
+    private String detailaddress;
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getShopInfoActivity()).navigation();
     }
@@ -129,12 +139,12 @@ public class ShopInfoActivity extends BaseActivity {
         super.doWork();
         initTitle();
         initPhotoHelper();
+        request();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        request();
     }
 
     private void initPhotoHelper() {
@@ -162,7 +172,7 @@ public class ShopInfoActivity extends BaseActivity {
         title.setText("商户信息");
     }
 
-    @OnClick({R.id.backLayout, R.id.LL1, R.id.tvShopName, R.id.tvSaleType, R.id.tvWorkTime, R.id.tvShopAddress, R.id.tvday, R.id.tvOk})
+    @OnClick({R.id.backLayout, R.id.LL1, R.id.tvShopName, R.id.tvSaleType, R.id.tvWorkTime, R.id.tvShopAddress, R.id.tvday, R.id.tvOk, R.id.pic})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.backLayout:
@@ -299,36 +309,95 @@ public class ShopInfoActivity extends BaseActivity {
 //                    }
 //                });
 //                cityPicker.show();
-                ShopAddressSelectActivity.start(ShopInfoActivity.this,0x03);
+                ShopAddressSelectActivity.start(ShopInfoActivity.this,latitude,longitude,address,detailaddress,0x03);
                 break;
             case R.id.tvOk:
-                if (TextUtils.isEmpty(tvShopName.getText().toString().trim())){
+                if (TextUtils.isEmpty(tvShopName.getText().toString().trim())) {
                     showToast("店铺名称不能为空");
                     return;
                 }
-                 if (TextUtils.isEmpty(tvSaleType.getText().toString().trim())){
+                if (TextUtils.isEmpty(tvSaleType.getText().toString().trim())) {
                     showToast("主营类目不能为空");
                     return;
                 }
-                 if (TextUtils.isEmpty(day2)){
+                if (TextUtils.isEmpty(day2)) {
                     showToast("营业时间星期不能为空");
                     return;
                 }
-                 if (TextUtils.isEmpty(time2)){
+                if (TextUtils.isEmpty(time2)) {
                     showToast("营业时间不能为空");
                     return;
                 }
-                 if (TextUtils.isEmpty(latitude)){
+                if (TextUtils.isEmpty(latitude)) {
                     showToast("地址选择不能为空");
                     return;
                 }
-
                 submintData();
+                break;
+            case R.id.pic:
+                //上传背景图片
+                choicePhotoWrapper2();
                 break;
         }
     }
 
+    private void uploadImg(String path) {
+        showLoadingDialog("上传中...");
+        File file = new File(path);
+        OkHttpUtils.post()
+                .url(Api.UPLOAD_BANNER)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addFile("businessimg", file.getName(), file)
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
+                        if (resp != null) {
+                            showToast(resp.getMsg());
+                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                request();
+                            }
+                        }
+                    }
+                });
+
+    }
+
     private void submintData() {
+        //信息未完善
+        if (day1 == null) {
+            ToastUtils.shortToast(ShopInfoActivity.this, "请完善营业时间");
+            return;
+        }
+        if (day2 == null) {
+            ToastUtils.shortToast(ShopInfoActivity.this, "请完善营业时间");
+            return;
+        }
+        if (time1 == null) {
+            ToastUtils.shortToast(ShopInfoActivity.this, "请完善营业时间");
+            return;
+        }
+        if (time2 == null) {
+            ToastUtils.shortToast(ShopInfoActivity.this, "请完善营业时间");
+            return;
+        }
+        if("".equals(tvShopAddress.getText().toString())){
+            ToastUtils.shortToast(ShopInfoActivity.this, "请完善店铺地址");
+            return;
+        }
+        if("".equals(etPhone.getText().toString())){
+            ToastUtils.shortToast(ShopInfoActivity.this, "请完善手机号");
+            return;
+        }
+
         showLoadingDialog("请求中...");
         OkHttpUtils.post()
                 .url(Api.EDIT_INFO)
@@ -365,6 +434,30 @@ public class ShopInfoActivity extends BaseActivity {
                 });
 
     }
+
+    private void choicePhotoWrapper2() {
+        r.request(Manifest.permission.CAMERA).subscribe(new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean aBoolean) throws Exception {
+                if (aBoolean) {
+                    // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话就没有拍照功能
+                    File takePhotoDir = new File(AppConfig.PHOTO_PATH, "space");
+                    File f = new File(AppConfig.PHOTO_PATH);
+                    if (!f.exists()) {
+                        f.mkdirs();
+                    }
+                    Intent photoPickerIntent = new BGAPhotoPickerActivity.IntentBuilder(mContext)
+                            .cameraFileDir(takePhotoDir) // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话则不开启图库里的拍照功能
+                            .maxChooseCount(1) // 图片选择张数的最大值
+                            .selectedPhotos(null) // 当前已选中的图片路径集合
+                            .pauseOnScroll(false) // 滚动列表时是否暂停加载图片
+                            .build();
+                    startActivityForResult(photoPickerIntent, RC_CHOOSE_PHOTO2);
+                }
+            }
+        });
+    }
+
 
     private void choicePhotoWrapper() {
         r.request(Manifest.permission.CAMERA).subscribe(new Consumer<Boolean>() {
@@ -408,20 +501,29 @@ public class ShopInfoActivity extends BaseActivity {
                         ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                if(resp.getData()!=null) {
+                                if (resp.getData() != null) {
                                     //请求成功
                                     Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(logo);
                                     tvShopName.setText(resp.getData().getName());
                                     tvSaleType.setText(resp.getData().getMainbusiness());
                                     day1 = resp.getData().getWeek1();
                                     day2 = resp.getData().getWeek2();
-                                    tvday.setText( day1+ "--" +day2);
+                                    tvday.setText(day1 + "--" + day2);
                                     time1 = resp.getData().getTime1();
                                     time2 = resp.getData().getTime2();
 
-                                    tvWorkTime.setText( time1+ "--" + time2);
+                                    tvWorkTime.setText(time1 + "--" + time2);
                                     tvShopAddress.setText(resp.getData().getAddress());
                                     etPhone.setText(resp.getData().getTel());
+                                    latitude=resp.getData().getLat();
+                                    longitude=resp.getData().getLng();
+                                    address=resp.getData().getAddress();
+
+                                    List<ShopInfoResponse.DataBean.ItemBean> itemBeans = resp.getData().getAttachList();
+                                    if (itemBeans != null && itemBeans.size() > 0) {
+                                        ShopInfoResponse.DataBean.ItemBean item = itemBeans.get(itemBeans.size()-1);
+                                        Glide.with(ShopInfoActivity.this).load(AppConfig.BASE_URL + item.getAttach()).into(iv);
+                                    }
                                 }
                             } else {
                                 //请求失败
@@ -455,11 +557,33 @@ public class ShopInfoActivity extends BaseActivity {
                         }
                     }
                     break;
+                case RC_CHOOSE_PHOTO2:
+                    //商铺图片返回
+                    if (data != null) {
+                        List<String> selectedPhotos = BGAPhotoPickerActivity.getSelectedPhotos(data);
+                        if (selectedPhotos != null && selectedPhotos.size() > 0) {
+                            //拍照返回
+                            try {
+                                startActivityForResult(mPhotoHelper.getCropIntent(selectedPhotos.get(0), 400, 200), REQUEST_CODE_CROP2);
+                            } catch (Exception e) {
+                                mPhotoHelper.deleteCameraFile();
+                                mPhotoHelper.deleteCropFile();
+                                BGAPhotoPickerUtil.show(R.string.bga_pp_not_support_crop);
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    break;
                 case REQUEST_CODE_CROP:
                     String cropPath = mPhotoHelper.getCropFilePath();
                     String path = ImageUtils.compress(mContext, System.currentTimeMillis() + "", new File(cropPath), AppConfig.PHOTO_PATH);
                     //裁剪后的
                     EditShopLogo(path);
+                    break;
+                case REQUEST_CODE_CROP2:
+                    String p = ImageUtils.compress(mContext, System.currentTimeMillis() + "", new File(mPhotoHelper.getCropFilePath()), AppConfig.PHOTO_PATH);
+                    //裁剪后的
+                    uploadImg(p);
                     break;
                 case 0x03:
                     latitude = data.getStringExtra("latitude");

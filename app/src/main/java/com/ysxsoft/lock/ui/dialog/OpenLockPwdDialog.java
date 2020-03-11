@@ -108,11 +108,10 @@ public class OpenLockPwdDialog extends Dialog {
         }
     }
 
-    public static OpenLockPwdDialog show(Context context, String pwd, OnDialogClickListener listener) {
+    public static OpenLockPwdDialog show(Context context, String pwd) {
         OpenLockPwdDialog dialog = new OpenLockPwdDialog(context, R.style.CenterDialogStyle);
-        dialog.setListener(listener);
-        dialog.showDialog();
         dialog.setData(pwd);
+        dialog.showDialog();
         return dialog;
     }
 

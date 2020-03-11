@@ -3,19 +3,24 @@ package com.ysxsoft.lock.ui.activity;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
 import com.ysxsoft.common_base.net.HttpResponse;
+import com.ysxsoft.common_base.pay.alipay.AlipayUtils;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.lock.base.RBaseAdapter;
@@ -34,6 +39,7 @@ import com.ysxsoft.lock.net.Api;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -130,7 +136,7 @@ public class PacketRechargeActivity extends BaseActivity {
                     }
                 });
     }
-
+    RBaseAdapter<PacketRechargeListResponse.DataBean> adapter;
     private void requestData() {
         OkHttpUtils.get()
                 .url(Api.CARD_RECHARGE_LIST)
@@ -150,7 +156,7 @@ public class PacketRechargeActivity extends BaseActivity {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 ArrayList<PacketRechargeListResponse.DataBean> datas = resp.getData();
                                 recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                                RBaseAdapter<PacketRechargeListResponse.DataBean> adapter = new RBaseAdapter<PacketRechargeListResponse.DataBean>(mContext, R.layout.item_packet_recharge, datas) {
+                                adapter = new RBaseAdapter<PacketRechargeListResponse.DataBean>(mContext, R.layout.item_packet_recharge, datas) {
                                     @Override
                                     protected void fillItem(RViewHolder holder, PacketRechargeListResponse.DataBean item, int position) {
                                         holder.setText(R.id.tv, item.getNum() + "点券" + item.getPrice() + "元");
@@ -175,6 +181,8 @@ public class PacketRechargeActivity extends BaseActivity {
                                         tvGrayMoney.setText("¥" + itemData.getYprice());
                                         Click = position;
                                         adapter.notifyDataSetChanged();
+                                        clickId=itemData.getId();
+                                        clickPrice=itemData.getPrice();
                                     }
                                 });
                                 recyclerView.setAdapter(adapter);
@@ -184,7 +192,8 @@ public class PacketRechargeActivity extends BaseActivity {
                     }
                 });
     }
-
+    private String clickId="";
+    private String clickPrice="";
 
     private void initTitle() {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
@@ -204,18 +213,25 @@ public class PacketRechargeActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                clickPrice="";
+                clickId="";
                 if (!TextUtils.isEmpty(etInput.getText().toString().trim())) {
 //                    int i = Integer.parseInt(etInput.getText().toString().trim()) / 100;
 //                    DecimalFormat format = new DecimalFormat("0.00");
                     BigDecimal content = new BigDecimal(etInput.getText().toString().trim());
                     BigDecimal a1 = new BigDecimal("100");
                     BigDecimal divide = content.divide(a1);
+                    clickPrice=divide+"";
 //                    String format1 = format.format(divide);
-                    tvMoney.setText(String.valueOf(divide));
+                    tvMoney.setText("￥"+String.valueOf(divide));
                 } else {
-                    tvMoney.setText("0");
+                    tvMoney.setText("￥"+"0");
                 }
-                tvGrayMoney.setText("0");
+                if(adapter!=null){
+                    Click=-1;
+                    adapter.notifyDataSetChanged();
+                }
+                tvGrayMoney.setText("￥0");
             }
         });
     }
@@ -250,21 +266,27 @@ public class PacketRechargeActivity extends BaseActivity {
                                 showToast("微信");
                                 break;
                             case 2:
-                                showToast("支付宝");
+//                                showToast("支付宝");
+                                request();
                                 break;
                         }
                     }
                 });
-                request();
                 break;
         }
     }
 
     public void request() {
         showLoadingDialog("请求中");
+        Log.e("tag","clickId:"+clickId);
+        clickId="8";
         OkHttpUtils.post()
-                .url(Api.GET_PACKET_RECHARGE)
+                .url(Api.RECHARGE)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
+                .addParams("body","邻里邻外点券充值")//对一笔交易的具体描述信息
+                .addParams("subject","点券充值")//商品标题
+                .addParams("amount",clickPrice)//订单总金额
+                .addParams("passback_params",clickId)//充值中心id
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -275,21 +297,37 @@ public class PacketRechargeActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("tag","response:"+response);
                         hideLoadingDialog();
-                        PacketRechargeResponse resp = JsonUtils.parseByGson(response, PacketRechargeResponse.class);
-                        if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<PacketRechargeResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
-                        } else {
-                            showToast("获取卡劵投放充值失败");
-                        }
+                        //TODO:支付宝支付
+//                        AlipayResponse alipayResponse = JsonUtils.parseByGson(response, AlipayResponse.class);
+//                        if (HttpResponse.SUCCESS.equals(alipayResponse.getCode())) {
+//                            String data = alipayResponse.getData();
+                            AlipayUtils.startAlipay(PacketRechargeActivity.this, handler, 0x10, response);//支付宝支付
+//                        } else {
+//                            showToast(alipayResponse.getMsg());
+//                        }
                     }
                 });
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x10:
+                    Map<String, String> map = (Map<String, String>) msg.obj;
+                    //9000支付成功  8000 正在处理中  4000 订单支付失败  5000重复请求  6001中途取消  6002网络连接出错 6004 支付结果未知  其他其他支付错误
+                    if ("9000".equals(map.get("resultStatus"))) {//订单支付成功
+                        showToast("支付成功！");
+                        recyclerViewBanlance();
+                    } else if ("4000".equals(map.get("resultStatus"))) {//订单支付失败
+                        Toast.makeText(PacketRechargeActivity.this, "支付宝支付失败！", Toast.LENGTH_SHORT).show();
+                    } else if ("6001".equals(map.get("resultStatus"))) {//订单支付中途取消
+                        Toast.makeText(PacketRechargeActivity.this, "支付宝支付取消！", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
 }

@@ -2,7 +2,10 @@ package com.ysxsoft.lock.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -30,10 +33,13 @@ import com.ysxsoft.common_base.zxing.ScanActivity;
 import com.ysxsoft.lock.ARouterPath;
 import com.ysxsoft.lock.R;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.ysxsoft.lock.config.AppConfig;
+import com.ysxsoft.lock.models.CodeBean;
 import com.ysxsoft.lock.models.response.ShopInfoResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.net.Api;
@@ -50,6 +56,12 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 店铺管理
@@ -107,83 +119,151 @@ public class ShopManagerActivity extends BaseActivity {
     public void doWork() {
         super.doWork();
         initTitle();
+        requestData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        requestData();
-        tabLayout.removeAllTabs();
-        List<Fragment> fragmentList = new ArrayList<>();
-        List<String> titles = new ArrayList<>();
-        titles.add("现金券");
-        titles.add("团购套餐");
-        titles.add("免费体验");
-        titles.add("会员卡");
-        TabShopManager1Fragment tabShopManager1Fragment = new TabShopManager1Fragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("business_id", business_id);
-        tabShopManager1Fragment.setArguments(bundle);
-        fragmentList.add(tabShopManager1Fragment);
-
-        TabShopManager2Fragment tabShopManager2Fragment = new TabShopManager2Fragment();
-        Bundle bundle2 = new Bundle();
-        bundle2.putString("business_id", business_id);
-        tabShopManager2Fragment.setArguments(bundle2);
-        fragmentList.add(tabShopManager2Fragment);
-
-
-        TabShopManager3Fragment tabShopManager3Fragment = new TabShopManager3Fragment();
-        Bundle bundle3 = new Bundle();
-        bundle3.putString("business_id", business_id);
-        tabShopManager3Fragment.setArguments(bundle3);
-        fragmentList.add(tabShopManager3Fragment);
-
-        TabShopManager4Fragment tabShopManager4Fragment = new TabShopManager4Fragment();
-        Bundle bundle4 = new Bundle();
-        bundle4.putString("business_id", business_id);
-        tabShopManager4Fragment.setArguments(bundle4);
-        fragmentList.add(tabShopManager4Fragment);
-        initViewPage(fragmentList, titles);
-        initTabLayout(titles);
+        requestData2();
     }
 
     private void requestData() {
         showLoadingDialog("请求中");
-        OkHttpUtils.post()
+        OkHttpClient httpClient = new OkHttpClient();
+        //RequestBody requestBody = RequestBody.create(mediaType, file);//把文件与类型放入请求体
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        builder.addFormDataPart("a","");
+        Request request = new Request.Builder()
+                .header("Authorization", SharedPreferencesUtils.getToken(mContext))//添加请求头的身份认证Token
                 .url(Api.SHOP_INFO)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
-                .tag(this)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
-                    }
+                .post(builder.build())
+                .build();
 
-                    @Override
-                    public void onResponse(String response, int id) {
-                        hideLoadingDialog();
-                        ShopInfoResponse resp = JsonUtils.parseByGson(response, ShopInfoResponse.class);
-                        if (resp != null) {
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                if (resp.getData()!=null) {
-                                    business_id = resp.getData().getId();
-                                    //请求成功
-                                    Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(civ);
-                                    tvName.setText(resp.getData().getName());
-                                    tvType.setText("主营类目：" + resp.getData().getMainbusiness());
-                                }
-                            } else {
-                                //请求失败
-                                showToast(resp.getMsg());
-                            }
-                        } else {
-                            showToast("获取商户信息失败");
-                        }
-                    }
-                });
+        Call call = httpClient.newCall(request);
+        call.enqueue(new Callback() {
+                         @Override
+                         public void onFailure(Call call, IOException e) {
+                             hideLoadingDialog();
+                             Log.e("TAG-失败：", e.toString() + "");
+                         }
 
+                         @Override
+                         public void onResponse(Call call, Response response) throws IOException {
+                             hideLoadingDialog();
+                             String string = response.body().string();
+                             Log.e("TAG-成功：", string + "");
+                             ShopInfoResponse resp = JsonUtils.parseByGson(string, ShopInfoResponse.class);
+                             runOnUiThread(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     if (resp != null) {
+                                         if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                             if (resp.getData() != null) {
+                                                 business_id = resp.getData().getId();
+                                                 //请求成功
+                                                 Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(civ);
+                                                 tvName.setText(resp.getData().getName());
+                                                 tvType.setText("主营类目：" + resp.getData().getMainbusiness());
+
+                                                 tabLayout.removeAllTabs();
+                                                 List<Fragment> fragmentList = new ArrayList<>();
+                                                 List<String> titles = new ArrayList<>();
+                                                 titles.add("现金券");
+                                                 titles.add("团购套餐");
+                                                 titles.add("免费体验");
+                                                 titles.add("会员卡");
+                                                 TabShopManager1Fragment tabShopManager1Fragment = new TabShopManager1Fragment();
+                                                 Bundle bundle = new Bundle();
+                                                 bundle.putString("business_id", business_id);
+                                                 tabShopManager1Fragment.setArguments(bundle);
+                                                 fragmentList.add(tabShopManager1Fragment);
+
+                                                 TabShopManager2Fragment tabShopManager2Fragment = new TabShopManager2Fragment();
+                                                 Bundle bundle2 = new Bundle();
+                                                 bundle2.putString("business_id", business_id);
+                                                 tabShopManager2Fragment.setArguments(bundle2);
+                                                 fragmentList.add(tabShopManager2Fragment);
+
+
+                                                 TabShopManager3Fragment tabShopManager3Fragment = new TabShopManager3Fragment();
+                                                 Bundle bundle3 = new Bundle();
+                                                 bundle3.putString("business_id", business_id);
+                                                 tabShopManager3Fragment.setArguments(bundle3);
+                                                 fragmentList.add(tabShopManager3Fragment);
+
+                                                 TabShopManager4Fragment tabShopManager4Fragment = new TabShopManager4Fragment();
+                                                 Bundle bundle4 = new Bundle();
+                                                 bundle4.putString("business_id", business_id);
+                                                 tabShopManager4Fragment.setArguments(bundle4);
+                                                 fragmentList.add(tabShopManager4Fragment);
+                                                 initViewPage(fragmentList, titles);
+                                                 initTabLayout(titles);
+                                             }
+                                         } else {
+                                             //请求失败
+                                             showToast(resp.getMsg());
+                                         }
+                                     } else {
+                                         showToast("获取商户信息失败");
+                                     }
+                                 }
+                             });
+                         }
+                     }
+        );
+    }
+
+    private void requestData2() {
+        showLoadingDialog("请求中");
+        OkHttpClient httpClient = new OkHttpClient();
+        //RequestBody requestBody = RequestBody.create(mediaType, file);//把文件与类型放入请求体
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        builder.addFormDataPart("a","");
+        Request request = new Request.Builder()
+                .header("Authorization", SharedPreferencesUtils.getToken(mContext))//添加请求头的身份认证Token
+                .url(Api.SHOP_INFO)
+                .post(builder.build())
+                .build();
+
+        Call call = httpClient.newCall(request);
+        call.enqueue(new Callback() {
+                         @Override
+                         public void onFailure(Call call, IOException e) {
+                             hideLoadingDialog();
+                             Log.e("TAG-失败：", e.toString() + "");
+                         }
+
+                         @Override
+                         public void onResponse(Call call, Response response) throws IOException {
+                             hideLoadingDialog();
+                             String string = response.body().string();
+                             Log.e("TAG-成功：", string + "");
+                             ShopInfoResponse resp = JsonUtils.parseByGson(string, ShopInfoResponse.class);
+                             runOnUiThread(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     if (resp != null) {
+                                         if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                             if (resp.getData() != null) {
+                                                 business_id = resp.getData().getId();
+                                                 //请求成功
+                                                 Glide.with(mContext).load(AppConfig.BASE_URL + resp.getData().getLogo()).into(civ);
+                                                 tvName.setText(resp.getData().getName());
+                                                 tvType.setText("主营类目：" + resp.getData().getMainbusiness());
+                                             }
+                                         } else {
+                                             //请求失败
+                                             showToast(resp.getMsg());
+                                         }
+                                     } else {
+                                         showToast("获取商户信息失败");
+                                     }
+                                 }
+                             });
+                         }
+                     }
+        );
     }
 
     @Override
@@ -293,15 +373,24 @@ public class ShopManagerActivity extends BaseActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case 0x01:
-                    String result = data.getStringExtra("result");
+                    String result = data.getStringExtra("result");//{"type":"1","id":"1"}  type0现金券 团购套餐 优惠使用 1会员卡
                     try {
+                        Log.e("tag",result+"");
                         JSONObject jsonObject=new JSONObject(result);
                         if("".equals(jsonObject.optString("id"))){
-                            ToastUtils.shortToast(mContext,"获取失败");
+                            ToastUtils.shortToast(mContext,"二维码不符合规则");
                             return;
                         }
-                        String Id=jsonObject.getString("id");
-                        requestCheckData(Id);
+                        String id=jsonObject.getString("id");
+                        String type=jsonObject.getString("type");
+                        boolean isCard=false;
+                        if("1".equals(type)){
+                            isCard=true;//会员卡
+                        }else{
+                            isCard=false;//非会员卡
+                        }
+                        requestCheckData(id,isCard);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -310,7 +399,7 @@ public class ShopManagerActivity extends BaseActivity {
         }
     }
 
-    private void requestCheckData(String Id) {
+    private void requestCheckData(String Id,boolean isCard) {
             OkHttpUtils.post()
                     .url(Api.HX)
                     .addHeader("Authorization", SharedPreferencesUtils.getToken(mContext))
@@ -328,7 +417,9 @@ public class ShopManagerActivity extends BaseActivity {
                             CommentResponse resp = JsonUtils.parseByGson(response, CommentResponse.class);
                             if (resp!=null){
                                 if (HttpResponse.SUCCESS.equals(resp.getCode())){
-                                    CheckSucessActivity.start();
+                                    CheckSucessActivity.start(isCard);
+                                }else{
+                                    ToastUtils.shortToast(ShopManagerActivity.this,resp.getMsg());
                                 }
                             }
                         }

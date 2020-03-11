@@ -3,14 +3,16 @@ package com.ysxsoft.lock;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -19,7 +21,6 @@ import com.dh.bluelock.imp.BlueLockPubCallBackBase;
 import com.dh.bluelock.object.LEDevice;
 import com.dh.bluelock.pub.BlueLockPub;
 import com.dh.bluelock.util.Constants;
-import com.google.gson.Gson;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -28,19 +29,24 @@ import com.ysxsoft.common_base.net.HttpResponse;
 import com.ysxsoft.common_base.utils.JsonUtils;
 import com.ysxsoft.common_base.utils.SharedPreferencesUtils;
 import com.ysxsoft.common_base.utils.ToastUtils;
-import com.ysxsoft.lock.models.response.ADResponse;
+import com.ysxsoft.lock.models.event.UnlockEvent;
+import com.ysxsoft.lock.models.event.UnlockSuccessEvent;
 import com.ysxsoft.lock.models.response.CheckPermissionResponse;
 import com.ysxsoft.lock.models.response.MessageEvent;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.PacketActivity;
 import com.ysxsoft.lock.ui.dialog.CouponDialog;
+import com.ysxsoft.lock.ui.dialog.CouponNullStatusDialog;
 import com.ysxsoft.lock.ui.dialog.NearByNoDeviceDialog;
 import com.ysxsoft.lock.ui.dialog.OpenBluthDialog;
+import com.ysxsoft.lock.ui.dialog.SafeDialog;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment1;
 import com.ysxsoft.lock.ui.fragment.main.MainFragment2;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
@@ -51,6 +57,7 @@ import java.util.Map;
 import java.util.Set;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
 import okhttp3.Call;
 
@@ -67,12 +74,13 @@ public class MainActivity extends BaseActivity {
     private int minOffset = 40;
     private static final String TAG = "MainActivity";
     private final String[] BASIC_PERMISSIONS = new String[]{
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
     private MainFragment2 fragment2;
+    private boolean isFromPage = false;
 
     public static void start() {
         ARouter.getInstance().build(ARouterPath.getMainActivity()).navigation();
@@ -81,7 +89,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
-
     }
 
     @Override
@@ -97,14 +104,41 @@ public class MainActivity extends BaseActivity {
         FragmentPagerAdapter pagerAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager(), fragmentList, new ArrayList<>());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
+//        map.put("1131", new LEDevice());
+        SafeDialog dialog=new SafeDialog(this,R.style.CenterDialogStyle);
+        dialog.setListener(new SafeDialog.OnDialogClickListener() {
+            @Override
+            public void sure() {
+                ToastUtils.shortToast(MainActivity.this,"点击了事件！");
+            }
+        });
+        dialog.showDialog();
     }
 
-    @Subscriber()
+    @Subscriber
     public void MessageEvent(MessageEvent messageEvent) {
         String pass = messageEvent.getPass();//密码
         String equ_id = messageEvent.getEqu_id();//门禁设备id
         String requ_id = messageEvent.getRequ_id();//小区id
-        checkPermision(equ_id, requ_id, pass);
+
+        if (equ_id.equals(getDeivceId())) {
+            isFromPage = true;
+            checkPermision(requ_id, equ_id, pass);
+        } else {
+            isFromPage = false;
+            sendHideLockProgressEvent();
+//            EventBus.getDefault().post(new UnlockSuccessEvent());
+            ToastUtils.shortToast(MainActivity.this, "设备不匹配");
+        }
+    }
+
+    private void sendHideLockProgressEvent(){
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().post(new UnlockEvent());
+            }
+        });
     }
 
     private void requestPermissions() {
@@ -261,29 +295,68 @@ public class MainActivity extends BaseActivity {
                     }
                     if (0 == result) {
                         //showToast("已打开");
-                        hideLoadingDialog();
-                        CouponDialog.show(MainActivity.this, false, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
-                            @Override
-                            public void sure() {
-                                PacketActivity.start(0);
-                            }
-                        });
-                    } else if (11 == result) {
-                        showToast("未注");
-                    } else {
-                        //enabledBtn(true);
-                        showToast(" openCloseDeviceCallBack err code: "
-                                + result);
-                        if (-9 == result) {
-                            if (hasScannedDaHaoLock) {
-                                showToast("您走错门了！");
+                        if (!isFromPage) {
+                            hideLoadingDialog();
+                            if (hashCoupon) {
+                                //有优惠券
+                                if (couponData != null) {
+//                                CouponDialog.show(MainActivity.this, false, "门已开启！欢迎回家", new CouponDialog.OnDialogClickListener() {
+//                                    @Override
+//                                    public void sure() {
+//                                        PacketActivity.start(0);
+//                                    }
+//                                });
+                                    CouponDialog.show(MainActivity.this, true, true,
+                                            couponData.getData().getOprice()
+                                            , couponData.getData().getPrice()
+                                            , couponData.getData().getTitle()
+                                            , couponData.getData().getStart_time()
+                                            , couponData.getData().getEnd_time()
+                                            , new CouponDialog.OnDialogClickListener() {
+                                                @Override
+                                                public void sure() {
+                                                    //跳转到卡券页面
+                                                    PacketActivity.start(0);
+                                                }
+                                            });
+                                } else {
+                                }
                             } else {
-                                showToast("没有扫描到门禁设备！");
+                                //无优惠券
+                                CouponNullStatusDialog.show(MainActivity.this, new CouponNullStatusDialog.OnDialogClickListener() {
+                                    @Override
+                                    public void sure() {
+                                    }
+                                });
                             }
-                        } else if (-6 == result) {
-                            showToast("开门超时请验证密码是否正确");
+                        } else {
+                            isFromPage = false;
+                            EventBus.getDefault().post(new UnlockSuccessEvent());
+                        }
+                    } else {
+                        showToast(" 开锁失败");
+                        if (!isFromPage) {
+                            EventBus.getDefault().post(new UnlockEvent());
+                        } else {
+                            isFromPage = false;
                         }
                     }
+                    //                    } else if (11 == result) {
+//                        showToast("未注");
+//                    } else {
+//                        //enabledBtn(true);
+//                        showToast(" 开锁失败 errcode: "
+//                                + result);
+//                        if (-9 == result) {
+//                            if (hasScannedDaHaoLock) {
+//                                showToast("您走错门了！");
+//                            } else {
+//                                showToast("没有扫描到门禁设备！");
+//                            }
+//                        } else if (-6 == result) {
+//                            showToast("开门超时请验证密码是否正确");
+//                        }
+//                    }
                 }
             });
         }
@@ -353,7 +426,7 @@ public class MainActivity extends BaseActivity {
         isLocking = true;
         Set<String> set = map.keySet();
         if (set.size() == 0) {
-            Log.e("tag","附近设备数量:"+map.size());
+            ToastUtils.longToast(MainActivity.this, "附近设备数量:" + map.size());
             NearByNoDeviceDialog.show(mContext);
             isLocking = false;
             return;
@@ -372,6 +445,9 @@ public class MainActivity extends BaseActivity {
         showLoadingDialog("开门中");
     }
 
+    private boolean hashCoupon = false;//是否拥有优惠券
+    private CheckPermissionResponse.DataBeanX couponData;//优惠券
+
     /**
      * 开锁接口
      *
@@ -379,12 +455,112 @@ public class MainActivity extends BaseActivity {
      * @param equid
      */
     public void checkPermision(String requid, String equid, String password) {
+        Log.e("tag", "设备id:" + equid);
+        if ("".equals(equid)) {
+            Set<String> set = map.keySet();
+            if (set.size() == 0) {
+                NearByNoDeviceDialog.show(mContext);
+                isFromPage = false;
+                return;
+            }
+        }
         showLoadingDialog("请求中");
         OkHttpUtils.post()
                 .url(Api.OPEN_JUR)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(MainActivity.this))
                 .addParams("requid", requid)//小区id
                 .addParams("equid", equid)//设备id
+//                .addParams("equid", "0A73A65C")//设备id
+//                .addParams("equid", "DF447F1C")//设备id
+                .tag(this)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        isFromPage = false;
+                        hideLoadingDialog();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        hideLoadingDialog();
+                        Log.e("tag", "response:" + response);
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("data");
+                            String data = jsonObject1.optString("data");
+                            if (data != null && "no".equals(data)) {
+                                //无优惠券
+                                hashCoupon = false;
+                                int jur = jsonObject1.optInt("jur");
+                                if (jur == 1) {
+                                    //有权限开门
+                                    open(password);
+                                } else {
+                                    //无权限开门
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            isFromPage = false;
+                                            ToastUtils.longToast(MainActivity.this, "无开门权限!" + "\n小区id" + (requid == null ? "" : requid) + "\n设备id:" + (equid == null ? "" : equid));
+                                        }
+                                    });
+                                }
+                            } else {
+                                //有优惠券
+                                CheckPermissionResponse resp = JsonUtils.parseByGson(response, CheckPermissionResponse.class);
+                                hashCoupon = true;
+                                if (resp != null) {
+                                    couponData = resp.getData();
+                                    if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                        int jur = resp.getData().getJur();
+                                        if (jur == 1) {
+                                            //有权限开门
+                                            open(password);
+                                        } else {
+                                            //无权限开门
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    isFromPage = false;
+                                                    ToastUtils.longToast(MainActivity.this, "无开门权限!" + "\n小区id" + (requid == null ? "" : requid) + "\n设备id:" + (equid == null ? "" : equid));
+                                                }
+                                            });
+                                        }
+                                    } else {
+                                        isFromPage = false;
+                                        showToast(resp.getMsg());
+                                    }
+                                } else {
+                                    isFromPage = false;
+                                    showToast("检测权限失败");
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            isFromPage = false;
+                        }
+                    }
+                });
+    }
+
+    public void getCoupon(String requid, String equid) {
+        Log.e("tag", "设备id:" + equid);
+        if ("".equals(equid)) {
+            Set<String> set = map.keySet();
+            if (set.size() == 0) {
+                NearByNoDeviceDialog.show(mContext);
+                return;
+            }
+        }
+        showLoadingDialog("请求中");
+        OkHttpUtils.post()
+                .url(Api.OPEN_JUR)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken(MainActivity.this))
+                .addParams("requid", requid)//小区id
+                .addParams("equid", equid)//设备id
+//                .addParams("equid", "0A73A65C")//设备id
+//                .addParams("equid", "DF447F1C")//设备id
                 .tag(this)
                 .build()
                 .execute(new StringCallback() {
@@ -395,40 +571,61 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("tag", "response:" + response);
                         hideLoadingDialog();
-                        CheckPermissionResponse resp = JsonUtils.parseByGson(response, CheckPermissionResponse.class);
-                        if (resp != null) {
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                int jur = resp.getData().getJur();
-                                if (jur == 1) {
-                                    //有权限开门
-                                    open(password);
-                                } else {
-                                    //无权限开门
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ToastUtils.shortToast(MainActivity.this, "无开门权限!");
-                                        }
-                                    });
-                                }
+                        Log.e("tag", "response:" + response);
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("data");
+                            String data = jsonObject1.optString("data");
+                            if (data != null && "no".equals(data)) {
+                                //无优惠券
+                                CouponNullStatusDialog.show(MainActivity.this, new CouponNullStatusDialog.OnDialogClickListener() {
+                                    @Override
+                                    public void sure() {
+                                    }
+                                });
                             } else {
-                                showToast(resp.getMsg());
+                                //有优惠券
+                                CheckPermissionResponse resp = JsonUtils.parseByGson(response, CheckPermissionResponse.class);
+                                if (resp != null) {
+                                    if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                        CheckPermissionResponse.DataBeanX item = resp.getData();
+
+                                        CouponDialog.show(MainActivity.this, true, false,
+                                                item.getData().getOprice()
+                                                , item.getData().getPrice()
+                                                , item.getData().getTitle()
+                                                , item.getData().getStart_time(), item.getData().getEnd_time(), new CouponDialog.OnDialogClickListener() {
+                                                    @Override
+                                                    public void sure() {
+                                                        //跳转到卡券页面
+                                                        PacketActivity.start(0);
+                                                    }
+                                                });
+                                    } else {
+                                        //showToast(resp.getMsg());
+                                    }
+                                } else {
+                                    //showToast("检测权限失败");
+                                }
                             }
-                        } else {
-                            showToast("检测权限失败");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
     }
 
-    public String getDeivceId(){
-        String result="";
-        for (Map.Entry<String,LEDevice> entry:map.entrySet()){
-            LEDevice device=entry.getValue();
-            result=device.getDeviceId();
+    public String getDeivceId() {
+        String result = "";
+        for (Map.Entry<String, LEDevice> entry : map.entrySet()) {
+            LEDevice device = entry.getValue();
+            result = device.getDeviceId();
         }
         return result;
+    }
+
+    public void resetStatus(){
+        isFromPage=false;
     }
 }

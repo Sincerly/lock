@@ -47,7 +47,6 @@ public class BaiduCityDialog {
     }
 
     public void showPopDown(View parentView, int offsetX, int offsetY) {
-        if (popupWindow == null) {
             View view = View.inflate(activity, R.layout.dialog_baidu, null);
             RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(activity));
@@ -87,9 +86,7 @@ public class BaiduCityDialog {
                 }
             });
             popupWindow.setFocusable(true);
-        } else {
-            popupWindow.showAsDropDown(parentView, 0, 0, Gravity.BOTTOM);
-        }
+
     }
 
     public void dismiss() {

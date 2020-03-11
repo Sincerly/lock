@@ -106,7 +106,7 @@ public class TabIdcardCert1Fragment extends BaseFragment {
                         if (resp != null) {
                             if (resp.getCode().equals(HttpResponse.SUCCESS)){
 
-                                ShopEgisActivity.start("个人认证");
+                                //ShopEgisActivity.start("个人认证");
                                 getActivity().finish();
                             }
                             showToast(resp.getMsg());

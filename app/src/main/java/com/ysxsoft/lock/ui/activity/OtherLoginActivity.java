@@ -160,6 +160,7 @@ public class OtherLoginActivity extends BaseActivity {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
                                 //请求成功
                                 SharedPreferencesUtils.saveToken(mContext,resp.getApitoken());
+                                SharedPreferencesUtils.savePhone(mContext,inputLoginPhone.getText().toString());
                                 MainActivity.start();
                                 AppManager.getAppManager().finishAllActivity();
                                 finish();

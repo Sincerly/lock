@@ -93,8 +93,17 @@ public class UseCouponResponse{
         private String start_time_str;
         private String status;
         private String tel;
+        private String distance;
         private String title;
         private int type;
+
+        public String getDistance() {
+            return distance;
+        }
+
+        public void setDistance(String distance) {
+            this.distance = distance;
+        }
 
         public String getCard_id() {
             return card_id;

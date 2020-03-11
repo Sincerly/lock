@@ -68,6 +68,8 @@ public class AddPlaceActivity extends BaseActivity {
     TextView tv1;
     @BindView(R.id.tv2)
     TextView tv2;
+    @BindView(R.id.tvOk)
+    TextView tvOk;
     @Autowired
     String flag;
 
@@ -97,7 +99,13 @@ public class AddPlaceActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("添加新小区");
+        if ("1".equals(flag)) {
+            title.setText("添加新小区");
+        }else{
+            title.setText("申请小区钥匙");
+            tvOk.setText("申请");
+
+        }
     }
 
     private String cityCode1;
@@ -139,6 +147,9 @@ public class AddPlaceActivity extends BaseActivity {
                 if ("1".equals(flag)) {
                     Intent intent = new Intent();
                     intent.putExtra("requid", requid);
+                    intent.putExtra("name",name);
+                    intent.putExtra("address",address);
+                    intent.putExtra("img",url);
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
@@ -180,6 +191,9 @@ public class AddPlaceActivity extends BaseActivity {
     }
 
     private String requid;
+    private String name;
+    private String address;
+    private String url;
 
     private void requestData(String cityCode1, String areaCode1) {
         showLoadingDialog("请求中...");
@@ -195,7 +209,6 @@ public class AddPlaceActivity extends BaseActivity {
                     public void onError(Call call, Exception e, int id) {
                         hideLoadingDialog();
                         Log.e("onError", e.getMessage());
-
                     }
 
                     @Override
@@ -204,7 +217,6 @@ public class AddPlaceActivity extends BaseActivity {
                         VillageResponse resp = JsonUtils.parseByGson(response, VillageResponse.class);
                         if (resp != null) {
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-
                                 List<VillageResponse.DataBean> data = resp.getData();
                                 SelectVillageDialog dialog = new SelectVillageDialog(mContext, R.style.BottomDialogStyle);
                                 dialog.setDatas(data);
@@ -213,6 +225,14 @@ public class AddPlaceActivity extends BaseActivity {
                                     public void sure(String villageName, String villageCode) {
                                         requid = villageCode;
                                         tv2.setText(villageName);
+                                    }
+                                });
+                                dialog.setDataListener(new SelectVillageDialog.OnDialogDataClickListener() {
+                                    @Override
+                                    public void data(String reqName, String addstr, String img) {
+                                        name=reqName;
+                                        address=addstr;
+                                        url=img;
                                     }
                                 });
                                 dialog.showDialog();

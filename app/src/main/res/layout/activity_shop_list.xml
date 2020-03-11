@@ -96,6 +96,27 @@
                     android:text=""
                     android:textColor="@color/color_686868"
                     android:textSize="@dimen/sp_14" />
+
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_toLeftOf="@id/rightWithIcon"
+                    android:layout_toRightOf="@id/backWithText"
+                    android:background="@drawable/bg_round_f1f1f1_radius_16"
+                    android:drawableLeft="@mipmap/icon_address_search"
+                    android:drawablePadding="@dimen/dp_12"
+                    android:gravity="center_vertical"
+                    android:hint="输入商家名"
+                    android:paddingLeft="@dimen/dp_16"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"
+                    android:textColor="@color/color_282828"
+                    android:textColorHint="@color/color_989898"
+                    android:textSize="11sp" />
+
             </RelativeLayout>
         </LinearLayout>
         <View
@@ -104,7 +125,26 @@
             android:layout_height="@dimen/dp_1" android:background="@color/color_spacing"/>
     </LinearLayout>
 
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <cn.bingoogolapple.bgabanner.BGABanner
+            android:id="@+id/banner"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_marginBottom="@dimen/dp_8"
+            android:layout_marginRight="@dimen/dp_16"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="true"
+            android:isScrollContainer="true"
+            app:banner_pageChangeDuration="1000"
+            app:banner_pointAutoPlayAble="true"
+            app:banner_pointContainerBackground="@android:color/transparent"
+            app:banner_transitionEffect="alpha"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/LL1"

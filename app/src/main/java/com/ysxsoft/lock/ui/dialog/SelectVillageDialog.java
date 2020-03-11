@@ -90,6 +90,9 @@ public class SelectVillageDialog extends Dialog {
                 if (listener!=null){
                     listener.sure(dataBean.getQuarters_name(),dataBean.getId());
                 }
+                if (listener2!=null){
+                    listener2.data(dataBean.getQuarters_name(),dataBean.getAddress(),dataBean.getImg());
+                }
                 dismiss();
             }
         });
@@ -130,6 +133,10 @@ public class SelectVillageDialog extends Dialog {
         this.listener = listener;
     }
 
+    public void setDataListener(OnDialogDataClickListener listener) {
+        this.listener2 = listener;
+    }
+
     public static SelectVillageDialog show(Context context, List<VillageResponse.DataBean> data, OnDialogClickListener listener) {
         SelectVillageDialog dialog = new SelectVillageDialog(context, R.style.BottomDialogStyle);
         dialog.setListener(listener);
@@ -141,5 +148,10 @@ public class SelectVillageDialog extends Dialog {
 
     public interface OnDialogClickListener {
         void sure(String villageName, String villageCode);
+    }
+
+    public OnDialogDataClickListener listener2;
+    public interface OnDialogDataClickListener{
+        void data(String reqName,String reqId,String img);
     }
 }

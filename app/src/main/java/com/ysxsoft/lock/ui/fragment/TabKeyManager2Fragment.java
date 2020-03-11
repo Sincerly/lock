@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -27,10 +29,13 @@ import com.ysxsoft.lock.models.response.ActionResponse;
 import com.ysxsoft.lock.models.response.resp.CommentResponse;
 import com.ysxsoft.lock.models.response.resp.FaceResponse;
 import com.ysxsoft.lock.net.Api;
+import com.ysxsoft.lock.ui.activity.PropertyCertActivity;
+import com.ysxsoft.lock.ui.activity.StatusActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +45,11 @@ import cn.bingoogolapple.photopicker.util.BGAPhotoHelper;
 import cn.bingoogolapple.photopicker.util.BGAPhotoPickerUtil;
 import io.reactivex.functions.Consumer;
 import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Create By 胡
@@ -55,11 +65,13 @@ public class TabKeyManager2Fragment extends BaseFragment {
     @BindView(R.id.tv3)
     TextView tv3;
     @BindView(R.id.LL1)
-    LinearLayout LL1;
+    LinearLayout LL1;//未认证
     @BindView(R.id.LL2)
-    LinearLayout LL2;
+    LinearLayout LL2;//认证成功
     @BindView(R.id.LL3)
-    LinearLayout LL3;
+    LinearLayout LL3; //审核中
+    @BindView(R.id.LL4)
+    LinearLayout LL4;//失败
 
     private BGAPhotoHelper mPhotoHelper;
     private RxPermissions r;
@@ -75,13 +87,13 @@ public class TabKeyManager2Fragment extends BaseFragment {
     @Override
     protected void doWork(View view) {
         initPhotoHelper();
+        request();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getIsface();
-        request();
+//        getIsface();
     }
 
     private void getIsface() {
@@ -181,7 +193,9 @@ public class TabKeyManager2Fragment extends BaseFragment {
                         if (resp != null) {
                             showToast(resp.getMsg());
                             if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                getIsface();
+//                                getIsface();
+                                LL1.setVisibility(View.GONE);
+                                request();
                             }
                         }
                     }
@@ -211,8 +225,6 @@ public class TabKeyManager2Fragment extends BaseFragment {
                 }
             }
         });
-
-
     }
 
     @Override
@@ -259,33 +271,81 @@ public class TabKeyManager2Fragment extends BaseFragment {
      * 用户人脸认证状态
      */
     public void request() {
-        OkHttpUtils.post()
+        showLoadingDialog("请求中");
+        OkHttpClient httpClient = new OkHttpClient();
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        builder.addFormDataPart("type", "1");//1=人脸识别 2=物业认证
+        Request request = new Request.Builder()
+                .header("Authorization", SharedPreferencesUtils.getToken(getActivity()))//添加请求头的身份认证Token
                 .url(Api.MEMBER_STATUS)
-                .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
-                .addHeader("type", "2")//1=人脸识别 2=业主认证 3=租户认证
-                .tag(this)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        Log.e("tag",e.getMessage());
-                    }
+                .post(builder.build())
+                .build();
 
-                    @Override
-                    public void onResponse(String response, int id) {
-                        ActionResponse resp = JsonUtils.parseByGson(response, ActionResponse.class);
-                        if (resp != null) {
-                            if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-                                //请求成功
+        Call call = httpClient.newCall(request);
+        call.enqueue(new Callback() {
+                         @Override
+                         public void onFailure(Call call, IOException e) {
+                             hideLoadingDialog();
+                             Log.e("TAG-失败：", e.toString() + "");
+                         }
 
-                            } else {
-                                //请求失败
-                                showToast(resp.getMsg());
-                            }
-                        } else {
-                            showToast("获取用户状态失败");
-                        }
-                    }
-                });
+                         @Override
+                         public void onResponse(Call call, Response response) throws IOException {
+                             new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     hideLoadingDialog();
+                                 }
+                             });
+                             ActionResponse resp = null;
+                             try {
+                                 resp = JsonUtils.parseByGson(response.body().string(), ActionResponse.class);
+                             } catch (IOException e) {
+                                 e.printStackTrace();
+                             }
+                             if (resp != null) {
+                                 if (HttpResponse.SUCCESS.equals(resp.getCode())) {
+                                     ActionResponse finalResp = resp;
+                                     getActivity().runOnUiThread(new Runnable() {
+                                         @Override
+                                         public void run() {
+                                             switch (finalResp.getData()) {//0=未提交认证 1=通过 2=审核中 3=审核失败
+                                                 case "0"://未提交审核
+                                                     LL1.setVisibility(View.VISIBLE);
+                                                     LL2.setVisibility(View.GONE);
+                                                     LL3.setVisibility(View.GONE);
+                                                     LL4.setVisibility(View.GONE);
+                                                     break;
+                                                 case "1"://通过
+                                                     LL2.setVisibility(View.VISIBLE);
+                                                     LL1.setVisibility(View.GONE);
+                                                     LL3.setVisibility(View.GONE);
+                                                     LL4.setVisibility(View.GONE);
+                                                     break;
+                                                 case "2"://审核中
+                                                     LL3.setVisibility(View.VISIBLE);
+                                                     LL1.setVisibility(View.GONE);
+                                                     LL4.setVisibility(View.GONE);
+                                                     LL2.setVisibility(View.GONE);
+                                                     break;
+                                                 case "3"://审核失败
+                                                     LL4.setVisibility(View.VISIBLE);
+                                                     LL1.setVisibility(View.GONE);
+                                                     LL3.setVisibility(View.GONE);
+                                                     LL2.setVisibility(View.GONE);
+                                                     break;
+                                             }
+                                         }
+                                     });
+                                 } else {
+                                     //请求失败
+                                     showToast(resp.getMsg());
+                                 }
+                             } else {
+                                 showToast("获取用户状态失败");
+                             }
+                         }
+                     }
+        );
     }
 }

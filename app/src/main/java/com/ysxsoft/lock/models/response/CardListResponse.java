@@ -1,6 +1,9 @@
 package com.ysxsoft.lock.models.response;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Create By 胡
@@ -52,9 +55,33 @@ public class CardListResponse {
         String snum;
         String totalnum;
         String ysnum;
+        String create_time;
+
+        public String getCreate_time2() {
+            String time="";
+            SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            if(create_time!=null){
+                try {
+                    Date date=format.parse(create_time);
+
+                    time=new SimpleDateFormat("yyyy-MM-dd").format(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            return time;
+        }
+
+        public String getCreate_time() {
+            return create_time;
+        }
+
+        public void setCreate_time(String create_time) {
+            this.create_time = create_time;
+        }
 
         public String getTotalnum() {
-            return totalnum;
+            return totalnum==null?"0":totalnum;
         }
 
         public void setTotalnum(String totalnum) {
@@ -70,15 +97,14 @@ public class CardListResponse {
         }
 
         public String getCostnum() {
-            return costnum;
+            return costnum==null?"0":costnum;
         }
 
         public void setCostnum(String costnum) {
             this.costnum = costnum;
         }
 
-        String costnum
-                ;
+        String costnum;
 
         public String getId() {
             return id;

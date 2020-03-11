@@ -277,6 +277,7 @@ public class AddPacketVipActivity extends BaseActivity {
         PostFormBuilder formBuilder = OkHttpUtils.post().url(Api.ADD_CARD);
         formBuilder.addHeader("Authorization", SharedPreferencesUtils.getToken(mContext));
         formBuilder.addParams("type", String.valueOf(typeClick + 1));//1=现金券 2=团购套餐 3=体验套餐 4=会员卡
+        formBuilder.addParams("collar","1");//限领数量
 
         switch (typeClick) {
             case 0://现金券

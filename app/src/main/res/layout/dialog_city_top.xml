@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/addressLayout"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:paddingTop="@dimen/dp_16"
@@ -22,7 +23,7 @@
                 android:layout_marginLeft="@dimen/dp_12"
                 android:layout_marginRight="@dimen/dp_16"
                 android:layout_width="wrap_content"
-                android:text="蓝天小区"
+                android:text=""
                 android:textColor="#FFFFFF"
                 android:drawablePadding="@dimen/dp_8"
                 android:drawableLeft="@mipmap/icon_location"

@@ -124,6 +124,7 @@ public interface Api {
     public final String IS_SHOP_CERT=BASE_URL+"/api/business/isbusinessauth";//是否通过商户认证
     public final String EDIT_INFO=BASE_URL+"/api/business/savebusiness";//添加/修改 店铺信息
     public final String ADD_CARD=BASE_URL+"/api/business/savecard";//添加卡券
+    public final String EDIT_CARD=BASE_URL+"/api/business/editcard";//修改卡券
     public final String CARD_RECHARGE_LIST=BASE_URL+"/api/business/listrecharge";//点券充值列表
     public final String CARD_INFO=BASE_URL+"/api/business/getcard";//获取卡券信息
     public final String CARD_LIST=BASE_URL+"/api/business/listcard";//获取卡券列表
@@ -152,4 +153,19 @@ public interface Api {
     public final String ABOUT_ME=BASE_URL+"/api/noauth/aboutus";//关于我们  403接口
     public final String AGREEMENT=BASE_URL+"/api/noauth/agreement";//服务协议
     public final String LIST_NEAR=BASE_URL+"/api/business/listnear";//获取附近商圈商户列表
+    public final String REMOTDOOR=BASE_URL+"/api/lock/openRemoteDeviceLock";//远程开门
+    public final String GET_PASSWORD=BASE_URL+"/api/lock/generateVisitPassword";//获取访客密码
+
+    public final String LIST_BSORT=BASE_URL+"/api/business/lisbsort";//商户类型列表
+    public final String LIST_ADDRESS_NEAR=BASE_URL+"/api/members/listnear";//获取附近地址列表
+    public final String BANNER=BASE_URL+"/api/business/listnearimg";//banner
+    public final String UPLOAD_BANNER=BASE_URL+"/api/business/businessimg";//商户轮播图上传
+    public final String GET_CARD_TYPE=BASE_URL+"/api/members/getcardtype";//获取商户类别
+
+    public final String UPLOAD_PIC=BASE_URL+"/api/business/cardimg";//上传图片
+    public final String DELETE_PIC=BASE_URL+"/api/business/delcardimg";//删除图片
+    public final String IS_BUSINESS=BASE_URL+"/api/business/isbusiness";//是否已完善商户资料
+    public final String DELETE_CARD=BASE_URL+"/api/business/delcard";//删除卡券
+    public final String TOU_LIST=BASE_URL+"/api/business/listcardbymember";//领取记录
+    public final String RECHARGE=BASE_URL+"/alipay/pay";//支付宝支付
 }

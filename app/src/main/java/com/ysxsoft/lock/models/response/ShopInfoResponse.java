@@ -53,6 +53,27 @@ public class ShopInfoResponse{
         String lng;
         String status;
         String create_time;
+        List<ItemBean> attachList;
+
+        public List<ItemBean> getAttachList() {
+            return attachList;
+        }
+
+        public void setAttachList(List<ItemBean> attachList) {
+            this.attachList = attachList;
+        }
+
+        public static class ItemBean{
+            private String attach;
+
+            public String getAttach() {
+                return attach;
+            }
+
+            public void setAttach(String attach) {
+                this.attach = attach;
+            }
+        }
 
         public String getId() {
             return id;

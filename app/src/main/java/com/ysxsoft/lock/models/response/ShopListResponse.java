@@ -96,6 +96,15 @@ public class ShopListResponse{
         private String ticket;
         private String distance;
         private String lat;
+        private String xl;
+
+        public String getXl() {
+            return xl;
+        }
+
+        public void setXl(String xl) {
+            this.xl = xl;
+        }
 
         public String getId() {
             return id;

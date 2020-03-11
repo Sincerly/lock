@@ -14,274 +14,296 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
+            android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_44"
-                android:layout_marginTop="@dimen/dp_5"
-                android:background="@color/colorWhite"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="15dp"
-                    android:gravity="center_vertical"
-                    android:text="卡券类型"
-                    android:textColor="@color/color_282828"
-                    android:textSize="@dimen/sp_14" />
-
-                <TextView
-                    android:id="@+id/tvMoney"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="15dp"
-                    android:layout_weight="1"
-                    android:drawableRight="@mipmap/icon_right_arrow"
-                    android:drawablePadding="@dimen/dp_5"
-                    android:gravity="center_vertical|right"
-                    android:text="现金券"
-                    android:textColor="@color/color_666666"
-                    android:textSize="@dimen/sp_14" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:background="@color/colorWhite"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/dp_44"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@color/colorWhite"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tv1Name"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="15dp"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="15dp"
-                        android:text="券的面额"
+                        android:gravity="center_vertical"
+                        android:text="卡券类型"
                         android:textColor="@color/color_282828"
                         android:textSize="@dimen/sp_14" />
 
                     <TextView
+                        android:id="@+id/tvMoney"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
                         android:layout_weight="1"
+                        android:drawableRight="@mipmap/icon_right_arrow"
+                        android:drawablePadding="@dimen/dp_5"
                         android:gravity="center_vertical|right"
-                        android:text=""
-                        android:textColor="@color/color_282828"
+                        android:text="现金券"
+                        android:textColor="@color/color_666666"
                         android:textSize="@dimen/sp_14" />
 
-                    <EditText
-                        android:id="@+id/etYhq"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="15dp"
-                        android:background="@null"
-                        android:hint="优惠券金额"
-                        android:singleLine="true"
-                        android:textColor="@color/color_282828"
-                        android:textColorHint="@color/color_cccccc"
-                        android:textSize="@dimen/sp_14" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:background="@color/colorWhite"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv2Name"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="15dp"
-                        android:layout_marginLeft="15dp"
-                        android:text="使用条件"
-                        android:textColor="@color/color_282828"
-                        android:textSize="@dimen/sp_14" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical|right"
-                        android:text=""
-                        android:textColor="@color/color_282828"
-                        android:textSize="@dimen/sp_14" />
+                        <TextView
+                            android:id="@+id/tv1Name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="15dp"
+                            android:layout_marginLeft="15dp"
+                            android:text="券的面额"
+                            android:textColor="@color/color_282828"
+                            android:textSize="@dimen/sp_14" />
 
-                    <EditText
-                        android:id="@+id/etUseTJ"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="15dp"
-                        android:background="@null"
-                        android:hint="用券最低订单金额，0元则全场通用"
-                        android:singleLine="true"
-                        android:textColor="@color/color_282828"
-                        android:textColorHint="@color/color_cccccc"
-                        android:textSize="@dimen/sp_14" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text=""
+                            android:textColor="@color/color_282828"
+                            android:textSize="@dimen/sp_14" />
+
+                        <EditText
+                            android:id="@+id/etYhq"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="15dp"
+                            android:background="@null"
+                            android:hint="优惠券金额"
+                            android:gravity="center_vertical|right"
+                            android:singleLine="true"
+                            android:textColor="@color/color_282828"
+                            android:textColorHint="@color/color_cccccc"
+                            android:textSize="@dimen/sp_14" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv2Name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="15dp"
+                            android:layout_marginLeft="15dp"
+                            android:text="使用条件"
+                            android:textColor="@color/color_282828"
+                            android:textSize="@dimen/sp_14" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text=""
+                            android:textColor="@color/color_282828"
+                            android:textSize="@dimen/sp_14" />
+                        <EditText
+                            android:id="@+id/etUseTJ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="15dp"
+                            android:background="@null"
+                            android:hint="用券最低订单金额，0元则全场通用"
+                            android:singleLine="true"
+                            android:gravity="center_vertical|right"
+                            android:textColor="@color/color_282828"
+                            android:textColorHint="@color/color_cccccc"
+                            android:textSize="@dimen/sp_14" />
+                    </LinearLayout>
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/LL1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                android:paddingVertical="@dimen/dp_10">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginVertical="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_weight="1"
-                    android:text="主图"
-                    android:textColor="@color/color_282828"
-                    android:textSize="@dimen/sp_14" />
-
-
-                <ImageView
-                    android:id="@+id/iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:src="@mipmap/icon_group" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="15dp"
-                    android:src="@mipmap/icon_right_arrow" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/LL2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv3Name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginVertical="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:text="现金券名称"
-                    android:textColor="@color/color_282828"
-                    android:textSize="@dimen/sp_14" />
-
-
-                <EditText
-                    android:id="@+id/etName"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="15dp"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:gravity="center_vertical|right"
-                    android:hint="请输入名称"
-                    android:singleLine="true"
-                    android:textColor="@color/color_282828"
-                    android:textColorHint="@color/color_cccccc"
-                    android:textSize="@dimen/sp_14" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv4Name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:paddingVertical="@dimen/dp_10"
-                android:text="现金券规则"
-                android:textColor="@color/color_282828"
-                android:textSize="@dimen/sp_14" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/cl1">
-
-                <EditText
-                    android:id="@+id/etInputRules"
+                <LinearLayout
+                    android:id="@+id/LL1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorWhite"
-                    android:gravity="start"
-                    android:hint="请写下使用规则…"
-                    android:minHeight="150dp"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="@dimen/dp_10"
-                    android:maxLength="500"
-                    android:textColor="@color/color_282828"
-                    android:textSize="@dimen/sp_14"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="@dimen/dp_10"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent">
+                    android:paddingVertical="@dimen/dp_10">
 
                     <TextView
-                        android:id="@+id/tv1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_weight="1"
+                        android:text="主图"
+                        android:textColor="@color/color_282828"
+                        android:textSize="@dimen/sp_14" />
+
+
+                    <ImageView
+                        android:id="@+id/iv"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/color_cccccc"
-                        android:textSize="11sp" />
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:src="@mipmap/icon_group" />
 
-                    <TextView
+                    <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="/"
-                        android:textColor="@color/color_cccccc"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:id="@+id/tv2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="500"
-                        android:textColor="@color/color_cccccc"
-                        android:textSize="11sp" />
-
-
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
+                        android:src="@mipmap/icon_right_arrow" />
                 </LinearLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout
+                    android:id="@+id/LL2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvOk"
+                    <TextView
+                        android:id="@+id/tv3Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:text="现金券名称"
+                        android:textColor="@color/color_282828"
+                        android:textSize="@dimen/sp_14" />
+
+
+                    <EditText
+                        android:id="@+id/etName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="center_vertical|right"
+                        android:hint="请输入名称"
+                        android:singleLine="true"
+                        android:textColor="@color/color_282828"
+                        android:textColorHint="@color/color_cccccc"
+                        android:textSize="@dimen/sp_14" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv4Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:paddingVertical="@dimen/dp_10"
+                    android:text="活动详情"
+                    android:textColor="@color/color_282828"
+                    android:textSize="@dimen/sp_14" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cl1">
+
+                    <EditText
+                        android:id="@+id/etInputRules"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorWhite"
+                        android:gravity="start"
+                        android:hint="请写下使用规则…"
+                        android:minHeight="150dp"
+                        android:paddingHorizontal="15dp"
+                        android:paddingVertical="@dimen/dp_10"
+                        android:maxLength="500"
+                        android:textColor="@color/color_282828"
+                        android:textSize="@dimen/sp_14"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintRight_toRightOf="parent">
+
+                        <TextView
+                            android:id="@+id/tv1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/color_cccccc"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="/"
+                            android:textColor="@color/color_cccccc"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/tv2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="500"
+                            android:textColor="@color/color_cccccc"
+                            android:textSize="11sp" />
+
+                    </LinearLayout>
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </androidx.recyclerview.widget.RecyclerView>
+                <com.ysxsoft.lock.view.TextOrPicLayout
+                    android:id="@+id/textOrPicLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </com.ysxsoft.lock.view.TextOrPicLayout>
+
+                <TextView
+                    android:id="@+id/tvOk"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_44"
+                    android:background="@drawable/shape_btn_bg"
+                    android:gravity="center"
+                    android:text="确认添加"
+                    android:layout_marginVertical="50dp"
+                    android:layout_marginHorizontal="35dp"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp" />
+
+            </LinearLayout>
+
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/progressBar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_44"
-                android:background="@drawable/shape_btn_bg"
-                android:gravity="center"
-                android:text="确认添加"
-                android:layout_marginVertical="50dp"
-                android:layout_marginHorizontal="35dp"
-                android:textColor="@color/colorWhite"
-                android:textSize="17sp" />
-
-        </LinearLayout>
+                android:layout_height="match_parent"/>
+        </FrameLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

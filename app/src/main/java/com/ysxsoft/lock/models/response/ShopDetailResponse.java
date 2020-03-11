@@ -1,5 +1,7 @@
 package com.ysxsoft.lock.models.response;
 
+import java.util.List;
+
 /**
  * 商铺详情
  * create by Sincerly on 9999/9/9 0009
@@ -47,10 +49,37 @@ public class ShopDetailResponse {
         private String time2;
         private String address;
         private String tel;
+        private String distance;
         private String lat;
         private String lng;
         private String status;
         private String create_time;
+        private String xl;
+        private List<ItemBean> attachList;
+
+        public String getDistance() {
+            return distance;
+        }
+
+        public void setDistance(String distance) {
+            this.distance = distance;
+        }
+
+        public List<ItemBean> getAttachList() {
+            return attachList;
+        }
+
+        public void setAttachList(List<ItemBean> attachList) {
+            this.attachList = attachList;
+        }
+
+        public String getXl() {
+            return xl;
+        }
+
+        public void setXl(String xl) {
+            this.xl = xl;
+        }
 
         public String getId() {
             return id;
@@ -141,7 +170,7 @@ public class ShopDetailResponse {
         }
 
         public String getLat() {
-            return lat;
+            return lat==null?"0.0":"".equals(lat)?"0.0":lat;
         }
 
         public void setLat(String lat) {
@@ -149,7 +178,7 @@ public class ShopDetailResponse {
         }
 
         public String getLng() {
-            return lng;
+            return lng==null?"0.0":"".equals(lng)?"0.0":lng;
         }
 
         public void setLng(String lng) {
@@ -181,6 +210,18 @@ public class ShopDetailResponse {
         }
 
         private String ticket;
+
+        public class ItemBean{
+            private String attach;
+
+            public String getAttach() {
+                return attach;
+            }
+
+            public void setAttach(String attach) {
+                this.attach = attach;
+            }
+        }
 
     }
 

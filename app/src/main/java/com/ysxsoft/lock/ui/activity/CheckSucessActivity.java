@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.ysxsoft.common_base.base.BaseActivity;
@@ -52,9 +53,17 @@ public class CheckSucessActivity extends BaseActivity {
     LinearLayout parent;
     @BindView(R.id.tvOk)
     TextView tvOk;
+    @BindView(R.id.tips)
+    TextView tips;
+    @BindView(R.id.tvTip)
+    TextView tvTip;
 
-    public static void start() {
-        ARouter.getInstance().build(ARouterPath.getCheckSucessActivity()).navigation();
+    @Autowired
+    boolean isCard;
+
+    public static void start(boolean isCard) {
+        ARouter.getInstance().build(ARouterPath.getCheckSucessActivity())
+                .withBoolean("isCard",isCard).navigation();
     }
 
     @Override
@@ -65,6 +74,7 @@ public class CheckSucessActivity extends BaseActivity {
     @Override
     public void doWork() {
         super.doWork();
+        ARouter.getInstance().inject(this);
         initTitle();
     }
 
@@ -72,7 +82,15 @@ public class CheckSucessActivity extends BaseActivity {
         bg.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         backLayout.setVisibility(View.VISIBLE);
         back.setImageResource(R.mipmap.icon_gray_back);
-        title.setText("核销成功");
+        if(isCard){
+            title.setText("核实成功");
+            tips.setText("核实成功");
+            tvTip.setText("详细信息可在核实记录里查看");
+        }else{
+            title.setText("核销成功");
+            tips.setText("核销成功");
+            tvTip.setText("详细信息可在核销记录里查看");
+        }
     }
 
     @OnClick({R.id.backLayout, R.id.tvOk})
@@ -85,38 +103,5 @@ public class CheckSucessActivity extends BaseActivity {
                 finish();
                 break;
         }
-    }
-
-    public void request() {
-        showLoadingDialog("请求中");
-        OkHttpUtils.post()
-                .url(Api.GET_CHECK_SUCESS)
-                .addParams("uid", SharedPreferencesUtils.getUid(CheckSucessActivity.this))
-                .tag(this)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        hideLoadingDialog();
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        hideLoadingDialog();
-                        CheckSucessResponse resp = JsonUtils.parseByGson(response, CheckSucessResponse.class);
-                        if (resp != null) {
-//                                if (HttpResponse.SUCCESS.equals(resp.getCode())) {
-//                                    //请求成功
-//                                    List<CheckSucessResponse.DataBean> data = resp.getData();
-//                                    manager.setData(data);
-//                                } else {
-//                                    //请求失败
-//                                    showToast(resp.getMsg());
-//                                }
-                        } else {
-                            showToast("获取核销成功失败");
-                        }
-                    }
-                });
     }
 }

@@ -28,10 +28,23 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView1"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/dp_5"
                     android:layout_marginRight="15dp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintDimensionRatio="2:1"
+                        android:id="@+id/pic"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/tvName"
@@ -78,7 +91,6 @@
                         android:id="@+id/tvSales"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp_20"
                         android:text="月售300单"
                         android:textColor="@color/color_666666"
                         android:textSize="11sp" />
@@ -157,7 +169,7 @@
                     android:minHeight="150dp"
                     app:cardCornerRadius="@dimen/dp_10">
 
-                    <com.baidu.mapapi.map.MapView
+                    <com.baidu.mapapi.map.TextureMapView
                         android:id="@+id/mapView"
                         android:layout_width="match_parent"
                         android:layout_height="150dp" />

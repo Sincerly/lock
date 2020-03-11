@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,8 @@ import com.ysxsoft.lock.models.response.CityTopResponse;
 import com.ysxsoft.lock.models.response.DefaultPlaceResponse;
 import com.ysxsoft.lock.models.response.TabKeyManager1FragmentResponse;
 import com.ysxsoft.lock.net.Api;
+import com.ysxsoft.lock.ui.activity.AddPlaceActivity;
+import com.ysxsoft.lock.ui.activity.KeyManagerActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -66,6 +69,14 @@ public class CityTopDialog extends Dialog {
     private View init() {
         View view = View.inflate(mContext, R.layout.dialog_city_top, null);
         tvName = view.findViewById(R.id.tvName);
+        LinearLayout addressLayout = view.findViewById(R.id.addressLayout);
+        addressLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                AddPlaceActivity.start();
+                KeyManagerActivity.start();
+            }
+        });
         recyclerView = view.findViewById(R.id.recyclerView);
         fangShiViewMenu = view.findViewById(R.id.fangShiViewMenu);
         request();
@@ -87,15 +98,14 @@ public class CityTopDialog extends Dialog {
         setCanceledOnTouchOutside(true);
         setContentView(init());
     }
-
     private void initData2(){
         fangShiViewMenu.setAdapter(null);
         fangShiViewMenu.setNestedScrollingEnabled(false);
         fangShiViewMenu.setLayoutManager(new GridLayoutManager(mContext,4));
 
         ArrayList<String> list = new ArrayList<>();
-        list.add("密码开门");
         list.add("蓝牙开门");
+        list.add("密码开门");
         list.add("远程开门");
 
         RBaseAdapter<String> adapter = new RBaseAdapter<String>(mContext, R.layout.item_city_top, list) {
@@ -110,16 +120,6 @@ public class CityTopDialog extends Dialog {
                     name.setTextColor(mContext.getResources().getColor(R.color.colorWhite));
                 }
                 name.setText(item);
-                switch (position){
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                }
             }
 
             @Override
@@ -130,8 +130,15 @@ public class CityTopDialog extends Dialog {
         adapter.setOnItemClickListener(new RBaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(RViewHolder holder, View view, int position) {
-                click1=position;
-                adapter.notifyDataSetChanged();
+                if(keyAdapter!=null){
+                    click1=position;
+                    adapter.notifyDataSetChanged();
+
+                    DefaultPlaceResponse.DataBean.ListkeyBean item=keyAdapter.getItemData(click);
+                    if(listener!=null){
+                        listener.sure(item.getRequ_id(),position,item.getEqu_id(),item.getEqu_pass());
+                    }
+                }
 
             }
         });
@@ -191,6 +198,11 @@ public class CityTopDialog extends Dialog {
                                     public void onItemClick(RViewHolder holder, View view, int position) {
                                         click=position;
                                         keyAdapter.notifyDataSetChanged();
+
+                                        if(listener!=null){
+                                            DefaultPlaceResponse.DataBean.ListkeyBean item=keyAdapter.getItemData(click);
+                                            listener.sure(item.getRequ_id(),click1,item.getEqu_id(),item.getEqu_pass());
+                                        }
                                     }
                                 });
                                 recyclerView.setAdapter(keyAdapter);
@@ -220,6 +232,6 @@ public class CityTopDialog extends Dialog {
     }
 
     public interface OnDialogClickListener {
-        void sure();
+        void sure(String requ_id, int type,String deviceId,String password);// requ_id 小区id  type0蓝牙 1密码开门 2远程开门
     }
 }

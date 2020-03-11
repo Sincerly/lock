@@ -7,6 +7,7 @@
 
     <LinearLayout
         android:id="@+id/LL1"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -82,16 +83,14 @@
                 android:text="提交认证"
                 android:textColor="@color/colorWhite"
                 android:textSize="17sp" />
-
-
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/LL2"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:orientation="vertical">
         <ImageView
             android:layout_width="wrap_content"
@@ -103,7 +102,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="核销成功！"
+            android:text="认证成功!"
             android:layout_marginTop="@dimen/dp_10"
             android:gravity="center_horizontal"
             android:textColor="@color/color_282828"
@@ -115,17 +114,18 @@
             android:layout_height="wrap_content"
             android:textColor="@color/color_999999"
             android:textSize="11sp"
+            android:visibility="gone"
             android:gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp_5"
             android:text="详细信息可在核销记录里查看"/>
-
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/LL3"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:orientation="vertical">
         <ImageView
             android:layout_width="wrap_content"
@@ -135,11 +135,11 @@
             android:src="@mipmap/icon_checking" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="信息审核中！"
+            android:text="信息审核中!"
             android:layout_marginTop="@dimen/dp_10"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/color_282828"
             android:textSize="17sp" />
 
@@ -151,8 +151,52 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp_5"
             android:text="信息审核需要1-2个工作日"/>
-
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL4"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_20"
+            android:src="@mipmap/icon_check_fail" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="信息审核失败!"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/color_282828"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/reson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_999999"
+            android:textSize="11sp"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="失败原因"/>
+        <TextView
+            android:id="@+id/tvAgain"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_44"
+            android:background="@drawable/shape_btn_bg"
+            android:textColor="@color/colorWhite"
+            android:textSize="17sp"
+            android:layout_marginTop="60dp"
+            android:layout_marginHorizontal="35dp"
+            android:text="重新认证"
+            android:gravity="center"/>
+    </LinearLayout>
+
 
 
 </LinearLayout>

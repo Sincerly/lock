@@ -1,10 +1,12 @@
 package com.ysxsoft.lock.ui.fragment;
 
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,6 +29,7 @@ import com.ysxsoft.lock.models.response.PacketCardResponse;
 import com.ysxsoft.lock.net.Api;
 import com.ysxsoft.lock.ui.activity.UseCouponActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.builder.PostFormBuilder;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.math.BigDecimal;
@@ -52,6 +55,16 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter<Pac
 
     public boolean isClick = false;
     private int isSelect = 0;
+
+    private String shopId;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            shopId=getArguments().getString("shopId");
+        }
+    }
 
     @Override
     public int getLayoutId() {
@@ -122,12 +135,15 @@ public class TabPacket1Fragment extends BaseFragment implements IListAdapter<Pac
 
     @Override
     public void request(int page) {
-        OkHttpUtils.post()
+        PostFormBuilder builder=OkHttpUtils.post()
                 .url(Api.MEM_BERCARD)
                 .addHeader("Authorization", SharedPreferencesUtils.getToken(getActivity()))
                 .addParams("type", "1")
-                .addParams("status", isSelect + "")
-                .tag(this)
+                .addParams("status", isSelect + "");
+        if(shopId!=null){
+            builder.addParams("business_id", shopId+"");
+        }
+        builder.tag(this)
                 .build()
                 .execute(new StringCallback() {
                     @Override
